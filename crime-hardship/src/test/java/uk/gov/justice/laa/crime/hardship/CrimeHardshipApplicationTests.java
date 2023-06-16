@@ -1,8 +1,8 @@
-package uk.gov.justice.laa.crime.microservice;
+package uk.gov.justice.laa.crime.hardship;
 
 import org.junit.jupiter.api.Test;
 
-class MicroserviceTemplateApplicationTests {
+class CrimeHardshipApplicationTests {
 
 	@Test
 	void contextLoads() {
