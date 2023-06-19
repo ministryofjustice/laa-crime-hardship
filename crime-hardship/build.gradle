@@ -87,6 +87,20 @@ pitest {
 	mutationThreshold = 60
 }
 
+sonarqube {
+	properties {
+		property "sonar.exclusions", "**/entity/**.java , **/model/**.java , **/dto/**.java , **/config/**.java, **/jms/**.java,**/exception/**.java,**/handler/**.java"
+		property "sonar.coverage.exclusions", "**/CrimeHardshipApplication.java"
+		property "sonar.coverage.jacoco.xmlReportPaths", "${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.projectKey", "ministryofjustice_laa-crime-hardship"
+		property "sonar.organization", "ministryofjustice"
+		property "sonar.host.url", "https://sonarcloud.io"
+		property "sonar.projectName", "Crime Apps :: crime-hardship"
+		property "sonar.pitest.mode", "reuseReport"
+		property "sonar.pitest.reportsDirectory", "build/reports/pitest"
+	}
+}
+
 jsonSchema2Pojo {
 	executions {
 		main {
