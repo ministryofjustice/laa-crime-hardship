@@ -112,12 +112,7 @@ jobs:
   build_scan_and_push_image:
     executor: aws-ecr/default # use the aws-ecr/default executor to start the docker daemon
     steps:
-      - checkout:
-          path: ~/laa-crime-hardship
-      - attach_workspace:
-          at: .
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - checkout
       # Authenticate to AWS using OIDC v2 with the AWS CLI
       - aws-cli/setup:
           role_arn: $ECR_ROLE_TO_ASSUME # this will use the env var
