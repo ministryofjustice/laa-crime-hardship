@@ -126,6 +126,7 @@ jobs:
       # Build and push your Docker image
       - aws-ecr/build-image:
           push-image: true
+          path: ~/laa-crime-hardship/crime-hardship
           tag: ${CIRCLE_SHA1}
           region: $ECR_REGION # this will use the env var
           repo: $ECR_REPOSITORY # this will use the env var
