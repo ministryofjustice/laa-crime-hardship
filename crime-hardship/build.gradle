@@ -87,7 +87,9 @@ pitest {
 	mutationThreshold = 60
 }
 
-sonarqube {
+tasks["sonar"].dependsOn test
+
+sonar {
 	properties {
 		property "sonar.exclusions", "**/entity/**.java , **/model/**.java , **/dto/**.java , **/config/**.java, **/jms/**.java,**/exception/**.java,**/handler/**.java"
 		property "sonar.coverage.exclusions", "**/CrimeHardshipApplication.java"
