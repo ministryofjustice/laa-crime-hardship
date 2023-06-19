@@ -114,6 +114,8 @@ jobs:
     steps:
       - checkout:
           path: ~/laa-crime-hardship
+      - attach_workspace:
+          at: .
       # Authenticate to AWS using OIDC v2 with the AWS CLI
       - aws-cli/setup:
           role_arn: $ECR_ROLE_TO_ASSUME # this will use the env var
