@@ -39,12 +39,12 @@ dependencies {
 
 	implementation "org.postgresql:postgresql"
 	implementation "org.apache.commons:commons-lang3"
+	implementation "io.micrometer:micrometer-registry-prometheus"
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdocVersion"
 
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.springframework.boot:spring-boot-starter-webflux"
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-
 	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
@@ -89,8 +89,16 @@ jacocoTestReport {
 }
 
 pitest {
-	targetClasses = ["uk.gov.justice.laa.crime.hardship.*", "uk.gov.justice.laa.crime.hardship.controller.*", "uk.gov.justice.laa.crime.hardship.validation.*"]
-	excludedClasses = ["uk.gov.justice.laa.crime.hardship.dto.*", "uk.gov.justice.laa.crime.hardship.mapper.*", "uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication"]
+	targetClasses = [
+			"uk.gov.justice.laa.crime.hardship.*",
+			"uk.gov.justice.laa.crime.hardship.controller.*",
+			"uk.gov.justice.laa.crime.hardship.validation.*"
+	]
+	excludedClasses = [
+			"uk.gov.justice.laa.crime.hardship.dto.*",
+			"uk.gov.justice.laa.crime.hardship.mapper.*",
+			"uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication"
+	]
 	threads = 5
 	outputFormats = ["XML", "HTML"]
 	timestampedReports = false
