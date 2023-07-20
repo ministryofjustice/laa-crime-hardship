@@ -10,31 +10,31 @@ import java.util.stream.Stream;
 @Getter
 @AllArgsConstructor
 public enum HardshipReviewDetailCode {
-    UNSECURED_LOAN("UNSECURED LOAN", "Unsecured Loan", HardshipReviewDetailType.EXPENDITURE),
-    SECURED_LOAN("SECURED LOAN", "Secured Loan", HardshipReviewDetailType.EXPENDITURE),
-    CAR_LOAN("CAR LOAN", "Car Loan", HardshipReviewDetailType.EXPENDITURE),
-    IVA("IVA", "IVA", HardshipReviewDetailType.EXPENDITURE),
-    CARDS("CARDS", "Credit/Store Card Payment", HardshipReviewDetailType.EXPENDITURE),
-    DEBTS("DEBTS", "Debts", HardshipReviewDetailType.EXPENDITURE),
-    FINES("FINES", "Fines", HardshipReviewDetailType.EXPENDITURE),
-    RENT_ARREARS("RENT ARREARS", "Rent Arrears", HardshipReviewDetailType.EXPENDITURE),
-    BAILIFF("BAILIFF", "Bailiff Costs", HardshipReviewDetailType.EXPENDITURE),
-    DWP_OVERPAYMENT("DWP OVERPAYMENT", "DWP Overpayment", HardshipReviewDetailType.EXPENDITURE),
-    STUDENT_LOAN("STUDENT LOAN", "Student Loan", HardshipReviewDetailType.EXPENDITURE),
-    ADD_MORTGAGE("ADD MORTGAGE", "Mortgage on additional Property", HardshipReviewDetailType.EXPENDITURE),
-    UNI_HOUSING("UNI HOUSING", "University Housing Costs", HardshipReviewDetailType.EXPENDITURE),
-    PRESCRIPTION("PRESCRIPTION", "Prescription Costs", HardshipReviewDetailType.EXPENDITURE),
-    PENSION_PAY("PENSION PAY", "Pension Payments", HardshipReviewDetailType.EXPENDITURE),
-    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE),
-    OTHER("OTHER", "Other", HardshipReviewDetailType.EXPENDITURE),
-    MEDICAL_GROUNDS("MEDICAL GROUNDS", "Medical Grounds", HardshipReviewDetailType.INCOME),
-    SUSPENDED_WORK("SUSPENDED WORK", "Suspended from work", HardshipReviewDetailType.INCOME),
-    OTHER_INC("OTHER INC", "Other", HardshipReviewDetailType.INCOME);
+    UNSECURED_LOAN("UNSECURED LOAN", "Unsecured Loan", HardshipReviewDetailType.EXPENDITURE.getType()),
+    SECURED_LOAN("SECURED LOAN", "Secured Loan", HardshipReviewDetailType.EXPENDITURE.getType()),
+    CAR_LOAN("CAR LOAN", "Car Loan", HardshipReviewDetailType.EXPENDITURE.getType()),
+    IVA("IVA", "IVA", HardshipReviewDetailType.EXPENDITURE.getType()),
+    CARDS("CARDS", "Credit/Store Card Payment", HardshipReviewDetailType.EXPENDITURE.getType()),
+    DEBTS("DEBTS", "Debts", HardshipReviewDetailType.EXPENDITURE.getType()),
+    FINES("FINES", "Fines", HardshipReviewDetailType.EXPENDITURE.getType()),
+    RENT_ARREARS("RENT ARREARS", "Rent Arrears", HardshipReviewDetailType.EXPENDITURE.getType()),
+    BAILIFF("BAILIFF", "Bailiff Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    DWP_OVERPAYMENT("DWP OVERPAYMENT", "DWP Overpayment", HardshipReviewDetailType.EXPENDITURE.getType()),
+    STUDENT_LOAN("STUDENT LOAN", "Student Loan", HardshipReviewDetailType.EXPENDITURE.getType()),
+    ADD_MORTGAGE("ADD MORTGAGE", "Mortgage on additional Property", HardshipReviewDetailType.EXPENDITURE.getType()),
+    UNI_HOUSING("UNI HOUSING", "University Housing Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    PRESCRIPTION("PRESCRIPTION", "Prescription Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    PENSION_PAY("PENSION PAY", "Pension Payments", HardshipReviewDetailType.EXPENDITURE.getType()),
+    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    OTHER("OTHER", "Other", HardshipReviewDetailType.EXPENDITURE.getType()),
+    MEDICAL_GROUNDS("MEDICAL GROUNDS", "Medical Grounds", HardshipReviewDetailType.INCOME.getType()),
+    SUSPENDED_WORK("SUSPENDED WORK", "Suspended from work", HardshipReviewDetailType.INCOME.getType()),
+    OTHER_INC("OTHER INC", "Other", HardshipReviewDetailType.INCOME.getType());
 
     @JsonPropertyDescription("Hardship review detail codes that are valid")
     private String code;
     private String description;
-    private HardshipReviewDetailType type;
+    private String type;
 
     public static HardshipReviewDetailCode getFrom(String code) {
         if (StringUtils.isBlank(code)) { return null; }
