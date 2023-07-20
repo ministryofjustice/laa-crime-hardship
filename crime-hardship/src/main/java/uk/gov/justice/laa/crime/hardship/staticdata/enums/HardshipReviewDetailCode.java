@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 @Getter
 @AllArgsConstructor
-public enum HardshipReviewDetailCodes {
+public enum HardshipReviewDetailCode {
     UNSECURED_LOAN("UNSECURED LOAN", "Unsecured Loan", HardshipReviewDetailType.EXPENDITURE),
     SECURED_LOAN("SECURED LOAN", "Secured Loan", HardshipReviewDetailType.EXPENDITURE),
     CAR_LOAN("CAR LOAN", "Car Loan", HardshipReviewDetailType.EXPENDITURE),
@@ -36,10 +36,10 @@ public enum HardshipReviewDetailCodes {
     private String description;
     private HardshipReviewDetailType type;
 
-    public static HardshipReviewDetailCodes getFrom(String code) {
+    public static HardshipReviewDetailCode getFrom(String code) {
         if (StringUtils.isBlank(code)) { return null; }
 
-        return Stream.of(HardshipReviewDetailCodes.values())
+        return Stream.of(HardshipReviewDetailCode.values())
                 .filter(hrdCode -> hrdCode.code.equals(code))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format(
