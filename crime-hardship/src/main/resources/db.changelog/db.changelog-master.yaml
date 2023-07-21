@@ -1,3 +1,7 @@
 databaseChangeLog:
   - include:
       file: db.changelog/changeset/01-crime-hardship-create-schema.sql
+  - include:
+      file: db.changelog/changeset/02-hardship-review-detail-reasons-table-create.sql
+  - include:
+      file: db.changelog/changeset/03-hardship-review-detail-reasons-table-data-insert.sql
