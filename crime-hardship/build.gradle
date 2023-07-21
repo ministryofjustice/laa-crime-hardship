@@ -22,6 +22,7 @@ def versions = [
 		springdocVersion        : "2.1.0",
 		okhttpVersion           : "4.9.3",
 		mockwebserverVersion    : "4.10.0",
+		liquibase               : '4.11.0'
 ]
 
 repositories {
@@ -41,6 +42,7 @@ dependencies {
 	implementation "org.apache.commons:commons-lang3"
 	implementation "io.micrometer:micrometer-registry-prometheus"
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdocVersion"
+	implementation "org.liquibase:liquibase-core:$versions.liquibase"
 
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation "org.springframework.boot:spring-boot-starter-webflux"
