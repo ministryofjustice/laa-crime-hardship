@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @Getter
@@ -32,18 +33,26 @@ public enum HardshipReviewDetailCode {
     OTHER_INC("OTHER INC", "Other", HardshipReviewDetailType.INCOME.getType());
 
     @JsonPropertyDescription("Hardship review detail codes that are valid")
-    private String code;
-    private String description;
-    private String type;
+    private final String code;
+    private final String description;
+    private final String type;
 
     public static HardshipReviewDetailCode getFrom(String code) {
         if (StringUtils.isBlank(code)) { return null; }
 
-        return Stream.of(HardshipReviewDetailCode.values())
+        List<HardshipReviewDetailCode> hardshipReviewDetailCodes =  Stream.of(HardshipReviewDetailCode.values())
                 .filter(hrdCode -> hrdCode.code.equals(code))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format(
-                        "Hardship review detail with code: %s does not exist.", code)));
+                .toList();
+
+        if (hardshipReviewDetailCodes.isEmpty()) {
+            throw new IllegalArgumentException(String.format(
+                    "Hardship review detail with code: %s does not exist.", code));
+        } else if (hardshipReviewDetailCodes.size() > 1) {
+            throw new IllegalArgumentException(String.format(
+                    "Hardship review detail code: %s returned non unique value", code));
+        } else {
+            return hardshipReviewDetailCodes.get(0);
+        }
 
     }
 
