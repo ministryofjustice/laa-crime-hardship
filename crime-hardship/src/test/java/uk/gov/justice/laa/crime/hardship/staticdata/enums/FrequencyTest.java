@@ -5,29 +5,30 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-class HardshipReviewDetailCodeTest {
+class FrequencyTest {
 
     @Test
     void givenABlankString_whenGetFromIsInvoked_thenNullIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom(null)).isNull();
+        assertThat(Frequency.getFrom(null)).isNull();
     }
 
     @Test
     void givenValidResultString_whenGetFromIsInvoked_thenCorrectEnumIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom("BAILIFF")).isEqualTo(HardshipReviewDetailCode.BAILIFF);
+        assertThat(Frequency.getFrom("MONTHLY")).isEqualTo(Frequency.MONTHLY);
     }
 
     @Test
     void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
         assertThatThrownBy(
-                () -> HardshipReviewDetailCode.getFrom("MOCK_RESULT_STRING")
+                () -> Frequency.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void givenValidInput_ValidateEnumValues() {
-        assertThat("ADD MORTGAGE").isEqualTo(HardshipReviewDetailCode.ADD_MORTGAGE.getCode());
-        assertThat("Car Loan").isEqualTo(HardshipReviewDetailCode.CAR_LOAN.getDescription());
+        assertThat("ANNUALLY").isEqualTo(Frequency.ANNUALLY.getCode());
+        assertThat("Weekly").isEqualTo(Frequency.WEEKLY.getDescription());
+        assertThat(26).isEqualTo(Frequency.TWO_WEEKLY.getAnnualWeighting());
     }
 
 }

@@ -18,8 +18,8 @@ public enum HardshipReviewDetailType {
     ACTION("ACTION", "Review Progress");
 
     @JsonPropertyDescription("This will have hardship review detail type")
-    private String type;
-    private String description;
+    private final String type;
+    private final String description;
 
     public static HardshipReviewDetailType getFrom(String type) {
         if (StringUtils.isBlank(type)) return null;
