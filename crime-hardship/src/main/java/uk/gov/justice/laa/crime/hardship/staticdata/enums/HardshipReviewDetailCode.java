@@ -1,0 +1,55 @@
+package uk.gov.justice.laa.crime.hardship.staticdata.enums;
+
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonValue;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.stream.Stream;
+
+@Getter
+@AllArgsConstructor
+public enum HardshipReviewDetailCode {
+
+    UNSECURED_LOAN("UNSECURED LOAN", "Unsecured Loan"),
+    SECURED_LOAN("SECURED LOAN", "Secured Loan"),
+    CAR_LOAN("CAR LOAN", "Car Loan"),
+    IVA("IVA", "IVA"),
+    CARDS("CARDS", "Credit/Store Card Payment"),
+    DEBTS("DEBTS", "Debts"),
+    FINES("FINES", "Fines"),
+    RENT_ARREARS("RENT ARREARS", "Rent Arrears"),
+    BAILIFF("BAILIFF", "Bailiff Costs"),
+    DWP_OVERPAYMENT("DWP OVERPAYMENT", "DWP Overpayment"),
+    STUDENT_LOAN("STUDENT LOAN", "Student Loan"),
+    ADD_MORTGAGE("ADD MORTGAGE", "Mortgage on additional Property"),
+    UNI_HOUSING("UNI HOUSING", "University Housing Costs"),
+    PRESCRIPTION("PRESCRIPTION", "Prescription Costs"),
+    PENSION_PAY("PENSION PAY", "Pension Payments"),
+    // Typo in the data that is already in the table
+    MEDICAL_COSTS("MEDIAL COSTS", "Medical Costs"),
+    OTHER("OTHER", "Other"),
+    MEDICAL_GROUNDS("MEDICAL GROUNDS", "Medical Grounds"),
+    SUSPENDED_WORK("SUSPENDED WORK", "Suspended from work"),
+    OTHER_INC("OTHER INC", "Other");
+
+    @JsonPropertyDescription("This will have the detail code of the hardship review")
+    private final String code;
+    private final String description;
+
+    @JsonValue
+    public String getValue() {
+        return this.code;
+    }
+
+    public static HardshipReviewDetailCode getFrom(String code) {
+        if (StringUtils.isBlank(code)) return null;
+
+        return Stream.of(HardshipReviewDetailCode.values())
+                .filter(f -> f.code.equals(code))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("HardshipReviewDetailCode with value: %s does not exist.", code)));
+    }
+
+}

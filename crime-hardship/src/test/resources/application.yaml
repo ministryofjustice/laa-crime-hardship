@@ -1,0 +1,64 @@
+server:
+  port: 52314
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:crime_hardship;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db.changelog/db.changelog-master.yaml
+    contexts: tests
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    generate-ddl: false
+
+  security:
+    oauth2:
+      client:
+        provider:
+          maat-api:
+            token-uri: http://localhost:9999/oauth2/token
+        registration:
+          maat-api:
+            client-id: dummy-client
+            client-secret: dummy-secret
+            authorization-grant-type: client_credentials
+      resource-server:
+        jwt:
+          issuer-uri: ${crime-hardship.security.issuer-uri}
+
+springdoc:
+  api-docs:
+    path: /crime-hardship
+
+swagger-ui:
+  path: /open-api/docs.html
+
+services:
+  maat-api:
+    oAuthEnabled: true
+    baseUrl: http://localhost:9999
+    assessments-domain: /api/internal/v1/assessment
+    hardship-endpoints:
+      hardship-detail-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
+
+retry-config:
+  max-retries: 2
+  min-back-off-period: 3
+  jitter-value: 0.5
+
+crime-hardship:
+  security:
+    issuer-uri: http://localhost:${server.port}
+
+feature:
+  postMvp:
+    enabled: false

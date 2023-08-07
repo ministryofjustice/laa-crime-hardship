@@ -52,6 +52,8 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-actuator"
 	implementation "org.springframework.boot:spring-boot-starter-validation"
 
+	implementation "uk.gov.justice.service.laa-crime:crime-commons-spring-boot-starter-rest-client:2.2.0"
+
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
 
