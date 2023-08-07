@@ -22,7 +22,7 @@ public class HardshipService {
 
         List<HardshipReviewDetail> hardshipReviewDetailList = maatCourtDataService.getHardshipByDetailType(
                         request.getRepId(), request.getDetailType(), request.getLaaTransactionId())
-                .stream().filter(hrd -> "Y".equals(hrd.getAccepted()) && !BigDecimal.valueOf(0.0).equals(hrd.getAmount())).toList();
+                .stream().filter(hrd -> "Y".equals(hrd.getAccepted()) && BigDecimal.ZERO.compareTo(hrd.getAmount()) != 0).toList();
 
         for (HardshipReviewDetail hardshipReviewDetail : hardshipReviewDetailList) {
             hardshipSummary = hardshipSummary.add(
