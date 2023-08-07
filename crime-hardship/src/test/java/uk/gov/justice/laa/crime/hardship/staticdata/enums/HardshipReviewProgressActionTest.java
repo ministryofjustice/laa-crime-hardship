@@ -5,29 +5,29 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-class HardshipReviewDetailCodeTest {
+class HardshipReviewProgressActionTest {
 
     @Test
     void givenABlankString_whenGetFromIsInvoked_thenNullIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom(null)).isNull();
+        assertThat(HardshipReviewProgressAction.getFrom(null)).isNull();
     }
 
     @Test
     void givenValidResultString_whenGetFromIsInvoked_thenCorrectEnumIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom("BAILIFF")).isEqualTo(HardshipReviewDetailCode.BAILIFF);
+        assertThat(HardshipReviewProgressAction.getFrom("FURTHER INFO")).isEqualTo(HardshipReviewProgressAction.FURTHER_INFO);
     }
 
     @Test
     void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
         assertThatThrownBy(
-                () -> HardshipReviewDetailCode.getFrom("MOCK_RESULT_STRING")
+                () -> HardshipReviewProgressAction.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void givenValidInput_ValidateEnumValues() {
-        assertThat("ADD MORTGAGE").isEqualTo(HardshipReviewDetailCode.ADD_MORTGAGE.getCode());
-        assertThat("Car Loan").isEqualTo(HardshipReviewDetailCode.CAR_LOAN.getDescription());
+        assertThat("OTHER").isEqualTo(HardshipReviewProgressAction.OTHER.getAction());
+        assertThat("Rejected application").isEqualTo(HardshipReviewProgressAction.REJECTED_APP.getDescription());
     }
 
 }

@@ -12,10 +12,35 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
 
 import java.math.BigDecimal;
 
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class HardshipService {
+
+    private final MaatCourtDataService maatCourtDataService;
+
+    public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(ApiCalculateHardshipByDetailRequest request) {
+        ApiCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new ApiCalculateHardshipByDetailResponse();
+        BigDecimal hardshipSummary = BigDecimal.ZERO;
+
+        List<HardshipReviewDetail> hardshipReviewDetailList = maatCourtDataService.getHardshipByDetailType(
+                        request.getRepId(), request.getDetailType(), request.getLaaTransactionId())
+                .stream().filter(hrd -> "Y".equals(hrd.getAccepted()) && BigDecimal.ZERO.compareTo(hrd.getAmount()) != 0).toList();
+
+        for (HardshipReviewDetail hardshipReviewDetail : hardshipReviewDetailList) {
+            hardshipSummary = hardshipSummary.add(
+                    hardshipReviewDetail.getAmount().multiply(
+                            BigDecimal.valueOf(hardshipReviewDetail.getFrequency().getAnnualWeighting()))
+            );
+        }
+        apiProcessRepOrderResponse.setHardshipSummary(hardshipSummary);
+        return apiProcessRepOrderResponse;
+    }
 
     public HardshipReviewDTO checkHardship(HardshipReviewDTO hardshipReviewDTO) {
         BigDecimal solEstTotalCost = null;
@@ -102,3 +127,6 @@ public class HardshipService {
 
     }
 }
+
+
+

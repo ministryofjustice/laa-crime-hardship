@@ -1,7 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.NoArgsConstructor;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReviewProgress;
 import uk.gov.justice.laa.crime.hardship.model.NewWorkReason;
@@ -27,4 +26,5 @@ public record HardshipReviewDTO(Integer id,
                                 List<HardshipReviewDetail> reviewDetails,
                                 List<HardshipReviewProgress> reviewProgressItems,
                                 String courtType) {
+
 }
