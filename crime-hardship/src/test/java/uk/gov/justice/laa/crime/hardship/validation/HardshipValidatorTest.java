@@ -15,12 +15,12 @@ public class HardshipValidatorTest {
     public final HardshipValidator hardshipValidator = new HardshipValidator();
 
     @Test
-    void givenReviewDateIsAfterInitAssDate_whenCheckReviewDateIsInvoked_thenEmptyIsReturned() {
+    void givenReviewDateIsAfterAssDate_whenCheckReviewDateIsInvoked_thenEmptyIsReturned() {
         assertThat(hardshipValidator.checkReviewDate(TODAYS_DATE, YESTERDAYS_DATE)).isEmpty();
     }
 
     @Test
-    void givenReviewDateIsBeforeInitAssDate_whenCheckReviewDateIsInvoked_thenExceptionIsRaised() {
+    void givenReviewDateIsBeforeAssDate_whenCheckReviewDateIsInvoked_thenExceptionIsRaised() {
         assertThatThrownBy(() -> hardshipValidator.checkReviewDate(YESTERDAYS_DATE, TODAYS_DATE))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Hardship review date precedes the initial assessment date");
@@ -34,6 +34,13 @@ public class HardshipValidatorTest {
     @Test
     void givenReviewDateIsBeforeFullAssDate_whenCheckReviewDateIsInvoked_thenExceptionIsRaised() {
         assertThatThrownBy(() -> hardshipValidator.checkReviewDate(YESTERDAYS_DATE, DAY_BEFORE_YESTERDAY_DATE, TODAYS_DATE))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Hardship review date precedes the initial or full assessment dates");
+    }
+
+    @Test
+    void givenReviewDateIsBeforeInitAssDate_whenCheckReviewDateIsInvoked_thenExceptionIsRaised() {
+        assertThatThrownBy(() -> hardshipValidator.checkReviewDate(YESTERDAYS_DATE, TODAYS_DATE, DAY_BEFORE_YESTERDAY_DATE))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Hardship review date precedes the initial or full assessment dates");
     }
