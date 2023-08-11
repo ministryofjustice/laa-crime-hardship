@@ -1,5 +1,7 @@
 package uk.gov.justice.laa.crime.hardship.config;
 
+import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration.MaatApi.HardshipEndpoints;
+
 public class MockServicesConfiguration {
 
     public static ServicesConfiguration getConfiguration(int port) {
@@ -9,10 +11,8 @@ public class MockServicesConfiguration {
         ServicesConfiguration servicesConfiguration = new ServicesConfiguration();
         ServicesConfiguration.MaatApi maatApiConfiguration = new ServicesConfiguration.MaatApi();
 
-        ServicesConfiguration.MaatApi.HardshipEndpoints hardshipEndpoints =
-                new ServicesConfiguration.MaatApi.HardshipEndpoints(
-                        "/hardship/repId/{repId}/detailType/{detailType}"
-                );
+        HardshipEndpoints hardshipEndpoints = new HardshipEndpoints();
+        hardshipEndpoints.setHardshipDetailUrl("/hardship/repId/{repId}/detailType/{detailType}");
 
         maatApiConfiguration.setBaseUrl(host);
         maatApiConfiguration.setHardshipEndpoints(hardshipEndpoints);

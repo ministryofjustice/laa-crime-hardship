@@ -1,8 +1,5 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;

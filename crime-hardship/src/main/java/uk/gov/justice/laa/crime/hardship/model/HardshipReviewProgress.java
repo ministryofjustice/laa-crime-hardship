@@ -1,41 +1,34 @@
 package uk.gov.justice.laa.crime.hardship.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewProgressAction;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewProgressResponse;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class HardshipReviewProgress {
 
-    private Integer id;
-    private LocalDateTime dateRequested;
-    private LocalDateTime dateRequired;
-    private LocalDateTime dateCompleted;
-    private LocalDateTime timestamp;
+public record HardshipReviewProgress(
 
-    private HardshipReviewProgressAction progressAction;
-    private HardshipReviewProgressResponse progressResponse;
+        Integer id,
+        LocalDateTime dateRequested,
+        LocalDateTime dateRequired,
+        LocalDateTime dateCompleted,
+        LocalDateTime timestamp,
 
-    @JsonIgnore
-    private LocalDateTime dateCreated;
-    @JsonIgnore
-    private LocalDateTime dateModified;
-    @JsonIgnore
-    private LocalDateTime removedDate;
-    @JsonIgnore
-    private String userCreated;
-    @JsonIgnore
-    private String userModified;
+        HardshipReviewProgressAction progressAction,
+        HardshipReviewProgressResponse progressResponse,
 
+        @JsonIgnore
+        LocalDateTime dateCreated,
+        @JsonIgnore
+        LocalDateTime dateModified,
+        @JsonIgnore
+        LocalDateTime removedDate,
+        @JsonIgnore
+        String userCreated,
+        @JsonIgnore
+        String userModified
+) {
     public LocalDateTime getTimestamp() {
         return dateModified != null ? dateModified : dateCreated;
     }

@@ -49,6 +49,7 @@ services:
     assessments-domain: /api/internal/v1/assessment
     hardship-endpoints:
       hardship-detail-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
+      nwr-auth-url: ${services.maat-api.assessments-domain}/users/{username}/work-reasons/{nworCode}
 
 retry-config:
   max-retries: 2
