@@ -30,4 +30,10 @@ class HardshipReviewStatusTest {
         assertThat("Incomplete").isEqualTo(HardshipReviewStatus.IN_PROGRESS.getDescription());
     }
 
+    @Test
+    void givenAValidInput_whenGetValueInvoked_thenCorrectEnumIsReturned() {
+        HardshipReviewStatus status = HardshipReviewStatus.IN_PROGRESS;
+        assertThat(status.getValue()).isEqualTo("IN PROGRESS");
+    }
+
 }

@@ -15,9 +15,6 @@ import java.util.Optional;
 @Service
 public class HardshipReviewValidator {
 
-    private HardshipReviewValidator() {
-        throw new IllegalStateException("Validator class");
-    }
     public static final String MSG_INVALID_DATE = "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress";
     public static final String MSG_INVALID_DETAIL_IN_SECTION = "Amount, Frequency, and Reason must be entered for each detail in section ";
     public static final String MSG_INVALID_FIELD = "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";

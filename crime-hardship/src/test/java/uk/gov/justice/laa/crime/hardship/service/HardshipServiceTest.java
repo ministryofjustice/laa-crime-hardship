@@ -140,6 +140,22 @@ class HardshipServiceTest {
     }
 
     @Test
+    void givenValidSolicitorCosts_whenCheckHardshipIsInvokedAndAuthorisationIsTrue_validSolCostIsReturned() {
+        HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
+                LocalDateTime.now(),
+                null);
+        hardshipReviewDTO.getReviewDetails().get(0).setDetailType(HardshipReviewDetailType.SOL_COSTS);
+        hardshipReviewDTO.setSolicitorCosts(SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                 .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
+                 .solicitorHours(BigDecimal.valueOf(100)).build());
+
+        when(maatCourtDataService.isNewWorkReasonAuthorized(anyString(), anyString()))
+                .thenReturn(new AuthorizationResponse(true));
+        hardshipReviewDTO = hardshipService.checkHardship(hardshipReviewDTO);
+        assertThat(hardshipReviewDTO.getSolicitorCosts().getSolicitorEstTotalCost().intValue()).isEqualTo(1040);
+    }
+
+    @Test
     void givenValidHardshipReviewDTOWithDetailTypeIncome_whenCheckHardshipIsInvokedAndAuthorisationIsTrue_validResponseIsReturned() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
                 LocalDateTime.now(),

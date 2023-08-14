@@ -13,6 +13,7 @@ public class MockServicesConfiguration {
 
         HardshipEndpoints hardshipEndpoints = new HardshipEndpoints();
         hardshipEndpoints.setHardshipDetailUrl("/hardship/repId/{repId}/detailType/{detailType}");
+        hardshipEndpoints.setNwrAuthUrl("/users/{username}/work-reasons/{nworCode}");
 
         maatApiConfiguration.setBaseUrl(host);
         maatApiConfiguration.setHardshipEndpoints(hardshipEndpoints);

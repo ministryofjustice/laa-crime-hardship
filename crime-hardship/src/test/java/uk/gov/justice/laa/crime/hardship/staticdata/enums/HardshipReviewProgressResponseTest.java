@@ -30,4 +30,10 @@ class HardshipReviewProgressResponseTest {
         assertThat("Additional evidence provided").isEqualTo(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED.getDescription());
     }
 
+    @Test
+    void givenAValidInput_whenGetValueInvoked_thenCorrectEnumIsReturned() {
+        HardshipReviewProgressResponse response = HardshipReviewProgressResponse.FURTHER_RECEIVED;
+        assertThat(response.getValue()).isEqualTo("FURTHER RECEIVED");
+    }
+
 }

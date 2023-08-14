@@ -40,4 +40,10 @@ class MaatCourtDataServiceTest {
         maatCourtDataService.getHardshipByDetailType(TestModelDataBuilder.TEST_REP_ID, TestModelDataBuilder.DETAIL_TYPE, LAA_TRANSACTION_ID);
         verify(maatCourtDataClient, atLeastOnce()).get(any(), anyString(), anyMap(), anyInt(), anyString());
     }
+
+    @Test
+    void givenAValidInput_whenIsNewWorkReasonAuthorizedIsInvoked_thenResponseIsReturned() {
+        maatCourtDataService.isNewWorkReasonAuthorized(TestModelDataBuilder.USER, "Test");
+        verify(maatCourtDataClient, atLeastOnce()).get(any(), anyString(), anyString(), anyString());
+    }
 }
