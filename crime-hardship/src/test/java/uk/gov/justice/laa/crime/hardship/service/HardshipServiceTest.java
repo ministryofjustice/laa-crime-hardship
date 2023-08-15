@@ -16,6 +16,7 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailTy
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -87,8 +88,10 @@ class HardshipServiceTest {
     @Test
     void givenValidHardshipReviewDTO_whenCheckNewWorkReasonAuthorisationIsInvoked_validResponseIsReturned() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
-                LocalDateTime.now(),
-                null);
+                LocalDateTime.now(),SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                        .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
+                        .solicitorHours(BigDecimal.valueOf(100)).build());
+
         when(maatCourtDataService.isNewWorkReasonAuthorized(anyString(), anyString()))
                 .thenReturn(new AuthorizationResponse(true));
         assertThat(hardshipService.checkHardship(hardshipReviewDTO)).isNotNull();
@@ -110,8 +113,10 @@ class HardshipServiceTest {
     @Test
     void givenValidHardshipReviewDTOWithDetailTypeFunding_whenCheckHardshipIsInvokedAndAuthorisationIsTrue_validResponseIsReturned() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
-                LocalDateTime.now(),
-                null);
+                LocalDateTime.now(),SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                        .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
+                        .solicitorHours(BigDecimal.valueOf(100)).build());
+
         hardshipReviewDTO.getReviewDetails().get(0).setDetailType(HardshipReviewDetailType.FUNDING);
         hardshipReviewDTO.getReviewDetails().get(0).setOtherDescription("DESCRIPTION");
         hardshipReviewDTO.getReviewDetails().get(0).setAmount(BigDecimal.valueOf(10.0));
@@ -196,5 +201,4 @@ class HardshipServiceTest {
         hardshipReviewDTO = hardshipService.checkHardship(hardshipReviewDTO);
         assertThat(hardshipService.checkHardship(hardshipReviewDTO)).isNotNull();
     }
-
 }

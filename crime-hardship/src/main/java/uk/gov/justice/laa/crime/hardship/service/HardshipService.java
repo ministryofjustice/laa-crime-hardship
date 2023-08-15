@@ -8,6 +8,7 @@ import uk.gov.justice.laa.crime.hardship.exeption.ValidationException;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipReviewValidator;
@@ -25,24 +26,20 @@ public class HardshipService {
     private final MaatCourtDataService maatCourtDataService;
 
     private Optional<Void> calculateSolicitorEstimatedTotalCost(HardshipReviewDTO hardshipReviewDTO) {
-        BigDecimal solEstTotalCost = null;
-        if (hardshipReviewDTO.getSolicitorCosts() != null && hardshipReviewDTO.getSolicitorCosts().getSolicitorRate() != null) {
-            if (hardshipReviewDTO.getSolicitorCosts().getSolicitorVat() != null &&
-                    hardshipReviewDTO.getSolicitorCosts().getSolicitorHours() != null &&
-                    hardshipReviewDTO.getSolicitorCosts().getSolicitorDisb() != null
-            ) {
-                solEstTotalCost = (hardshipReviewDTO.getSolicitorCosts().getSolicitorRate()
-                        .multiply(hardshipReviewDTO.getSolicitorCosts().getSolicitorHours()))
-                        .add(hardshipReviewDTO.getSolicitorCosts().getSolicitorVat().add(hardshipReviewDTO.getSolicitorCosts().getSolicitorDisb())
-                        );
-            }
-            hardshipReviewDTO.getSolicitorCosts().setSolicitorEstTotalCost(solEstTotalCost);
 
-            HardshipReviewDetail hardshipReviewDetail = new HardshipReviewDetail();
-            hardshipReviewDetail.setDetailType(HardshipReviewDetailType.SOL_COSTS);
 
-            hardshipReviewDTO.getReviewDetails().add(hardshipReviewDetail);
-        }
+        BigDecimal solEstTotalCost = (hardshipReviewDTO.getSolicitorCosts().getSolicitorRate()
+                .multiply(hardshipReviewDTO.getSolicitorCosts().getSolicitorHours()))
+                .add(Optional.ofNullable(hardshipReviewDTO.getSolicitorCosts().getSolicitorVat()).orElse(BigDecimal.ZERO)
+                        .add(Optional.ofNullable(hardshipReviewDTO.getSolicitorCosts().getSolicitorDisb()).orElse(BigDecimal.ZERO))
+                );
+
+        hardshipReviewDTO.getSolicitorCosts().setSolicitorEstTotalCost(solEstTotalCost);
+
+        HardshipReviewDetail hardshipReviewDetail = new HardshipReviewDetail();
+        hardshipReviewDetail.setDetailType(HardshipReviewDetailType.SOL_COSTS);
+
+        hardshipReviewDTO.getReviewDetails().add(hardshipReviewDetail);
         return Optional.empty();
     }
 
@@ -91,6 +88,7 @@ public class HardshipService {
                     }
                     case "INCOME" -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hrDetailType);
                     case "EXPENDITURE" -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hrDetailType);
+                    default -> log.debug(String.format("Invalid case type")); // added for code smell
                 }
             });
         }
