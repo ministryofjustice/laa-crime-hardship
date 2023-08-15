@@ -24,7 +24,7 @@ public class HardshipService {
     public static final String MSG_INCORRECT_ROLE = "User does not have correct role for this work reason";
     private final MaatCourtDataService maatCourtDataService;
 
-    private static Optional<Void> calculateSolicitorEstimatedTotalCost(HardshipReviewDTO hardshipReviewDTO) {
+    private Optional<Void> calculateSolicitorEstimatedTotalCost(HardshipReviewDTO hardshipReviewDTO) {
         BigDecimal solEstTotalCost = null;
         if (hardshipReviewDTO.getSolicitorCosts() != null && hardshipReviewDTO.getSolicitorCosts().getSolicitorRate() != null) {
             if (hardshipReviewDTO.getSolicitorCosts().getSolicitorVat() != null &&
@@ -76,7 +76,7 @@ public class HardshipService {
 
 
         if (hardshipReviewDTO.getReviewDetails() != null) {
-            hardshipReviewDTO.getReviewDetails().stream().forEach(hrDetailType -> {
+            hardshipReviewDTO.getReviewDetails().forEach(hrDetailType -> {
                 switch (hrDetailType.getDetailType().getType()) {
                     case "FUNDING" -> {
                         if (hrDetailType.getOtherDescription() != null) {
