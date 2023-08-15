@@ -88,7 +88,7 @@ public class HardshipService {
                     }
                     case "INCOME" -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hrDetailType);
                     case "EXPENDITURE" -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hrDetailType);
-                    default -> log.debug(String.format("Invalid case type")); // added for code smell
+                    default -> log.debug("Invalid case type"); // added for code smell
                 }
             });
         }
