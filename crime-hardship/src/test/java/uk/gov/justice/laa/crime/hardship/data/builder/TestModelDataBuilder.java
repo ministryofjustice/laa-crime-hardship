@@ -125,16 +125,16 @@ public class TestModelDataBuilder {
                 .build();
     }
 
-    public static HardshipReviewDetail buildHardshipReviewDetail(String description, BigDecimal amount, Frequency frequency,
+    public static HardshipReviewDetail buildHardshipReviewDetail(HardshipReviewDetailCode detailCode, BigDecimal amount, Frequency frequency,
                                                                  HardshipReviewDetailReason detailReason,
                                                                  String reasonNote, LocalDateTime dateDue) {
         return HardshipReviewDetail.builder()
                 .id(HARDSHIP_ID)
-                .description(description)
+                .description("description")
                 .accepted("Y")
                 .amount(amount)
                 .frequency(frequency)
-                .detailCode(HardshipReviewDetailCode.ADD_MORTGAGE)
+                .detailCode(detailCode)
                 .detailReason(detailReason)
                 .reasonNote(reasonNote)
                 .dateDue(dateDue)

@@ -35,17 +35,18 @@ public class HardshipReviewValidator {
     }
 
     public static Optional<Void> validateHardshipReviewExpenditureItem(HardshipReviewDetail hrDetailType) {
-        if ((hrDetailType.getDetailCode().getDescription() != null) &&
-                (hrDetailType.getAmount() == null
-                        || hrDetailType.getFrequency() == null
-                        || (hrDetailType.getDetailReason() == null || hrDetailType.getDetailReason().getId() == null))) {
+        if ( null != hrDetailType.getDetailCode()
+                && (hrDetailType.getAmount() == null || hrDetailType.getFrequency() == null
+                   || (hrDetailType.getDetailReason() == null || hrDetailType.getDetailReason().getId() == null))
+            ) {
             throw new ValidationException(MSG_INVALID_DETAIL_IN_SECTION + hrDetailType.getDescription());
         }
         return Optional.empty();
     }
 
     public static Optional<Void> validateHardshipReviewIncomeItem(HardshipReviewDetail hrDetailType) {
-        if ((hrDetailType.getDetailCode().getDescription() != null) && (hrDetailType.getAmount() == null
+        if ((null != hrDetailType.getDetailCode()) &&
+                (hrDetailType.getAmount() == null
                 || hrDetailType.getFrequency() == null
                 || hrDetailType.getReasonNote() == null)) {
             throw new ValidationException(MSG_INVALID_DETAIL_IN_SECTION + hrDetailType.getDescription());
@@ -73,11 +74,11 @@ public class HardshipReviewValidator {
     }
 
     public static Optional<Void> validateCompletedHardship(HardshipReviewDTO hardshipReviewDTO) {
-        if ((hardshipReviewDTO.getReviewStatus() != null &&
-                hardshipReviewDTO.getReviewStatus().getStatus().equalsIgnoreCase(HardshipReviewStatus.COMPLETE.getStatus()))
-                && (hardshipReviewDTO.getReviewDate() == null))
-            throw new ValidationException(MSG_INVALID_REVIEW_DATE);
 
+        if (HardshipReviewStatus.COMPLETE.equals(hardshipReviewDTO.getReviewStatus())
+                && null == hardshipReviewDTO.getReviewDate()) {
+            throw new ValidationException(MSG_INVALID_REVIEW_DATE);
+        }
         return Optional.empty();
     }
 

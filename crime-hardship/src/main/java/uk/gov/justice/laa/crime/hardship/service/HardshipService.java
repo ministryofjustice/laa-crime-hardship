@@ -8,12 +8,12 @@ import uk.gov.justice.laa.crime.hardship.exeption.ValidationException;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipReviewValidator;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +39,9 @@ public class HardshipService {
         HardshipReviewDetail hardshipReviewDetail = new HardshipReviewDetail();
         hardshipReviewDetail.setDetailType(HardshipReviewDetailType.SOL_COSTS);
 
+        if (null == hardshipReviewDTO.getReviewDetails()) {
+            hardshipReviewDTO.setReviewDetails(Collections.emptyList());
+        }
         hardshipReviewDTO.getReviewDetails().add(hardshipReviewDetail);
         return Optional.empty();
     }
@@ -71,27 +74,25 @@ public class HardshipService {
 
         calculateSolicitorEstimatedTotalCost(hardshipReviewDTO);
 
-
-        if (hardshipReviewDTO.getReviewDetails() != null) {
-            hardshipReviewDTO.getReviewDetails().forEach(hrDetailType -> {
-                switch (hrDetailType.getDetailType().getType()) {
-                    case "FUNDING" -> {
-                        if (hrDetailType.getOtherDescription() != null) {
-                            HardshipReviewValidator.validateHardshipReviewFundingItem(hrDetailType);
-                            hrDetailType.setFrequency(Frequency.MONTHLY);
+        hardshipReviewDTO.getReviewDetails().forEach(hrDetailType -> {
+                    switch (hrDetailType.getDetailType().getType()) {
+                        case "FUNDING" -> {
+                            if (hrDetailType.getOtherDescription() != null) {
+                                HardshipReviewValidator.validateHardshipReviewFundingItem(hrDetailType);
+                                hrDetailType.setFrequency(Frequency.MONTHLY);
+                            }
                         }
+                        case "SOL COSTS" -> {
+                            hrDetailType.setFrequency(Frequency.ANNUALLY);
+                            hrDetailType.setAmount(hardshipReviewDTO.getSolicitorCosts().getSolicitorEstTotalCost());
+                            hrDetailType.setAccepted("Y");
+                        }
+                        case "INCOME" -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hrDetailType);
+                        case "EXPENDITURE" -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hrDetailType);
+                        default -> log.debug("Invalid case type"); // added for code smell
                     }
-                    case "SOL COSTS" -> {
-                        hrDetailType.setFrequency(Frequency.ANNUALLY);
-                        hrDetailType.setAmount(hardshipReviewDTO.getSolicitorCosts().getSolicitorEstTotalCost());
-                        hrDetailType.setAccepted("Y");
-                    }
-                    case "INCOME" -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hrDetailType);
-                    case "EXPENDITURE" -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hrDetailType);
-                    default -> log.debug("Invalid case type"); // added for code smell
                 }
-            });
-        }
+        );
 
         if (hardshipReviewDTO.getReviewProgressItems() != null) {
             hardshipReviewDTO.getReviewProgressItems().stream().forEach(HardshipReviewValidator::validateHardshipReviewProgressItem);
