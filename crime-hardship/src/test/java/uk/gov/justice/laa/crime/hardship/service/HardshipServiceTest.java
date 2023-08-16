@@ -238,4 +238,21 @@ class HardshipServiceTest {
         hardshipReviewDTO = hardshipService.checkHardship(hardshipReviewDTO);
         assertThat(hardshipReviewDTO.getReviewProgressItems()).isNull();
     }
+
+    @Test
+    void givenEmptyReviewDetails_whenCheckHardshipIsInvoked_thanReturnCorrectResponse() {
+
+        HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
+                LocalDateTime.now(),
+                null);
+        hardshipReviewDTO.setReviewDetails(null);
+        hardshipReviewDTO.setSolicitorCosts(SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
+                .solicitorHours(BigDecimal.valueOf(100)).build());
+
+        when(maatCourtDataService.isNewWorkReasonAuthorized(anyString(), anyString()))
+                .thenReturn(new AuthorizationResponse(true));
+        hardshipReviewDTO = hardshipService.checkHardship(hardshipReviewDTO);
+        assertThat(hardshipReviewDTO.getReviewDetails()).isNotNull();
+    }
 }

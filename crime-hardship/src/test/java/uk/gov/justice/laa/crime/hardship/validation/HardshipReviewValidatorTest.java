@@ -38,12 +38,6 @@ class HardshipReviewValidatorTest {
     }
 
     @Test
-    void givenValidRequest_whenValidateHardshipReviewIncomeItemIsInvoked_thenNoExceptionIsRaised() {
-        HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildValidHardshipReviewDetail();
-        assertThat(HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail)).isEmpty();
-    }
-
-    @Test
     void givenValidRequest_whenValidateHardshipReviewFundingItemIsInvoked_thenNoExceptionIsRaised() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildValidHardshipReviewDetail();
         assertThat(HardshipReviewValidator.validateHardshipReviewFundingItem(hardshipReviewDetail)).isEmpty();
@@ -167,6 +161,12 @@ class HardshipReviewValidatorTest {
 
 
     @Test
+    void givenValidRequest_whenValidateHardshipReviewIncomeItemIsInvoked_thenNoExceptionIsRaised() {
+        HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildValidHardshipReviewDetail();
+        assertThat(HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail)).isEmpty();
+    }
+
+    @Test
     void givenHardshipReviewDetailWithNullDetailCode_whenValidateReviewIncomeIsInvoked_thenReturnEmpty() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(null, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
@@ -174,8 +174,8 @@ class HardshipReviewValidatorTest {
     }
 
     @Test
-    void givenHardshipReviewDetailWithDescriptionAndNullReasonNote_whenValidateReviewIncomeIsInvoked_thenValidationFails() {
-        HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
+    void givenHardshipReviewDetailWithDescriptionAndNullAmount_whenValidateReviewIncomeIsInvoked_thenValidationFails() {
+        HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, null,
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), null, LocalDateTime.now());
         assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
@@ -190,6 +190,16 @@ class HardshipReviewValidatorTest {
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
+
+    @Test
+    void givenHardshipReviewDetailWithDescriptionAndNullReasonNote_whenValidateReviewIncomeIsInvoked_thenValidationFails() {
+        HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
+                Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), null, LocalDateTime.now());
+        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+    }
+
 
     @Test
     void givenHardshipReviewDetailAndNullAmount_whenValidateReviewFundingItemIsInvoked_thenValidationFails() {
@@ -275,6 +285,15 @@ class HardshipReviewValidatorTest {
         assertThatThrownBy(() -> HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_REVIEW_DATE);
+    }
+
+    @Test
+    void givenNullReviewStatusAndReviewDate_whenValidateCompletedHardshipIsInvoked_thenValidationFails() {
+        HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, null,
+                SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
+        hardshipReviewDTO.setReviewStatus(null);
+        assertThat(HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO)).isEmpty();
+
     }
 
     @Test

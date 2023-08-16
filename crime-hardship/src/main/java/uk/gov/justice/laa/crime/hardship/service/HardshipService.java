@@ -13,6 +13,7 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailTy
 import uk.gov.justice.laa.crime.hardship.validation.HardshipReviewValidator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -40,7 +41,7 @@ public class HardshipService {
         hardshipReviewDetail.setDetailType(HardshipReviewDetailType.SOL_COSTS);
 
         if (null == hardshipReviewDTO.getReviewDetails()) {
-            hardshipReviewDTO.setReviewDetails(Collections.emptyList());
+            hardshipReviewDTO.setReviewDetails(new ArrayList<>());
         }
         hardshipReviewDTO.getReviewDetails().add(hardshipReviewDetail);
         return Optional.empty();
