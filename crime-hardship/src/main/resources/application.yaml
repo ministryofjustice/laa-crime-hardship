@@ -79,4 +79,4 @@ sentry:
   servername: aws-eks-container
   send-default-pii: true
   attach-stacktrace: true
-  sample-rate: 0.05
+  sample-rate: ${SENTRY_SAMPLE_RATE}
