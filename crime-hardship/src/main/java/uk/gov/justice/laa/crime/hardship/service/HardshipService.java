@@ -14,7 +14,6 @@ import uk.gov.justice.laa.crime.hardship.validation.HardshipReviewValidator;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +24,8 @@ public class HardshipService {
 
     public static final String MSG_INCORRECT_ROLE = "User does not have correct role for this work reason";
     private final MaatCourtDataService maatCourtDataService;
+
+    private final HardshipReviewValidator validator;
 
     private Optional<Void> calculateSolicitorEstimatedTotalCost(HardshipReviewDTO hardshipReviewDTO) {
 
@@ -67,11 +68,11 @@ public class HardshipService {
 
     public HardshipReviewDTO checkHardship(HardshipReviewDTO hardshipReviewDTO) {
 
-        HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO);
+        validator.validateCompletedHardship(hardshipReviewDTO);
 
         checkNewWorkReasonAuthorisation(hardshipReviewDTO);
 
-        HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO);
+        validator.validateHardshipMandatoryFields(hardshipReviewDTO);
 
         calculateSolicitorEstimatedTotalCost(hardshipReviewDTO);
 
@@ -79,7 +80,7 @@ public class HardshipService {
                     switch (hrDetailType.getDetailType().getType()) {
                         case "FUNDING" -> {
                             if (hrDetailType.getOtherDescription() != null) {
-                                HardshipReviewValidator.validateHardshipReviewFundingItem(hrDetailType);
+                                validator.validateHardshipReviewFundingItem(hrDetailType);
                                 hrDetailType.setFrequency(Frequency.MONTHLY);
                             }
                         }
@@ -88,15 +89,15 @@ public class HardshipService {
                             hrDetailType.setAmount(hardshipReviewDTO.getSolicitorCosts().getSolicitorEstTotalCost());
                             hrDetailType.setAccepted("Y");
                         }
-                        case "INCOME" -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hrDetailType);
-                        case "EXPENDITURE" -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hrDetailType);
+                        case "INCOME" -> validator.validateHardshipReviewIncomeItem(hrDetailType);
+                        case "EXPENDITURE" -> validator.validateHardshipReviewExpenditureItem(hrDetailType);
                         default -> log.debug("Invalid case type"); // added for code smell
                     }
                 }
         );
 
         if (hardshipReviewDTO.getReviewProgressItems() != null) {
-            hardshipReviewDTO.getReviewProgressItems().stream().forEach(HardshipReviewValidator::validateHardshipReviewProgressItem);
+            hardshipReviewDTO.getReviewProgressItems().stream().forEach(review -> validator.validateHardshipReviewProgressItem(review));
         }
         return hardshipReviewDTO;
     }

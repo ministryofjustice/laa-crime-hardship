@@ -13,10 +13,10 @@ import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
+import uk.gov.justice.laa.crime.hardship.validation.HardshipReviewValidator;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -36,6 +36,9 @@ class HardshipServiceTest {
 
     @InjectMocks
     private HardshipService hardshipService;
+
+    @Mock
+    private HardshipReviewValidator validator;
 
     @Test
     void givenHardshipReviewAmount_whenCalculateHardshipByDetailIsInvoked_validResponseIsReturned() {
@@ -88,7 +91,7 @@ class HardshipServiceTest {
     @Test
     void givenValidHardshipReviewDTO_whenCheckNewWorkReasonAuthorisationIsInvoked_validResponseIsReturned() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
-                LocalDateTime.now(),SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                LocalDateTime.now(), SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
                         .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
                         .solicitorHours(BigDecimal.valueOf(100)).build());
 
@@ -113,7 +116,7 @@ class HardshipServiceTest {
     @Test
     void givenValidHardshipReviewDTOWithDetailTypeFunding_whenCheckHardshipIsInvokedAndAuthorisationIsTrue_validResponseIsReturned() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
-                LocalDateTime.now(),SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                LocalDateTime.now(), SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
                         .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
                         .solicitorHours(BigDecimal.valueOf(100)).build());
 
@@ -131,7 +134,7 @@ class HardshipServiceTest {
     @Test
     void givenEmptyOtherDescription_whenCheckHardshipIsInvokedAndAuthorisationIsTrue_validResponseIsReturned() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
-                LocalDateTime.now(),SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
+                LocalDateTime.now(), SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
                         .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
                         .solicitorHours(BigDecimal.valueOf(100)).build());
 
@@ -170,8 +173,8 @@ class HardshipServiceTest {
                 null);
         hardshipReviewDTO.getReviewDetails().get(0).setDetailType(HardshipReviewDetailType.SOL_COSTS);
         hardshipReviewDTO.setSolicitorCosts(SolicitorCosts.builder().solicitorVat(BigDecimal.valueOf(20))
-                 .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
-                 .solicitorHours(BigDecimal.valueOf(100)).build());
+                .solicitorDisb(BigDecimal.valueOf(20)).solicitorRate(BigDecimal.valueOf(10))
+                .solicitorHours(BigDecimal.valueOf(100)).build());
 
         when(maatCourtDataService.isNewWorkReasonAuthorized(anyString(), anyString()))
                 .thenReturn(new AuthorizationResponse(true));

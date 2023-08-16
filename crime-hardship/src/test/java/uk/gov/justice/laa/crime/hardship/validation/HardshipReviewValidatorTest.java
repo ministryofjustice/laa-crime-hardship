@@ -25,22 +25,24 @@ class HardshipReviewValidatorTest {
     public static final String REASON_NOTE = "Reason Note";
     public static final String NEW_WORK_REASON_CODE = "Reason Code";
 
+    private HardshipReviewValidator validator = new HardshipReviewValidator();
+
     @Test
     void givenValidRequest_whenValidateHardshipReviewProgressItemIsInvoked_thenNoExceptionIsRaised() {
         HardshipReviewProgress hardshipReviewProgress = TestModelDataBuilder.buildHardshipReviewProgress();
-        assertThat(HardshipReviewValidator.validateHardshipReviewProgressItem(hardshipReviewProgress)).isEmpty();
+        assertThat(validator.validateHardshipReviewProgressItem(hardshipReviewProgress)).isEmpty();
     }
 
     @Test
     void givenValidRequest_whenValidateHardshipReviewExpenditureItemIsInvoked_thenNoExceptionIsRaised() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildValidHardshipReviewDetail();
-        assertThat(HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
     void givenValidRequest_whenValidateHardshipReviewFundingItemIsInvoked_thenNoExceptionIsRaised() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildValidHardshipReviewDetail();
-        assertThat(HardshipReviewValidator.validateHardshipReviewFundingItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewFundingItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
@@ -48,7 +50,7 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
                 LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
-        assertThat(HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
     }
 
     @Test
@@ -56,7 +58,7 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE,
                 LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
-        assertThat(HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateCompletedHardship(hardshipReviewDTO)).isEmpty();
     }
 
     @Test
@@ -64,9 +66,9 @@ class HardshipReviewValidatorTest {
         HardshipReviewProgress hardshipReviewProgress = TestModelDataBuilder.buildHardshipReviewProgress(null,
                 HardshipReviewProgressResponse.ADDITIONAL_PROVIDED, LocalDateTime.now());
 
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewProgressItem(hardshipReviewProgress))
+        assertThatThrownBy(() -> validator.validateHardshipReviewProgressItem(hardshipReviewProgress))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DATE);
+                .hasMessageContaining(validator.MSG_INVALID_DATE);
     }
 
     @Test
@@ -74,9 +76,9 @@ class HardshipReviewValidatorTest {
         HardshipReviewProgress hardshipReviewProgress = TestModelDataBuilder.buildHardshipReviewProgress(LocalDateTime.now(),
                 null, LocalDateTime.now());
 
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewProgressItem(hardshipReviewProgress))
+        assertThatThrownBy(() -> validator.validateHardshipReviewProgressItem(hardshipReviewProgress))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DATE);
+                .hasMessageContaining(validator.MSG_INVALID_DATE);
     }
 
     @Test
@@ -84,9 +86,9 @@ class HardshipReviewValidatorTest {
         HardshipReviewProgress hardshipReviewProgress = TestModelDataBuilder.buildHardshipReviewProgress(LocalDateTime.now(),
                 HardshipReviewProgressResponse.ADDITIONAL_PROVIDED, null);
 
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewProgressItem(hardshipReviewProgress))
+        assertThatThrownBy(() -> validator.validateHardshipReviewProgressItem(hardshipReviewProgress))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DATE);
+                .hasMessageContaining(validator.MSG_INVALID_DATE);
     }
 
 
@@ -94,7 +96,7 @@ class HardshipReviewValidatorTest {
     void givenHardshipReviewDetailWithNullDescription_whenValidateReviewExpenditureIsInvoked_thenEmptyIsReturned() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(null, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThat(HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
@@ -102,32 +104,32 @@ class HardshipReviewValidatorTest {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(null, null,
                 null, null, REASON_NOTE, LocalDateTime.now());
         hardshipReviewDetail.setDetailCode(null);
-        assertThat(HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
     void givenHardshipReviewDetailWithNullDetailCodeAndNullAmount_whenValidateReviewExpenditureIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(null, null,
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThat(HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
     void givenHardshipReviewDetailWithNullFrequency_whenValidateReviewExpenditureIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 null, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
     void givenHardshipReviewDetailWithNullDetailReason_whenValidateReviewExpenditureIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, null, REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
@@ -136,68 +138,68 @@ class HardshipReviewValidatorTest {
         hardshipReviewDetailReason.setId(null);
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, hardshipReviewDetailReason, REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
     void givenHardshipReviewDetailWithDescriptionAndNullAmount_whenValidateReviewExpenditureIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, null,
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
     void givenHardshipReviewDetailWithDescriptionAndNullDetailReason_whenValidateReviewExpenditureIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, null, REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewExpenditureItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
 
     @Test
     void givenValidRequest_whenValidateHardshipReviewIncomeItemIsInvoked_thenNoExceptionIsRaised() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildValidHardshipReviewDetail();
-        assertThat(HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewIncomeItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
     void givenHardshipReviewDetailWithNullDetailCode_whenValidateReviewIncomeIsInvoked_thenReturnEmpty() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(null, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThat(HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail)).isEmpty();
+        assertThat(validator.validateHardshipReviewIncomeItem(hardshipReviewDetail)).isEmpty();
     }
 
     @Test
     void givenHardshipReviewDetailWithDescriptionAndNullAmount_whenValidateReviewIncomeIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, null,
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), null, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
     void givenHardshipReviewDetailWithDescriptionAndNullFrequency_whenValidateReviewIncomeIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 null, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
     void givenHardshipReviewDetailWithDescriptionAndNullReasonNote_whenValidateReviewIncomeIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), null, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewIncomeItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
 
@@ -205,18 +207,18 @@ class HardshipReviewValidatorTest {
     void givenHardshipReviewDetailAndNullAmount_whenValidateReviewFundingItemIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, null,
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, LocalDateTime.now());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewFundingItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewFundingItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
     @Test
     void givenHardshipReviewDetailAndNullDateDue_whenValidateReviewFundingItemIsInvoked_thenValidationFails() {
         HardshipReviewDetail hardshipReviewDetail = TestModelDataBuilder.buildHardshipReviewDetail(detailCode, BigDecimal.valueOf(10),
                 Frequency.ANNUALLY, TestModelDataBuilder.buildHardshipReviewDetailReason(), REASON_NOTE, null);
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipReviewFundingItem(hardshipReviewDetail))
+        assertThatThrownBy(() -> validator.validateHardshipReviewFundingItem(hardshipReviewDetail))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
+                .hasMessageContaining(validator.MSG_INVALID_DETAIL_IN_SECTION + hardshipReviewDetail.getDescription());
     }
 
 
@@ -224,16 +226,16 @@ class HardshipReviewValidatorTest {
     void givenHardshipReviewDTOAndNullNewWorkReasonCode_whenValidateHardshipMandatoryFieldsIsInvoked_thenValidationFails() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(null, LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO))
+        assertThatThrownBy(() -> validator.validateHardshipMandatoryFields(hardshipReviewDTO))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_REVIEW_REASON);
+                .hasMessageContaining(validator.MSG_INVALID_REVIEW_REASON);
     }
 
     @Test
     void givenHardshipReviewDTOWithNullSolicitorCosts_whenValidateHardshipMandatoryFieldsIsInvoked_thenValidationFails() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, LocalDateTime.now(),
                 null);
-        assertThat(HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
 
     }
 
@@ -241,16 +243,16 @@ class HardshipReviewValidatorTest {
     void givenHardshipReviewDTOWithNullSolicitorRate_whenValidateHardshipMandatoryFieldsIsInvoked_thenValidationFails() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(null).solicitorHours(BigDecimal.valueOf(100)).build());
-        assertThat(HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
     }
 
     @Test
     void givenHardshipReviewDTOWithSolictorRateAndNullSolicitorHours_whenValidateHardshipMandatoryFieldsIsInvoked_thenValidationFails() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(null).build());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO))
+        assertThatThrownBy(() -> validator.validateHardshipMandatoryFields(hardshipReviewDTO))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_FIELD);
+                .hasMessageContaining(validator.MSG_INVALID_FIELD);
     }
 
 
@@ -259,7 +261,7 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
         hardshipReviewDTO.setReviewStatus(null);
-        assertThat(HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
     }
 
     @Test
@@ -267,7 +269,7 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, LocalDateTime.now(),
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
         hardshipReviewDTO.setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
-        assertThat(HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
     }
 
     @Test
@@ -275,16 +277,16 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, null,
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
         hardshipReviewDTO.setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
-        assertThat(HardshipReviewValidator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateHardshipMandatoryFields(hardshipReviewDTO)).isEmpty();
     }
 
     @Test
     void givenHardshipReviewDTOWithNullReviewDate_whenValidateCompletedHardshipIsInvoked_thenValidationFails() {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, null,
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
-        assertThatThrownBy(() -> HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO))
+        assertThatThrownBy(() -> validator.validateCompletedHardship(hardshipReviewDTO))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_REVIEW_DATE);
+                .hasMessageContaining(validator.MSG_INVALID_REVIEW_DATE);
     }
 
     @Test
@@ -292,7 +294,7 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, null,
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
         hardshipReviewDTO.setReviewStatus(null);
-        assertThat(HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO)).isEmpty();
+        assertThat(validator.validateCompletedHardship(hardshipReviewDTO)).isEmpty();
 
     }
 
@@ -301,9 +303,9 @@ class HardshipReviewValidatorTest {
         HardshipReviewDTO hardshipReviewDTO = TestModelDataBuilder.buildHardshipReviewDTO(NEW_WORK_REASON_CODE, null,
                 SolicitorCosts.builder().solicitorRate(BigDecimal.valueOf(10)).solicitorHours(BigDecimal.valueOf(100)).build());
         hardshipReviewDTO.setReviewStatus(HardshipReviewStatus.COMPLETE);
-        assertThatThrownBy(() -> HardshipReviewValidator.validateCompletedHardship(hardshipReviewDTO))
+        assertThatThrownBy(() -> validator.validateCompletedHardship(hardshipReviewDTO))
                 .isInstanceOf(ValidationException.class)
-                .hasMessageContaining(HardshipReviewValidator.MSG_INVALID_REVIEW_DATE);
+                .hasMessageContaining(validator.MSG_INVALID_REVIEW_DATE);
     }
 
 }

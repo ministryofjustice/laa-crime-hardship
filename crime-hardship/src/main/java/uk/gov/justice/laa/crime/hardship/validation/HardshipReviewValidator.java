@@ -19,30 +19,8 @@ public class HardshipReviewValidator {
     public static final String MSG_INVALID_FIELD = "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";
     public static final String MSG_INVALID_REVIEW_DATE = "The Review Date must be entered for completed hardship";
     public static final String MSG_INVALID_REVIEW_REASON = "The Review Reason must be entered for hardship";
-    private HardshipReviewValidator() {
-        throw new IllegalStateException("Validator class");
-    }
 
-    public static Optional<Void> validateHardshipReviewProgressItem(HardshipReviewProgress hardshipReviewProgress) {
-        if (hardshipReviewProgress.dateRequested() == null
-                || hardshipReviewProgress.progressResponse() == null
-                || hardshipReviewProgress.dateRequired() == null) {
-            throw new ValidationException(MSG_INVALID_DATE);
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<Void> validateHardshipReviewExpenditureItem(HardshipReviewDetail hrDetailType) {
-        if (null != hrDetailType.getDetailCode()
-                && (hrDetailType.getAmount() == null || hrDetailType.getFrequency() == null
-                || (hrDetailType.getDetailReason() == null || hrDetailType.getDetailReason().getId() == null))
-        ) {
-            throw new ValidationException(MSG_INVALID_DETAIL_IN_SECTION + hrDetailType.getDescription());
-        }
-        return Optional.empty();
-    }
-
-    public static Optional<Void> validateHardshipReviewIncomeItem(HardshipReviewDetail hrDetailType) {
+    public Optional<Void> validateHardshipReviewIncomeItem(HardshipReviewDetail hrDetailType) {
         if ((null != hrDetailType.getDetailCode()) &&
                 (hrDetailType.getAmount() == null
                         || hrDetailType.getFrequency() == null
@@ -52,14 +30,33 @@ public class HardshipReviewValidator {
         return Optional.empty();
     }
 
-    public static Optional<Void> validateHardshipReviewFundingItem(HardshipReviewDetail hrDetailType) {
+    public Optional<Void> validateHardshipReviewFundingItem(HardshipReviewDetail hrDetailType) {
         if (hrDetailType.getAmount() == null || hrDetailType.getDateDue() == null) {
             throw new ValidationException(MSG_INVALID_DETAIL_IN_SECTION + hrDetailType.getDescription());
         }
         return Optional.empty();
     }
 
-    public static Optional<Void> validateHardshipMandatoryFields(HardshipReviewDTO hardshipReviewDTO) {
+    public Optional<Void> validateHardshipReviewProgressItem(HardshipReviewProgress hardshipReviewProgress) {
+        if (hardshipReviewProgress.dateRequested() == null
+                || hardshipReviewProgress.progressResponse() == null
+                || hardshipReviewProgress.dateRequired() == null) {
+            throw new ValidationException(MSG_INVALID_DATE);
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Void> validateHardshipReviewExpenditureItem(HardshipReviewDetail hrDetailType) {
+        if (null != hrDetailType.getDetailCode()
+                && (hrDetailType.getAmount() == null || hrDetailType.getFrequency() == null
+                || (hrDetailType.getDetailReason() == null || hrDetailType.getDetailReason().getId() == null))
+        ) {
+            throw new ValidationException(MSG_INVALID_DETAIL_IN_SECTION + hrDetailType.getDescription());
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Void> validateHardshipMandatoryFields(HardshipReviewDTO hardshipReviewDTO) {
         if (hardshipReviewDTO.getNewWorkReason().code() == null) {
             throw new ValidationException(MSG_INVALID_REVIEW_REASON);
         }
@@ -71,7 +68,7 @@ public class HardshipReviewValidator {
         return Optional.empty();
     }
 
-    public static Optional<Void> validateCompletedHardship(HardshipReviewDTO hardshipReviewDTO) {
+    public Optional<Void> validateCompletedHardship(HardshipReviewDTO hardshipReviewDTO) {
 
         if (HardshipReviewStatus.COMPLETE.equals(hardshipReviewDTO.getReviewStatus())
                 && null == hardshipReviewDTO.getReviewDate()) {
