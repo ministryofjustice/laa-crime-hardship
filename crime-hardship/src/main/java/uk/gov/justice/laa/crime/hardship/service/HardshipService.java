@@ -97,7 +97,7 @@ public class HardshipService {
         );
 
         if (hardshipReviewDTO.getReviewProgressItems() != null) {
-            hardshipReviewDTO.getReviewProgressItems().stream().forEach(review -> validator.validateHardshipReviewProgressItem(review));
+            hardshipReviewDTO.getReviewProgressItems().stream().forEach(validator::validateHardshipReviewProgressItem);
         }
         return hardshipReviewDTO;
     }
