@@ -21,11 +21,6 @@ public enum HardshipReviewStatus {
     private String status;
     private String description;
 
-    @JsonValue
-    public String getValue() {
-        return this.status;
-    }
-
     public static HardshipReviewStatus getFrom(String status) {
         if (StringUtils.isBlank(status)) return null;
 
@@ -33,5 +28,10 @@ public enum HardshipReviewStatus {
                 .filter(hrs -> hrs.status.equals(status))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("HardshipReviewStatus with value: %s does not exist.", status)));
+    }
+
+    @JsonValue
+    public String getValue() {
+        return this.status;
     }
 }

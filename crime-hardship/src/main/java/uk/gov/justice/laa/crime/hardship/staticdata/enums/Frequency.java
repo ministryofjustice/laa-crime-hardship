@@ -26,11 +26,6 @@ public enum Frequency {
     private final String description;
     private final int annualWeighting;
 
-    @JsonValue
-    public String getCode() {
-        return code;
-    }
-
     public static Frequency getFrom(String code) {
         if (StringUtils.isBlank(code)) return null;
 
@@ -38,5 +33,10 @@ public enum Frequency {
                 .filter(f -> f.code.equals(code))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Frequency with value: %s does not exist.", code)));
+    }
+
+    @JsonValue
+    public String getCode() {
+        return code;
     }
 }

@@ -1,4 +1,4 @@
-package uk.gov.justice.laa.crime.hardship.dto;
+package uk.gov.justice.laa.crime.hardship.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

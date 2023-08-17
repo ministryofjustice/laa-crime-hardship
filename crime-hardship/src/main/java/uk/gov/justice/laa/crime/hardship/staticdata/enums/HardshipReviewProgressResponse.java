@@ -16,14 +16,10 @@ public enum HardshipReviewProgressResponse {
     ORIGINAL_RECEIVED("ORIGINAL RECEIVED", "Original application received from HMCS"),
     ADDITIONAL_PROVIDED("ADDITIONAL PROVIDED", "Additional evidence provided");
 
+
     @JsonPropertyDescription("This will have the hardship review progress response")
     private String response;
     private String description;
-
-    @JsonValue
-    public String getValue() {
-        return this.response;
-    }
 
     public static HardshipReviewProgressResponse getFrom(String response) {
         if (StringUtils.isBlank(response)) return null;
@@ -32,5 +28,10 @@ public enum HardshipReviewProgressResponse {
                 .filter(hrpr -> hrpr.response.equals(response))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("hardship review progress response with type: %s does not exist.", response)));
+    }
+
+    @JsonValue
+    public String getValue() {
+        return this.response;
     }
 }

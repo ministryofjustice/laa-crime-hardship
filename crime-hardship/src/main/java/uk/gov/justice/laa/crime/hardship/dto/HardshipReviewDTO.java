@@ -1,15 +1,17 @@
 package uk.gov.justice.laa.crime.hardship.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReviewProgress;
+import uk.gov.justice.laa.crime.hardship.model.NewWorkReason;
+import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HardshipReviewDTO {
-
     private Integer id;
     private Integer cmuId;
     private String notes;
@@ -28,33 +29,11 @@ public class HardshipReviewDTO {
     private BigDecimal disposableIncomeAfterHardship;
     private NewWorkReason newWorkReason;
     private SolicitorCosts solicitorCosts;
-    private HardshipReviewStatus status;
-
-    @JsonIgnore
-    private LocalDateTime dateCreated;
-    @JsonIgnore
-    private Integer repId;
-    @JsonIgnore
-    private String userCreated;
-    @JsonIgnore
-    private LocalDateTime updated;
-    @JsonIgnore
-    private String userModified;
-    @JsonIgnore
-    private LocalDateTime resultDate;
-    @JsonIgnore
+    private HardshipReviewStatus reviewStatus;
+    private List<HardshipReviewDetail> reviewDetails;
+    private List<HardshipReviewProgress> reviewProgressItems;
     private String courtType;
-    @JsonIgnore
-    private Integer financialAssessmentId;
-    @JsonIgnore
-    private String valid;
-
-    @Builder.Default
-    private List<HardshipReviewDetail> reviewDetails = new ArrayList<>();
-    @Builder.Default
-    private List<HardshipReviewProgress> reviewProgressItems = new ArrayList<>();
-
-    public LocalDateTime getTimestamp() {
-        return updated != null ? updated : dateCreated;
-    }
 }
+
+
+

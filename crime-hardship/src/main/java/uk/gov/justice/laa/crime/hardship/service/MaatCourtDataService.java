@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
 import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.model.AuthorizationResponse;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReviewDetail;
 
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MaatCourtDataService {
 
+    private static final String RESPONSE_STRING = "Response from Court Data API: %s";
     @Qualifier("maatApiClient")
     private final RestAPIClient maatAPIClient;
     private final ServicesConfiguration configuration;
-    private static final String RESPONSE_STRING = "Response from Court Data API: %s";
 
     public List<HardshipReviewDetail> getHardshipByDetailType(Integer repId, String detailType, String laaTransactionId) {
 
@@ -36,4 +37,20 @@ public class MaatCourtDataService {
         log.info(String.format(RESPONSE_STRING, response));
         return response;
     }
+
+
+    public AuthorizationResponse isNewWorkReasonAuthorized(String username, String nworCode) {
+
+        AuthorizationResponse response = maatAPIClient.get(
+                new ParameterizedTypeReference<>() {
+                },
+                configuration.getMaatApi().getHardshipEndpoints().getNwrAuthUrl(),
+                username,
+                nworCode
+        );
+        log.info(String.format(RESPONSE_STRING, response));
+        return response;
+    }
+
+
 }

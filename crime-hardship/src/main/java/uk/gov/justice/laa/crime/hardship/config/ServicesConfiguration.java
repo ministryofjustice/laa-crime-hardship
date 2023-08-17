@@ -36,6 +36,9 @@ public class ServicesConfiguration {
 
             @NotNull
             private String hardshipDetailUrl;
+
+            @NotNull
+            private String nwrAuthUrl;
         }
     }
 }

@@ -10,7 +10,7 @@ import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
 import uk.gov.justice.laa.crime.hardship.config.MockServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReviewDetail;
 
 import java.util.List;
 
@@ -39,5 +39,11 @@ class MaatCourtDataServiceTest {
                 .thenReturn(expected);
         maatCourtDataService.getHardshipByDetailType(TestModelDataBuilder.TEST_REP_ID, TestModelDataBuilder.DETAIL_TYPE, LAA_TRANSACTION_ID);
         verify(maatCourtDataClient, atLeastOnce()).get(any(), anyString(), anyMap(), anyInt(), anyString());
+    }
+
+    @Test
+    void givenAValidInput_whenIsNewWorkReasonAuthorizedIsInvoked_thenResponseIsReturned() {
+        maatCourtDataService.isNewWorkReasonAuthorized(TestModelDataBuilder.USER, "Test");
+        verify(maatCourtDataClient, atLeastOnce()).get(any(), anyString(), anyString(), anyString());
     }
 }
