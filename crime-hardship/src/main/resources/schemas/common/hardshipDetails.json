@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "hardshipDetails.json",
+  "type": "object",
+  "title": "The hardship details schema",
+  "description": "Details of hardship",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "ACTION",
+        "SOL_COSTS",
+        "INCOME",
+        "EXPENDITURE",
+        "FUNDING"
+      ]
+    },
+    "amount": {
+      "type": "number",
+      "description": "The amount under consideration"
+    }
+  },
+  "required": ["type", "amount"]
+}

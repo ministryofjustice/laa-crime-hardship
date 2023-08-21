@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "extraExpenditure.json",
+  "type": "object",
+  "title": "The extra expenditure schema",
+  "description": "Details of extra expenditure",
+  "properties": {
+    "reasonCode": {
+      "type": "string",
+      "enum": [
+        "Evidence Supplied",
+        "Essential - need for work",
+        "Essential Item",
+        "Arrangement in place",
+        "No evidence supplied",
+        "Insufficient evidence supplied",
+        "Non-essential item/expense",
+        "Covered by living expense",
+        "Not allowable (diff from non-essential)",
+        "Not in computation period"
+      ],
+      "description": "The hardship review details reasons code"
+    },
+    "itemCode": {
+      "type": "string",
+      "enum": [
+        "UNSECURED LOAN",
+        "SECURED LOAN",
+        "CAR LOAN",
+        "IVA",
+        "CARDS",
+        "DEBTS",
+        "FINES",
+        "RENT ARREARS",
+        "BAILIFF",
+        "DWP OVERPAYMENT",
+        "STUDENT LOAN",
+        "ADD MORTGAGE",
+        "UNI HOUSING",
+        "PRESCRIPTION",
+        "PENSION PAY",
+        "MEDIAL COSTS",
+        "OTHER"
+      ],
+      "description": "The hardship review detail codes"
+    }
+  },
+  "extends": {
+    "$ref": "hardshipCost.json"
+  }
+}

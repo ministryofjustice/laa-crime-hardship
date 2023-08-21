@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "hardshipCost.json",
+  "type": "object",
+  "title": "The hardship cost schema",
+  "description": "Details of hardship cost",
+  "properties": {
+    "accepted": {
+      "type": "boolean",
+      "description": "Indicates whether the additional cost has been accepted"
+    },
+    "frequency": {
+      "type": "string",
+      "enum": [
+        "WEEKLY",
+        "2WEEKLY",
+        "4WEEKLY",
+        "MONTHLY",
+        "ANNUALLY"
+      ],
+      "description": "Hardship payment frequency"
+    }
+  },
+  "extends": {
+    "$ref": "hardshipDetails.json"
+  }
+}

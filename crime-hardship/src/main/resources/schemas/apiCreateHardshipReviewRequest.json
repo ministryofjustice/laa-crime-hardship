@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "apiCreateHardshipRequest.json",
+  "type": "object",
+  "title": "Create hardship request",
+  "description": "Data Contract for create hardship",
+  "properties": {
+    "laaTransactionId": {
+      "type": "string",
+      "description": "The txn / correlation UUID"
+    },
+    "repId": {
+      "type": "integer",
+      "description": "MAAT / Rep Id"
+    },
+    "cmuId": {
+      "type": "integer",
+      "description": "Case Management Unit Id"
+    },
+    "courtType": {
+      "description": "The Court Type",
+      "type": "string",
+      "enum": [
+        "MAGISTRATES",
+        "CROWN_COURT"
+      ]
+    },
+    "reviewStatus": {
+      "description": "The review status",
+      "type": "string",
+      "enum": [
+        "COMPLETE",
+        "IN_PROGRESS"
+      ]
+    },
+    "reviewDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The hardship review date"
+    },
+    "userSession": {
+      "type": "object",
+      "description": "The current users session",
+      "$ref": "common/apiUserSession.json"
+    },
+    "reviewReason": {
+      "description": "The review reason",
+      "type": "string",
+      "enum": [
+        "PRI",
+        "JR",
+        "NEW"
+      ]
+    },
+    "notes": {
+      "type": "string",
+      "description": "The review progress notes"
+    },
+    "decisionNotes": {
+      "type": "string",
+      "description": "The notes regarding the decision"
+    },
+    "financialAssessmentId": {
+      "type": "integer",
+      "description": "The ID of the financial assessment being updated"
+    },
+    "totalAnnualDisposableIncome": {
+      "type": "number",
+      "description": "Total Annual Disposable Income of the Application"
+    },
+    "otherFundingSources": {
+      "type": "object",
+      "description": "Other funding sources",
+      "$ref": "common/otherFundingSources.json"
+    },
+    "extraExpenditure": {
+      "type": "object",
+      "description": "Extra expenditure",
+      "$ref": "common/extraExpenditure.json"
+    },
+    "deniedIncome": {
+      "type": "object",
+      "description": "Denied income",
+      "$ref": "common/deniedIncome.json"
+    },
+    "solicitorCost": {
+      "type": "object",
+      "description": "Solicitor cost",
+      "$ref": "common/solicitorCosts.json"
+    },
+    "progressItems": {
+      "type": "object",
+      "description": "The hardship review progress details (actions taken & responses)",
+      "$ref": "common/hardshipProgress.json"
+    }
+  }
+}
