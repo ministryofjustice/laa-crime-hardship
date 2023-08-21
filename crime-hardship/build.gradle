@@ -3,9 +3,9 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 plugins {
 	id "java"
 	id "jacoco"
-	id "org.springframework.boot" version "3.1.2"
 	id "org.sonarqube" version "4.0.0.2929"
 	id "info.solidsoft.pitest" version "1.9.11"
+	id "org.springframework.boot" version "3.1.2"
 	id "org.jsonschema2dataclass" version "6.0.0"
 }
 
@@ -21,8 +21,14 @@ def versions = [
 		sentryVersion			: "6.15.0",
 		springdocVersion        : "2.1.0",
 		okhttpVersion           : "4.9.3",
-		mockwebserverVersion    : "4.10.0"
+		wiremockVersion    		: "2.35.0"
 ]
+
+configurations {
+	configureEach {
+		exclude group: 'junit', module: 'junit'
+	}
+}
 
 repositories {
 	mavenCentral()
@@ -57,12 +63,11 @@ dependencies {
 	annotationProcessor "org.projectlombok:lombok"
 
 	testImplementation "com.h2database:h2"
+	testImplementation "org.pitest:pitest:$versions.pitest"
 	testImplementation "org.springframework.boot:spring-boot-starter-test"
 	testImplementation "org.springframework.security:spring-security-test"
-	testImplementation "org.pitest:pitest:$versions.pitest"
 	testImplementation "com.squareup.okhttp3:okhttp:$versions.okhttpVersion"
-	testImplementation "com.squareup.okhttp3:mockwebserver:$versions.mockwebserverVersion"
-	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.2'
+	testImplementation "com.github.tomakehurst:wiremock-jre8-standalone:$versions.wiremockVersion"
 }
 
 jacoco {
