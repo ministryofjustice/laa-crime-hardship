@@ -10,10 +10,8 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -49,7 +47,7 @@ public class TestModelDataBuilder {
                 .build());
     }
 
-    public static HardshipReviewCalculationDTO getHardshipReviewCalculationDTO(HardshipReviewDetailType ... hardshipReviewDetailTypes) {
+    public static HardshipReviewCalculationDTO getHardshipReviewCalculationDTO(HardshipReviewDetailType... hardshipReviewDetailTypes) {
         var hardshipReviewCalculationDetails = Arrays.stream(hardshipReviewDetailTypes)
                 .map(TestModelDataBuilder::getHardshipReviewCalculationDetail)
                 .collect(toList());
@@ -86,7 +84,9 @@ public class TestModelDataBuilder {
                         .build();
             }
             default -> {
-                return null;
+                return HardshipReviewCalculationDetail.builder()
+                        .detailType(detailType)
+                        .build();
             }
         }
     }
