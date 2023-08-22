@@ -4,14 +4,12 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
-public class HardshipReviewResultDTO {
+public class HardshipReviewCalculationDTO {
 
-    private String hardshipReviewResult;
-    private BigDecimal hardshipSummary;
+    private List<HardshipReviewCalculationDetail> hardshipReviewCalculationDetails;
     private BigDecimal disposableIncome;
-    private BigDecimal disposableIncomeAfterHardship;
-
 }

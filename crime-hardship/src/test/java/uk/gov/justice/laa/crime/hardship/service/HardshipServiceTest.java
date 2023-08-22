@@ -6,18 +6,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.FULL_THRESHOLD;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.getHardshipReviewCalculationDTO;
+import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.*;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SoftAssertionsExtension.class)
@@ -30,39 +27,61 @@ class HardshipServiceTest {
     private HardshipService hardshipService;
 
     @Test
-    void givenHardshipReviewAmount_whenCalculateHardshipByDetailIsInvoked_validResponseIsReturned() {
-        ApiCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
-        List<HardshipReviewDetail> hardshipReviewDetailList = TestModelDataBuilder.getHardshipReviewDetailList("Y", 100);
-        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
-                .thenReturn(hardshipReviewDetailList);
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
-
-        assertThat(response.getHardshipSummary())
-                .isEqualTo(BigDecimal.valueOf(100.0));
+    void givenValidHardshipReviewCalculationDTOWithDetailTypeExpenditure_whenCalculateHardshipIsInvoked_thenHardshipReviewResultDTOIsReturned() {
+        HardshipReviewCalculationDTO hardshipReviewCalculationDTO = getHardshipReviewCalculationDTO(EXPENDITURE);
+        HardshipReviewResultDTO response = hardshipService.calculateHardship(hardshipReviewCalculationDTO, FULL_THRESHOLD);
+        assertThat(response.getDisposableIncomeAfterHardship()).isEqualTo(BigDecimal.valueOf(-3320.0));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.valueOf(8320.0));
+        assertThat(response.getHardshipReviewResult()).isEqualTo("PASS");
     }
 
     @Test
-    void givenHardshipDetailWithZeroAmount_whenCalculateEvidenceFeeIsInvoked_validResponseIsReturned() {
-        ApiCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
-        List<HardshipReviewDetail> hardshipReviewDetailList = TestModelDataBuilder.getHardshipReviewDetailList("Y", 0);
-        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
-                .thenReturn(hardshipReviewDetailList);
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
-
-        assertThat(response.getHardshipSummary())
-                .isEqualTo(BigDecimal.ZERO);
+    void givenValidHardshipReviewCalculationDTOWithDetailTypeIncome_whenCalculateHardshipIsInvoked_thenHardshipReviewResultDTOIsReturned() {
+        HardshipReviewCalculationDTO hardshipReviewCalculationDTO = getHardshipReviewCalculationDTO(INCOME);
+        HardshipReviewResultDTO response = hardshipService.calculateHardship(hardshipReviewCalculationDTO, FULL_THRESHOLD);
+        assertThat(response.getDisposableIncomeAfterHardship()).isEqualTo(BigDecimal.valueOf(3000.0));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.valueOf(2000.0));
+        assertThat(response.getHardshipReviewResult()).isEqualTo("PASS");
     }
 
     @Test
-    void givenHardshipDetailWithNotAccepted_whenCalculateEvidenceFeeIsInvoked_validResponseIsReturned() {
-        ApiCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
-        List<HardshipReviewDetail> hardshipReviewDetailList = TestModelDataBuilder.getHardshipReviewDetailList("N", 10);
-        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
-                .thenReturn(hardshipReviewDetailList);
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
+    void givenValidHardshipReviewCalculationDTOWithMultipleDetailTypes_whenCalculateHardshipIsInvoked_thenHardshipReviewResultDTOIsReturned() {
+        HardshipReviewCalculationDTO hardshipReviewCalculationDTO = getHardshipReviewCalculationDTO( EXPENDITURE, SOL_COSTS);
+        HardshipReviewResultDTO response = hardshipService.calculateHardship(hardshipReviewCalculationDTO, FULL_THRESHOLD);
+        assertThat(response.getDisposableIncomeAfterHardship()).isEqualTo(BigDecimal.valueOf(-5620.25));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.valueOf(10620.25));
+        assertThat(response.getHardshipReviewResult()).isEqualTo("PASS");
+    }
 
-        assertThat(response.getHardshipSummary())
-                .isEqualTo(BigDecimal.ZERO);
+    @Test
+    void givenValidHardshipReviewCalculationDTOWithZeroAmount_whenCalculateHardshipIsInvoked_thenHardshipReviewResultDTOIsReturned() {
+        HardshipReviewCalculationDTO hardshipReviewCalculationDTO = getHardshipReviewCalculationDTO(EXPENDITURE);
+        hardshipReviewCalculationDTO.getHardshipReviewCalculationDetails()
+                .forEach(hRCalcDetail -> hRCalcDetail.setAmount(BigDecimal.ZERO));
+        HardshipReviewResultDTO response = hardshipService.calculateHardship(hardshipReviewCalculationDTO, FULL_THRESHOLD);
+        assertThat(response.getDisposableIncomeAfterHardship()).isEqualTo(BigDecimal.valueOf(5000.0));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.ZERO);
+        assertThat(response.getHardshipReviewResult()).isEqualTo("FAIL");
+    }
+
+    @Test
+    void givenValidHardshipReviewCalculationDTOWithAcceptedAsFalse_whenCalculateHardshipIsInvoked_thenHardshipReviewResultDTOIsReturned() {
+        HardshipReviewCalculationDTO hardshipReviewCalculationDTO = getHardshipReviewCalculationDTO(EXPENDITURE);
+        hardshipReviewCalculationDTO.getHardshipReviewCalculationDetails()
+                .forEach(hRCalcDetail -> hRCalcDetail.setAccepted("N"));
+        HardshipReviewResultDTO response = hardshipService.calculateHardship(hardshipReviewCalculationDTO, FULL_THRESHOLD);
+        assertThat(response.getDisposableIncomeAfterHardship()).isEqualTo(BigDecimal.valueOf(5000.0));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.ZERO);
+        assertThat(response.getHardshipReviewResult()).isEqualTo("FAIL");
+    }
+
+    @Test
+    void givenValidHardshipReviewCalculationDTOWithEmptyDetails_whenCalculateHardshipIsInvoked_thenHardshipReviewResultDTOIsReturned() {
+        HardshipReviewCalculationDTO hardshipReviewCalculationDTO = getHardshipReviewCalculationDTO();
+        HardshipReviewResultDTO response = hardshipService.calculateHardship(hardshipReviewCalculationDTO, FULL_THRESHOLD);
+        assertThat(response.getDisposableIncomeAfterHardship()).isEqualTo(BigDecimal.valueOf(5000.0));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.ZERO);
+        assertThat(response.getHardshipReviewResult()).isEqualTo("FAIL");
     }
 
 }
