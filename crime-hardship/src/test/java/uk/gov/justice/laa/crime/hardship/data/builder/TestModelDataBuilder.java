@@ -1,14 +1,20 @@
 package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
 
 import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class TestModelDataBuilder {
@@ -19,6 +25,7 @@ public class TestModelDataBuilder {
     public static final BigDecimal HARDSHIP_SUMMARY = BigDecimal.valueOf(100.12);
     public static final Integer HARDSHIP_ID = 1234;
     public static final BigDecimal HARDSHIP_AMOUNT = BigDecimal.valueOf(10.0);
+    public static final BigDecimal FULL_THRESHOLD = BigDecimal.valueOf(3000.0);
 
     public static StatelessApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(boolean isValid) {
         return new StatelessApiCalculateHardshipByDetailRequest()
@@ -34,10 +41,55 @@ public class TestModelDataBuilder {
 
     public static List<HardshipReviewDetail> getHardshipReviewDetailList(String accepted, double amount) {
         return List.of(HardshipReviewDetail.builder()
-                        .id(HARDSHIP_ID)
-                        .accepted(accepted)
-                        .amount(BigDecimal.valueOf(amount))
-                        .frequency(Frequency.ANNUALLY)
-                        .build());
+                .id(HARDSHIP_ID)
+                .accepted(accepted)
+                .amount(BigDecimal.valueOf(amount))
+                .frequency(Frequency.ANNUALLY)
+                .build());
     }
+
+    public static HardshipReviewCalculationDTO getHardshipReviewCalculationDTO(HardshipReviewDetailType... hardshipReviewDetailTypes) {
+        var hardshipReviewCalculationDetails = Arrays.stream(hardshipReviewDetailTypes)
+                .map(TestModelDataBuilder::getHardshipReviewCalculationDetail)
+                .collect(toList());
+
+        return HardshipReviewCalculationDTO.builder()
+                .hardshipReviewCalculationDetails(hardshipReviewCalculationDetails)
+                .disposableIncome(BigDecimal.valueOf(5000.00)).build();
+    }
+
+    public static HardshipReviewCalculationDetail getHardshipReviewCalculationDetail(HardshipReviewDetailType detailType) {
+        switch (detailType) {
+            case EXPENDITURE -> {
+                return HardshipReviewCalculationDetail.builder()
+                        .detailType(HardshipReviewDetailType.EXPENDITURE)
+                        .accepted("Y")
+                        .amount(BigDecimal.valueOf(160.00))
+                        .frequency(Frequency.WEEKLY)
+                        .build();
+            }
+            case SOL_COSTS -> {
+                return HardshipReviewCalculationDetail.builder()
+                        .detailType(HardshipReviewDetailType.SOL_COSTS)
+                        .accepted("Y")
+                        .amount(BigDecimal.valueOf(2300.25))
+                        .frequency(Frequency.ANNUALLY)
+                        .build();
+            }
+            case INCOME -> {
+                return HardshipReviewCalculationDetail.builder()
+                        .detailType(HardshipReviewDetailType.INCOME)
+                        .accepted("Y")
+                        .amount(BigDecimal.valueOf(2000.00))
+                        .frequency(Frequency.ANNUALLY)
+                        .build();
+            }
+            default -> {
+                return HardshipReviewCalculationDetail.builder()
+                        .detailType(detailType)
+                        .build();
+            }
+        }
+    }
+
 }
