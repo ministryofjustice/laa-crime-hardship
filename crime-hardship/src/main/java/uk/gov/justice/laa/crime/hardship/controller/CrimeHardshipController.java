@@ -14,8 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+
+import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class CrimeHardshipController {
     @Operation(description = "Calculate Crime Hardship for Detail")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
+                    schema = @Schema(implementation = StatelessApiCalculateHardshipByDetailResponse.class)
             )
     )
     @ApiResponse(responseCode = "400",
@@ -46,12 +47,12 @@ public class CrimeHardshipController {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ResponseEntity<ApiCalculateHardshipByDetailResponse> calculateHardshipForDetail(
+    public ResponseEntity<StatelessApiCalculateHardshipByDetailResponse> calculateHardshipForDetail(
             @Parameter(description = "Calculate Crime Hardship For Detail",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
+                            schema = @Schema(implementation = StatelessApiCalculateHardshipByDetailRequest.class)
                     )
-            ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
+            ) @Valid @RequestBody StatelessApiCalculateHardshipByDetailRequest request) {
         return ResponseEntity.ok(hardshipService.calculateHardshipForDetail(request));
     }
 

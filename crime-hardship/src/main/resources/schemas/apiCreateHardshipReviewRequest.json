@@ -59,19 +59,25 @@
       "description": "Total Annual Disposable Income of the Application"
     },
     "otherFundingSources": {
-      "type": "object",
+      "type": "array",
       "description": "Other funding sources",
-      "$ref": "common/otherFundingSources.json"
+      "items": {
+        "$ref": "common/otherFundingSources.json"
+      }
     },
     "extraExpenditure": {
-      "type": "object",
+      "type": "array",
       "description": "Extra expenditure",
-      "$ref": "common/extraExpenditure.json"
+      "items": {
+        "$ref": "common/extraExpenditure.json"
+      }
     },
     "deniedIncome": {
-      "type": "object",
+      "type": "array",
       "description": "Denied income",
-      "$ref": "common/deniedIncome.json"
+      "items": {
+        "$ref": "common/deniedIncome.json"
+      }
     },
     "solicitorCost": {
       "type": "object",
@@ -79,9 +85,11 @@
       "$ref": "common/solicitorCosts.json"
     },
     "progressItems": {
-      "type": "object",
+      "type": "array",
       "description": "The hardship review progress details (actions taken & responses)",
-      "$ref": "common/hardshipProgress.json"
+      "items": {
+        "$ref": "common/hardshipProgress.json"
+      }
     }
   },
   "additionalProperties": false

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,8 +16,8 @@ import java.util.List;
 public class HardshipService {
     private final MaatCourtDataService maatCourtDataService;
 
-    public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(ApiCalculateHardshipByDetailRequest request) {
-        ApiCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new ApiCalculateHardshipByDetailResponse();
+    public StatelessApiCalculateHardshipByDetailResponse calculateHardshipForDetail(StatelessApiCalculateHardshipByDetailRequest request) {
+        StatelessApiCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new StatelessApiCalculateHardshipByDetailResponse();
         BigDecimal hardshipSummary = BigDecimal.ZERO;
 
         List<HardshipReviewDetail> hardshipReviewDetailList = maatCourtDataService.getHardshipByDetailType(

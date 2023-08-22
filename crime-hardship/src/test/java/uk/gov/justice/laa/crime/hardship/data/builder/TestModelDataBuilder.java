@@ -2,8 +2,9 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+
+import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 
 import java.math.BigDecimal;
@@ -19,15 +20,15 @@ public class TestModelDataBuilder {
     public static final Integer HARDSHIP_ID = 1234;
     public static final BigDecimal HARDSHIP_AMOUNT = BigDecimal.valueOf(10.0);
 
-    public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(boolean isValid) {
-        return new ApiCalculateHardshipByDetailRequest()
+    public static StatelessApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(boolean isValid) {
+        return new StatelessApiCalculateHardshipByDetailRequest()
                 .withRepId(isValid ? TEST_REP_ID : null)
                 .withLaaTransactionId(MEANS_ASSESSMENT_TRANSACTION_ID)
                 .withDetailType(DETAIL_TYPE);
     }
 
-    public static ApiCalculateHardshipByDetailResponse getApiCalculateHardshipByDetailResponse() {
-        return new ApiCalculateHardshipByDetailResponse()
+    public static StatelessApiCalculateHardshipByDetailResponse getApiCalculateHardshipByDetailResponse() {
+        return new StatelessApiCalculateHardshipByDetailResponse()
                 .withHardshipSummary(HARDSHIP_SUMMARY);
     }
 
