@@ -11,13 +11,7 @@
     },
     "frequency": {
       "type": "string",
-      "enum": [
-        "WEEKLY",
-        "2WEEKLY",
-        "4WEEKLY",
-        "MONTHLY",
-        "ANNUALLY"
-      ],
+      "enum": ["WEEKLY", "2WEEKLY", "4WEEKLY", "MONTHLY", "ANNUALLY"],
       "description": "Hardship payment frequency"
     }
   },

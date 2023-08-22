@@ -7,13 +7,7 @@
   "properties": {
     "type": {
       "type": "string",
-      "enum": [
-        "ACTION",
-        "SOL_COSTS",
-        "INCOME",
-        "EXPENDITURE",
-        "FUNDING"
-      ]
+      "enum": ["ACTION", "SOL_COSTS", "INCOME", "EXPENDITURE", "FUNDING"]
     },
     "amount": {
       "type": "number",

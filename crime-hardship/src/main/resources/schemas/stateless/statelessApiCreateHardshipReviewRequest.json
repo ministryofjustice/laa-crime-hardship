@@ -12,10 +12,7 @@
     "courtType": {
       "description": "The Court Type",
       "type": "string",
-      "enum": [
-        "MAGISTRATES",
-        "CROWN_COURT"
-      ]
+      "enum": ["MAGISTRATES", "CROWN_COURT"]
     },
     "reviewDate": {
       "type": "string",
