@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.stateless.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 
 @Slf4j
