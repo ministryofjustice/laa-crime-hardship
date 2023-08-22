@@ -11,11 +11,7 @@
     },
     "itemCode": {
       "type": "string",
-      "enum": [
-        "MEDICAL GROUNDS",
-        "SUSPENDED WORK",
-        "OTHER INC"
-      ],
+      "enum": ["MEDICAL GROUNDS", "SUSPENDED WORK", "OTHER INC"],
       "description": "The hardship denied income codes"
     }
   },

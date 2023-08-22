@@ -7,24 +7,12 @@
   "properties": {
     "action": {
       "type": "string",
-      "enum": [
-        "FURTHER INFO",
-        "ORIG APP REQUESTED",
-        "ORIG APP RETURNED",
-        "SOLICITOR INFORMED",
-        "ADDITIONAL EVIDENCE",
-        "REJECTED APP",
-        "OTHER"
-      ],
+      "enum": ["FURTHER INFO", "ORIG APP REQUESTED", "ORIG APP RETURNED", "SOLICITOR INFORMED", "ADDITIONAL EVIDENCE", "REJECTED APP", "OTHER"],
       "description": "The hardship review progress action codes"
     },
     "response": {
       "type": "string",
-      "enum": [
-        "FURTHER RECEIVED",
-        "ORIGINAL RECEIVED",
-        "ADDITIONAL PROVIDED"
-      ],
+      "enum": ["FURTHER RECEIVED", "ORIGINAL RECEIVED", "ADDITIONAL PROVIDED"],
       "description": "The hardship review progress response codes"
     },
     "dateTaken": {
@@ -44,4 +32,3 @@
     }
   }
 }
-

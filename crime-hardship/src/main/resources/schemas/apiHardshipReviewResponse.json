@@ -8,10 +8,7 @@
     "reviewResult": {
       "description": "The review result",
       "type": "string",
-      "enum": [
-        "PASS",
-        "FAIL"
-      ]
+      "enum": ["PASS", "FAIL"]
     },
     "postHardshipDisposableIncome": {
       "type": "number",
