@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiCalculateHardshipByDetailResponse;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -17,18 +17,9 @@
       "type": "number",
       "description": "Post hardship disposable income"
     },
-    "hardshipReviewId": {
-      "type": "integer",
-      "description": "Hardship review id"
-    },
     "disposableIncome": {
       "type": "number",
       "description": "The disposable income"
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The hardship review modification timestamp"
     }
   },
   "additionalProperties": false

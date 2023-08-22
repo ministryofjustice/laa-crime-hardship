@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "statelessApiCreateHardshipReviewRequest.json",
+  "type": "object",
+  "title": "Stateless create hardship request",
+  "description": "Data Contract for stateless create hardship",
+  "properties": {
+    "laaTransactionId": {
+      "type": "string",
+      "description": "The txn / correlation UUID"
+    },
+    "courtType": {
+      "description": "The Court Type",
+      "type": "string",
+      "enum": [
+        "MAGISTRATES",
+        "CROWN_COURT"
+      ]
+    },
+    "reviewDate": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The hardship review date"
+    },
+    "financialAssessmentId": {
+      "type": "integer",
+      "description": "The ID of the financial assessment being updated"
+    },
+    "otherFundingSources": {
+      "type": "object",
+      "description": "Other funding sources",
+      "$ref": "../common/otherFundingSources.json"
+    },
+    "extraExpenditure": {
+      "type": "object",
+      "description": "Extra expenditure",
+      "$ref": "../common/extraExpenditure.json"
+    },
+    "deniedIncome": {
+      "type": "object",
+      "description": "Denied income",
+      "$ref": "../common/deniedIncome.json"
+    },
+    "solicitorCost": {
+      "type": "object",
+      "description": "Solicitor cost",
+      "$ref": "../common/solicitorCosts.json"
+    }
+  },
+  "additionalProperties": false
+}

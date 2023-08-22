@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiCalculateHardshipByDetailResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
