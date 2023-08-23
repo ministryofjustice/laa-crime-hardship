@@ -6,43 +6,14 @@
   "description": "Details of extra expenditure",
   "properties": {
     "reasonCode": {
-      "type": "string",
-      "enum": [
-        "Evidence Supplied",
-        "Essential - need for work",
-        "Essential Item",
-        "Arrangement in place",
-        "No evidence supplied",
-        "Insufficient evidence supplied",
-        "Non-essential item/expense",
-        "Covered by living expense",
-        "Not allowable (diff from non-essential)",
-        "Not in computation period"
-      ],
-      "description": "The hardship review details reasons code"
+      "type": "object",
+      "description": "The hardship review details reasons code",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReasons"
     },
     "itemCode": {
-      "type": "string",
-      "enum": [
-        "UNSECURED LOAN",
-        "SECURED LOAN",
-        "CAR LOAN",
-        "IVA",
-        "CARDS",
-        "DEBTS",
-        "FINES",
-        "RENT ARREARS",
-        "BAILIFF",
-        "DWP OVERPAYMENT",
-        "STUDENT LOAN",
-        "ADD MORTGAGE",
-        "UNI HOUSING",
-        "PRESCRIPTION",
-        "PENSION PAY",
-        "MEDIAL COSTS",
-        "OTHER"
-      ],
-      "description": "The hardship review detail codes"
+      "type": "object",
+      "description": "Expenditure specific codes",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.ExtraExpenditureDetailCode"
     }
   },
   "extends": {

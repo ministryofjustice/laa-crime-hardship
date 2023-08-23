@@ -7,8 +7,8 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
-import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.stateless.StatelessApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
@@ -27,8 +27,8 @@ public class HardshipService {
 
     private final MaatCourtDataService maatCourtDataService;
 
-    public StatelessApiCalculateHardshipByDetailResponse calculateHardshipForDetail(StatelessApiCalculateHardshipByDetailRequest request) {
-        StatelessApiCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new StatelessApiCalculateHardshipByDetailResponse();
+    public ApiStatelessCalculateHardshipByDetailResponse calculateHardshipForDetail(ApiStatelessCalculateHardshipByDetailRequest request) {
+        ApiStatelessCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new ApiStatelessCalculateHardshipByDetailResponse();
         BigDecimal hardshipSummary = BigDecimal.ZERO;
 
         List<HardshipReviewDetail> hardshipReviewDetailList = maatCourtDataService.getHardshipByDetailType(

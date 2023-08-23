@@ -10,9 +10,9 @@
       "description": "Indicates whether the additional cost has been accepted"
     },
     "frequency": {
-      "type": "string",
-      "enum": ["WEEKLY", "2WEEKLY", "4WEEKLY", "MONTHLY", "ANNUALLY"],
-      "description": "Hardship payment frequency"
+      "type": "object",
+      "description": "Hardship payment frequency",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency"
     }
   },
   "extends": {

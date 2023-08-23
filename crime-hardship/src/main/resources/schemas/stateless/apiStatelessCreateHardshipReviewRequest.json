@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "statelessApiCreateHardshipReviewRequest.json",
+  "id": "apiStatelessCreateHardshipReviewRequest.json",
   "type": "object",
   "title": "Stateless create hardship request",
   "description": "Data Contract for stateless create hardship",

@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "statelessApiCalculateHardshipByDetailRequest.json",
+  "id": "apiStatelessCalculateHardshipByDetailRequest.json",
   "type": "object",
   "title": "Stateless Calculate Hardship By Detail Request",
   "description": "Data Contract for Stateless Calculate Hardship By Detail Request",

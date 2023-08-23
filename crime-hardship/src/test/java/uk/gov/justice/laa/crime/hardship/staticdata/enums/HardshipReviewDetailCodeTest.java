@@ -9,25 +9,25 @@ class HardshipReviewDetailCodeTest {
 
     @Test
     void givenABlankString_whenGetFromIsInvoked_thenNullIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom(null)).isNull();
+        assertThat(ExtraExpenditureDetailCode.getFrom(null)).isNull();
     }
 
     @Test
     void givenValidResultString_whenGetFromIsInvoked_thenCorrectEnumIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom("BAILIFF")).isEqualTo(HardshipReviewDetailCode.BAILIFF);
+        assertThat(ExtraExpenditureDetailCode.getFrom("BAILIFF")).isEqualTo(ExtraExpenditureDetailCode.BAILIFF);
     }
 
     @Test
     void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
         assertThatThrownBy(
-                () -> HardshipReviewDetailCode.getFrom("MOCK_RESULT_STRING")
+                () -> ExtraExpenditureDetailCode.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void givenValidInput_ValidateEnumValues() {
-        assertThat("ADD MORTGAGE").isEqualTo(HardshipReviewDetailCode.ADD_MORTGAGE.getCode());
-        assertThat("Car Loan").isEqualTo(HardshipReviewDetailCode.CAR_LOAN.getDescription());
+        assertThat("ADD MORTGAGE").isEqualTo(ExtraExpenditureDetailCode.ADD_MORTGAGE.getCode());
+        assertThat("Car Loan").isEqualTo(ExtraExpenditureDetailCode.CAR_LOAN.getDescription());
     }
 
 }

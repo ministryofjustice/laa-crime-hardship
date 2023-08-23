@@ -6,8 +6,9 @@
   "description": "Details of hardship",
   "properties": {
     "type": {
-      "type": "string",
-      "enum": ["ACTION", "SOL_COSTS", "INCOME", "EXPENDITURE", "FUNDING"]
+      "type": "object",
+      "description": "Hardship review detail type",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType"
     },
     "amount": {
       "type": "number",
