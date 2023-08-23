@@ -5,29 +5,31 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-class HardshipReviewDetailCodeTest {
+class DeniedIncomeDetailCodeTest {
 
     @Test
     void givenABlankString_whenGetFromIsInvoked_thenNullIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom(null)).isNull();
+        assertThat(DeniedIncomeDetailCode.getFrom(null)).isNull();
     }
 
     @Test
     void givenValidResultString_whenGetFromIsInvoked_thenCorrectEnumIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom("BAILIFF")).isEqualTo(HardshipReviewDetailCode.BAILIFF);
+        assertThat(DeniedIncomeDetailCode.getFrom("MEDICAL GROUNDS")).isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS);
     }
 
     @Test
     void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
         assertThatThrownBy(
-                () -> HardshipReviewDetailCode.getFrom("MOCK_RESULT_STRING")
+                () -> DeniedIncomeDetailCode.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void givenValidInput_ValidateEnumValues() {
-        assertThat("ADD MORTGAGE").isEqualTo(HardshipReviewDetailCode.ADD_MORTGAGE.getCode());
-        assertThat("Car Loan").isEqualTo(HardshipReviewDetailCode.CAR_LOAN.getDescription());
+        assertThat("MEDICAL GROUNDS").isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS.getCode());
+        assertThat("Medical Grounds").isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS.getDescription());
+        assertThat("INCOME").isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS.getType());
+
     }
 
 }

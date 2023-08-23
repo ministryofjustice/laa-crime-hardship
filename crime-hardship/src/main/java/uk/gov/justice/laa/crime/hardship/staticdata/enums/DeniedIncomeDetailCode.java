@@ -21,7 +21,7 @@ public enum DeniedIncomeDetailCode {
     private final String description;
     private final String type;
 
-    public DeniedIncomeDetailCode getFrom(String code) {
+    public static DeniedIncomeDetailCode getFrom(String code) {
         if (StringUtils.isBlank(code)) { return null; }
 
         List<DeniedIncomeDetailCode> deniedIncomeDetailCodes =  Stream.of(DeniedIncomeDetailCode.values())
