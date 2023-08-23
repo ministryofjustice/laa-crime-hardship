@@ -45,10 +45,10 @@
       }
     },
     "solicitorCost": {
-        "type": "object",
-        "description": "Solicitor cost",
-        "$ref": "../common/solicitorCosts.json"
-      }
-   },
+      "type": "object",
+      "description": "Solicitor cost",
+      "$ref": "../common/solicitorCosts.json"
+    }
+  },
   "additionalProperties": false
 }
