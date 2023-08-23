@@ -41,7 +41,6 @@
       "description": "The review reason",
       "type": "object",
       "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason"
-
     },
     "notes": {
       "type": "string",
