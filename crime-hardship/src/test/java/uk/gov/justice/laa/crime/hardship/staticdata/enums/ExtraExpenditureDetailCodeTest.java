@@ -29,7 +29,6 @@ class ExtraExpenditureDetailCodeTest {
         assertThat("CAR LOAN").isEqualTo(ExtraExpenditureDetailCode.CAR_LOAN.getCode());
         assertThat("Car Loan").isEqualTo(ExtraExpenditureDetailCode.CAR_LOAN.getDescription());
         assertThat("EXPENDITURE").isEqualTo(ExtraExpenditureDetailCode.CAR_LOAN.getType());
-
     }
 
 }

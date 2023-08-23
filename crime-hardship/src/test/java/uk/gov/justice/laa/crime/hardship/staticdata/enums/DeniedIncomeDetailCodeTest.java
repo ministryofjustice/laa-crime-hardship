@@ -29,7 +29,6 @@ class DeniedIncomeDetailCodeTest {
         assertThat("MEDICAL GROUNDS").isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS.getCode());
         assertThat("Medical Grounds").isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS.getDescription());
         assertThat("INCOME").isEqualTo(DeniedIncomeDetailCode.MEDICAL_GROUNDS.getType());
-
     }
 
 }
