@@ -25,7 +25,7 @@ class HardshipReviewDetailReasonsTest {
     }
 
     @Test
-    void valueOfCurrentStatusFromString1_nullParameter_ReturnsNull() {
+    void givenInvalidResultString_whenGetFromIsInvoked_thenExceptionIsThrown() {
         assertThatThrownBy(
                 () -> HardshipReviewDetailReasons.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);

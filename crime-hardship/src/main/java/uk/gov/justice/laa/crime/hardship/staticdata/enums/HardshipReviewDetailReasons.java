@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @Getter
@@ -29,22 +28,11 @@ public enum HardshipReviewDetailReasons {
     private final String type;
 
     public static HardshipReviewDetailReasons getFrom(String reason) {
-        if (StringUtils.isBlank(reason)) { return null; }
+        if (StringUtils.isBlank(reason)) return null;
 
-        List<HardshipReviewDetailReasons> extraExpenditureDetailCodes =  Stream.of(HardshipReviewDetailReasons.values())
-                .filter(eedCode -> eedCode.reason.equals(reason))
-                .toList();
-
-        if (extraExpenditureDetailCodes.isEmpty()) {
-            throw new IllegalArgumentException(String.format(
-                    "Hardship review detail reason: %s does not exist.", reason));
-        } else if (extraExpenditureDetailCodes.size() > 1) {
-            throw new IllegalArgumentException(String.format(
-                    "Hardship review detail reason: %s returned non unique value", reason));
-        } else {
-            return extraExpenditureDetailCodes.get(0);
-        }
-
+        return Stream.of(HardshipReviewDetailReasons.values())
+                .filter(hardshipReviewDetailReason -> hardshipReviewDetailReason.reason.equals(reason))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Hardship review detail reason: %s does not exist.", reason)));
     }
-
 }

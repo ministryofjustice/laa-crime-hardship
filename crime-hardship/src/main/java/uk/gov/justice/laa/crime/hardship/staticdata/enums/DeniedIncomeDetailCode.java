@@ -22,22 +22,12 @@ public enum DeniedIncomeDetailCode {
     private final String type;
 
     public static DeniedIncomeDetailCode getFrom(String code) {
-        if (StringUtils.isBlank(code)) { return null; }
+        if (StringUtils.isBlank(code)) return null;
 
-        List<DeniedIncomeDetailCode> deniedIncomeDetailCodes =  Stream.of(DeniedIncomeDetailCode.values())
+        return Stream.of(DeniedIncomeDetailCode.values())
                 .filter(didCode -> didCode.code.equals(code))
-                .toList();
-
-        if (deniedIncomeDetailCodes.isEmpty()) {
-            throw new IllegalArgumentException(String.format(
-                    "Denied income detail with code: %s does not exist.", code));
-        } else if (deniedIncomeDetailCodes.size() > 1) {
-            throw new IllegalArgumentException(String.format(
-                    "Denied income detail code: %s returned non unique value", code));
-        } else {
-            return deniedIncomeDetailCodes.get(0);
-        }
-
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Denied income detail code: %s does not exist.", code)));
     }
 
 }

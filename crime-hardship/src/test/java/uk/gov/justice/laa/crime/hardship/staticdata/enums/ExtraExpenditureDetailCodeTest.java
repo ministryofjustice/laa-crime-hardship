@@ -18,7 +18,7 @@ class ExtraExpenditureDetailCodeTest {
     }
 
     @Test
-    void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
+    void givenInvalidResultString_whenGetFromIsInvoked_thenExceptionIsThrown() {
         assertThatThrownBy(
                 () -> ExtraExpenditureDetailCode.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);

@@ -35,22 +35,11 @@ public enum ExtraExpenditureDetailCode {
     private final String type;
 
     public static ExtraExpenditureDetailCode getFrom(String code) {
-        if (StringUtils.isBlank(code)) { return null; }
+        if (StringUtils.isBlank(code)) return null;
 
-        List<ExtraExpenditureDetailCode> extraExpenditureDetailCodes =  Stream.of(ExtraExpenditureDetailCode.values())
+        return Stream.of(ExtraExpenditureDetailCode.values())
                 .filter(eedCode -> eedCode.code.equals(code))
-                .toList();
-
-        if (extraExpenditureDetailCodes.isEmpty()) {
-            throw new IllegalArgumentException(String.format(
-                    "Extra expenditure detail with code: %s does not exist.", code));
-        } else if (extraExpenditureDetailCodes.size() > 1) {
-            throw new IllegalArgumentException(String.format(
-                    "Extra expenditure detail code: %s returned non unique value", code));
-        } else {
-            return extraExpenditureDetailCodes.get(0);
-        }
-
-    }
-
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Extra expenditure detail code: %s does not exist.", code)));
+   }
 }

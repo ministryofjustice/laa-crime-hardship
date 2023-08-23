@@ -18,7 +18,7 @@ class DeniedIncomeDetailCodeTest {
     }
 
     @Test
-    void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
+    void givenInvalidResultString_whenGetFromIsInvoked_thenExceptionIsThrown() {
         assertThatThrownBy(
                 () -> DeniedIncomeDetailCode.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);

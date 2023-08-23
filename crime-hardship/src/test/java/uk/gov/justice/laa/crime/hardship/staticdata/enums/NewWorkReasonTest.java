@@ -9,7 +9,7 @@ class NewWorkReasonTest {
 
     @Test
     void givenABlankString_whenGetFromIsInvoked_thenNullIsReturned() {
-        assertThat(HardshipReviewDetailCode.getFrom(null)).isNull();
+        assertThat(NewWorkReason.getFrom(null)).isNull();
     }
 
     @Test
@@ -18,7 +18,7 @@ class NewWorkReasonTest {
     }
 
     @Test
-    void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
+    void givenInvalidResultString_whenGetFromIsInvoked_thenExceptionIsThrown() {
         assertThatThrownBy(
                 () -> NewWorkReason.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);

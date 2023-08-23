@@ -18,7 +18,7 @@ class CourtTypeTest {
     }
 
     @Test
-    void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
+    void givenInvalidResultString_whenGetFromIsInvoked_thenExceptionIsThrown() {
         assertThatThrownBy(
                 () -> CourtType.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
@@ -27,6 +27,7 @@ class CourtTypeTest {
     @Test
     void givenValidInput_ValidateEnumValues() {
         assertThat("MAGISTRATE").isEqualTo(CourtType.MAGISTRATE.getValue());
+        assertThat("MAGISTRATE").isEqualTo(CourtType.MAGISTRATE.getType());
         assertThat("Crown Court").isEqualTo(CourtType.CROWN_COURT.getDescription());
     }
 
