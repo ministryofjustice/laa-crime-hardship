@@ -12,10 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 
 @Slf4j
@@ -31,7 +34,7 @@ public class CrimeHardshipController {
     @Operation(description = "Calculate Crime Hardship for Detail")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
+                    schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailResponse.class)
             )
     )
     @ApiResponse(responseCode = "400",
@@ -46,12 +49,12 @@ public class CrimeHardshipController {
                     schema = @Schema(implementation = ErrorDTO.class)
             )
     )
-    public ResponseEntity<ApiCalculateHardshipByDetailResponse> calculateHardshipForDetail(
+    public ResponseEntity<ApiStatelessCalculateHardshipByDetailResponse> calculateHardshipForDetail(
             @Parameter(description = "Calculate Crime Hardship For Detail",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
+                            schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailRequest.class)
                     )
-            ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
+            ) @Valid @RequestBody ApiStatelessCalculateHardshipByDetailRequest request) {
         return ResponseEntity.ok(hardshipService.calculateHardshipForDetail(request));
     }
 

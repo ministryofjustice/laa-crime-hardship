@@ -10,8 +10,8 @@ import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -36,11 +36,11 @@ class HardshipServiceTest {
 
     @Test
     void givenHardshipReviewAmount_whenCalculateHardshipByDetailIsInvoked_validResponseIsReturned() {
-        ApiCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
+        ApiStatelessCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
         List<HardshipReviewDetail> hardshipReviewDetailList = TestModelDataBuilder.getHardshipReviewDetailList("Y", 100);
         when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
                 .thenReturn(hardshipReviewDetailList);
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
+        ApiStatelessCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
 
         assertThat(response.getHardshipSummary())
                 .isEqualTo(BigDecimal.valueOf(100.0));
@@ -48,11 +48,11 @@ class HardshipServiceTest {
 
     @Test
     void givenHardshipDetailWithZeroAmount_whenCalculateEvidenceFeeIsInvoked_validResponseIsReturned() {
-        ApiCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
+        ApiStatelessCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
         List<HardshipReviewDetail> hardshipReviewDetailList = TestModelDataBuilder.getHardshipReviewDetailList("Y", 0);
         when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
                 .thenReturn(hardshipReviewDetailList);
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
+        ApiStatelessCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
 
         assertThat(response.getHardshipSummary())
                 .isEqualTo(BigDecimal.ZERO);
@@ -60,11 +60,11 @@ class HardshipServiceTest {
 
     @Test
     void givenHardshipDetailWithNotAccepted_whenCalculateEvidenceFeeIsInvoked_validResponseIsReturned() {
-        ApiCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
+        ApiStatelessCalculateHardshipByDetailRequest request = TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true);
         List<HardshipReviewDetail> hardshipReviewDetailList = TestModelDataBuilder.getHardshipReviewDetailList("N", 10);
         when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
                 .thenReturn(hardshipReviewDetailList);
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
+        ApiStatelessCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(request);
 
         assertThat(response.getHardshipSummary())
                 .isEqualTo(BigDecimal.ZERO);

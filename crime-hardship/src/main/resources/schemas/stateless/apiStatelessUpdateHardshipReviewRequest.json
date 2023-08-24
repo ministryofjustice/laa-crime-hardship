@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "apiStatelessUpdateHardshipReviewRequest.json",
+  "type": "object",
+  "title": "Stateless update hardship request",
+  "description": "Data Contract for stateless update hardship",
+  "properties": {
+    "hardshipReviewId": {
+      "type": "integer",
+      "description": "The ID of the Hardship Review to update"
+    }
+  },
+  "extends": {
+    "$ref": "apiStatelessCreateHardshipReviewRequest.json"
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "apiStatelessHardshipReviewResponse.json",
+  "type": "object",
+  "title": "Stateless hardship review response",
+  "description": "Data contract for stateless hardship review response",
+  "properties": {
+    "reviewResult": {
+      "description": "The review result",
+      "type": "string",
+      "enum": ["PASS", "FAIL"]
+    },
+    "postHardshipDisposableIncome": {
+      "type": "number",
+      "description": "Post hardship disposable income"
+    },
+    "disposableIncome": {
+      "type": "number",
+      "description": "The disposable income"
+    }
+  },
+  "additionalProperties": false
+}
