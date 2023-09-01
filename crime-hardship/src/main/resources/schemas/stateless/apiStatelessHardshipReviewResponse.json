@@ -7,8 +7,8 @@
   "properties": {
     "reviewResult": {
       "description": "The review result",
-      "type": "string",
-      "enum": ["PASS", "FAIL"]
+      "type": "object",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult"
     },
     "postHardshipDisposableIncome": {
       "type": "number",
