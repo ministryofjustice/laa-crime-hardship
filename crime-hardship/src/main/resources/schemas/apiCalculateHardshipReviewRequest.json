@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiStatelessCreateHardshipReviewRequest.json",
+  "id": "apiCalculateHardshipReviewRequest.json",
   "type": "object",
-  "title": "Stateless create hardship request",
-  "description": "Data Contract for stateless create hardship",
+  "title": "Calculate Hardship Request",
+  "description": "Data contract for calculate Hardship Review request",
   "properties": {
     "laaTransactionId": {
       "type": "string",
@@ -31,27 +31,27 @@
       "type": "array",
       "description": "Other funding sources",
       "items": {
-        "$ref": "../common/otherFundingSources.json"
+        "$ref": "common/otherFundingSources.json"
       }
     },
     "extraExpenditure": {
       "type": "array",
       "description": "Extra expenditure",
       "items": {
-        "$ref": "../common/extraExpenditure.json"
+        "$ref": "common/extraExpenditure.json"
       }
     },
     "deniedIncome": {
       "type": "array",
       "description": "Denied income",
       "items": {
-        "$ref": "../common/deniedIncome.json"
+        "$ref": "common/deniedIncome.json"
       }
     },
     "solicitorCost": {
       "type": "object",
       "description": "Solicitor cost",
-      "$ref": "../common/solicitorCosts.json"
+      "$ref": "common/solicitorCosts.json"
     }
   },
   "additionalProperties": false

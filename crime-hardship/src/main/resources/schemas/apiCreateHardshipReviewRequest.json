@@ -2,13 +2,9 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "apiCreateHardshipRequest.json",
   "type": "object",
-  "title": "Create hardship request",
-  "description": "Data Contract for create hardship",
+  "title": "Create Hardship Request",
+  "description": "Data contract for create Hardship Review request",
   "properties": {
-    "laaTransactionId": {
-      "type": "string",
-      "description": "The txn / correlation UUID"
-    },
     "repId": {
       "type": "integer",
       "description": "MAAT / Rep Id"
@@ -56,7 +52,7 @@
     },
     "totalAnnualDisposableIncome": {
       "type": "number",
-      "description": "Total Annual Disposable Income of the Application"
+      "description": "The applicants total annual disposable income"
     },
     "otherFundingSources": {
       "type": "array",

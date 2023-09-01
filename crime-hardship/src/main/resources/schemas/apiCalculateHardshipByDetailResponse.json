@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiStatelessCalculateHardshipByDetailResponse.json",
+  "id": "apiCalculateHardshipByDetailResponse.json",
   "type": "object",
-  "title": "Stateless Calculate Hardship By Detail Response",
-  "description": "Data contract for Stateless Calculate Hardship By Detail Response",
+  "title": "Calculate Hardship By Detail Response",
+  "description": "Data contract for Calculate Hardship By Detail Response",
   "properties": {
     "hardshipSummary": {
       "type": "number",

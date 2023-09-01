@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "apiHardshipReviewResponse.json",
   "type": "object",
-  "title": "Hardship review response",
+  "title": "Hardship Review Response",
   "description": "Data contract for Hardship Review Response",
   "properties": {
     "reviewResult": {

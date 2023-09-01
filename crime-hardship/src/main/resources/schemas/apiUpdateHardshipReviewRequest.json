@@ -3,7 +3,7 @@
   "id": "apiUpdateHardshipRequest",
   "type": "object",
   "title": "Update hardship request",
-  "description": "Data Contract for update hardship",
+  "description": "Data contract for update Hardship Review request",
   "properties": {
     "hardshipReviewId": {
       "type": "integer",
