@@ -9,10 +9,6 @@
       "type": "string",
       "format": "date-time",
       "description": "The date the funding is expected."
-    },
-    "description": {
-      "type": "string",
-      "description": "Description of the funding source."
     }
   },
   "extends": {

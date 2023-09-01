@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;

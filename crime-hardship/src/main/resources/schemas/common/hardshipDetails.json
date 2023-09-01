@@ -13,6 +13,10 @@
     "amount": {
       "type": "number",
       "description": "The amount under consideration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the funding source."
     }
   },
   "required": ["type", "amount"]
