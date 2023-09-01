@@ -14,11 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
-import uk.gov.justice.laa.crime.hardship.model.ApiCreateHardshipReviewRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiHardshipReviewResponse;
-import uk.gov.justice.laa.crime.hardship.model.ApiUpdateHardshipReviewRequest;
-import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 
 @Slf4j
@@ -34,16 +30,16 @@ public class CrimeHardshipController {
     @Operation(description = "Calculate Crime Hardship for Detail")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailResponse.class)
+                    schema = @Schema(implementation = ApiCalculateHardshipByDetailResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiStatelessCalculateHardshipByDetailResponse> calculateHardshipForDetail(
+    public ResponseEntity<ApiCalculateHardshipByDetailResponse> calculateHardshipForDetail(
             @Parameter(description = "Calculate Crime Hardship For Detail",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailRequest.class)
+                            schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
                     )
-            ) @Valid @RequestBody ApiStatelessCalculateHardshipByDetailRequest request) {
+            ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
         return ResponseEntity.ok(hardshipService.calculateHardshipForDetail(request));
     }
 
