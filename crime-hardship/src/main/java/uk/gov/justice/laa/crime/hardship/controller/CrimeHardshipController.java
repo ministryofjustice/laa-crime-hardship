@@ -14,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
-import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
+import uk.gov.justice.laa.crime.hardship.model.ApiCreateHardshipReviewRequest;
+import uk.gov.justice.laa.crime.hardship.model.ApiHardshipReviewResponse;
+import uk.gov.justice.laa.crime.hardship.model.ApiUpdateHardshipReviewRequest;
 import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
@@ -49,11 +51,11 @@ public class CrimeHardshipController {
     @Operation(description = "Find Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailResponse.class)
+                    schema = @Schema(implementation = ApiHardshipReviewResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiStatelessCalculateHardshipByDetailResponse> find(
+    public ResponseEntity<ApiHardshipReviewResponse> find(
             @PathVariable int hardshipReviewId,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
@@ -65,16 +67,16 @@ public class CrimeHardshipController {
     @Operation(description = "Create Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailResponse.class)
+                    schema = @Schema(implementation = ApiHardshipReviewResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiStatelessCalculateHardshipByDetailResponse> create(
+    public ResponseEntity<ApiHardshipReviewResponse> create(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailRequest.class)
+                            schema = @Schema(implementation = ApiCreateHardshipReviewRequest.class)
                     )
-            ) @Valid @RequestBody ApiStatelessCalculateHardshipByDetailRequest request,
+            ) @Valid @RequestBody ApiCreateHardshipReviewRequest request,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 
@@ -85,16 +87,16 @@ public class CrimeHardshipController {
     @Operation(description = "Update Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailResponse.class)
+                    schema = @Schema(implementation = ApiHardshipReviewResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiStatelessCalculateHardshipByDetailResponse> update(
+    public ResponseEntity<ApiHardshipReviewResponse> update(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiStatelessCalculateHardshipByDetailRequest.class)
+                            schema = @Schema(implementation = ApiUpdateHardshipReviewRequest.class)
                     )
-            ) @Valid @RequestBody ApiStatelessCalculateHardshipByDetailRequest request,
+            ) @Valid @RequestBody ApiUpdateHardshipReviewRequest request,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 
