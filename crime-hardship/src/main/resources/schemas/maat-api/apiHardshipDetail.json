@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiHardshipReviewDetail.json",
+  "id": "ApiHardshipDetail.json",
   "type": "object",
   "title": "Hardship Review Details Schema",
   "description": "Data contract for Hardship Review Detail Items in the Court Data API",

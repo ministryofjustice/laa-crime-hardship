@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiCreateHardshipReviewRequest.json",
+  "id": "ApiCreateHardshipRequest.json",
   "type": "object",
   "title": "Create Hardship Review request",
   "description": "Data contract for creating a Hardship Review via the Court Data API",
@@ -24,7 +24,7 @@
     }
   },
   "extends": {
-    "$ref": "apiPersistHardshipReviewRequest.json"
+    "$ref": "apiPersistHardshipRequest.json"
   },
   "additionalProperties": false,
   "required": [

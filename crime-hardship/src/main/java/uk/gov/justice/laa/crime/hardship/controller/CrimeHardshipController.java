@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
 import uk.gov.justice.laa.crime.hardship.model.*;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiUpdateHardshipReviewRequest;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 
 @Slf4j
@@ -47,11 +48,11 @@ public class CrimeHardshipController {
     @Operation(description = "Find Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiHardshipReviewResponse.class)
+                    schema = @Schema(implementation = ApiHardshipResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiHardshipReviewResponse> find(
+    public ResponseEntity<ApiHardshipResponse> find(
             @PathVariable int hardshipReviewId,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
@@ -63,16 +64,16 @@ public class CrimeHardshipController {
     @Operation(description = "Create Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiHardshipReviewResponse.class)
+                    schema = @Schema(implementation = ApiHardshipResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiHardshipReviewResponse> create(
+    public ResponseEntity<ApiHardshipResponse> create(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiCreateHardshipReviewRequest.class)
+                            schema = @Schema(implementation = ApiCreateHardshipRequest.class)
                     )
-            ) @Valid @RequestBody ApiCreateHardshipReviewRequest request,
+            ) @Valid @RequestBody ApiCreateHardshipRequest request,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 
@@ -83,11 +84,11 @@ public class CrimeHardshipController {
     @Operation(description = "Update Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiHardshipReviewResponse.class)
+                    schema = @Schema(implementation = ApiHardshipResponse.class)
             )
     )
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiHardshipReviewResponse> update(
+    public ResponseEntity<ApiHardshipResponse> update(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = ApiUpdateHardshipReviewRequest.class)

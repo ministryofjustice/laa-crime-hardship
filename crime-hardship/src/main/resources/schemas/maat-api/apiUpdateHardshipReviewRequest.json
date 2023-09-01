@@ -20,7 +20,7 @@
     }
   },
   "extends": {
-    "$ref": "apiPersistHardshipReviewRequest.json"
+    "$ref": "apiPersistHardshipRequest.json"
   },
   "additionalProperties": false,
   "required": [
