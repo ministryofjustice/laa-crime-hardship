@@ -75,7 +75,7 @@
         "$ref": "common/deniedIncome.json"
       }
     },
-    "solicitorCost": {
+    "solicitorCosts": {
       "type": "object",
       "description": "Solicitor cost",
       "$ref": "common/solicitorCosts.json"
