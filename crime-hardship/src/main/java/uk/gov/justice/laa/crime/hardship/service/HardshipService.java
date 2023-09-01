@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;

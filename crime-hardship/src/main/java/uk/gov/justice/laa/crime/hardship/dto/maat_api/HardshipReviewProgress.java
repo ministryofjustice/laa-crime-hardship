@@ -1,4 +1,4 @@
-package uk.gov.justice.laa.crime.hardship.dto;
+package uk.gov.justice.laa.crime.hardship.dto.maat_api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

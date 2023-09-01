@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
 import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
