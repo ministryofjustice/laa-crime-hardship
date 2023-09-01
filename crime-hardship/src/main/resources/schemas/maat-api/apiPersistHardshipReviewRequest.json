@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "apiPersistHardshipReviewRequest.json",
+  "type": "object",
+  "title": "Persist Hardship Review Schema",
+  "description": "Data contract for persisting a Hardship Review via the Court Data API",
+  "properties": {
+    "nworCode": {
+      "type": "string",
+      "description": "New work reason details"
+    },
+    "cmuId": {
+      "type": "integer",
+      "description": "Case Management Unit Id"
+    },
+    "reviewResult": {
+      "description": "The review result",
+      "type": "object",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult"
+    },
+    "resultDate": {
+      "type": "string",
+      "description": "Initial assessment date",
+      "format": "date-time"
+    },
+    "reviewDate": {
+      "type": "string",
+      "description": "Initial assessment date",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string",
+      "description": "The review progress notes"
+    },
+    "decisionNotes": {
+      "type": "string",
+      "description": "The notes regarding the decision"
+    },
+    "solicitorCosts": {
+      "type": "object",
+      "description": "Solicitor cost",
+      "$ref": "../common/solicitorCosts.json"
+    },
+    "disposableIncome": {
+      "type": "number",
+      "description": "The applicants disposable income"
+    },
+    "disposableIncomeAfterHardship": {
+      "type": "number",
+      "description": "Disposable income post Hardship Review"
+    },
+    "status": {
+      "description": "The Hardship Review status",
+      "type": "object",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus"
+    },
+    "reviewDetails": {
+      "type": "array",
+      "description": "Hardship Review detail items",
+      "items": {
+        "$ref": "apiHardshipReviewDetail.json"
+      }
+    },
+    "reviewProgressItems": {
+      "type": "array",
+      "description": "Hardship Review progress items",
+      "items": {
+        "$ref": "apiHardshipReviewDetail.json"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "nworCode",
+    "cmuId",
+    "reviewResult",
+    "resultDate",
+    "reviewDate",
+    "solicitorCosts",
+    "disposableIncome",
+    "disposableIncomeAfterHardship",
+    "status",
+    "reviewDetails"
+  ]
+}
