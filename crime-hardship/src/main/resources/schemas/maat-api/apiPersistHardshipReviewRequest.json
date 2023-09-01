@@ -20,12 +20,12 @@
     },
     "resultDate": {
       "type": "string",
-      "description": "Initial assessment date",
+      "description": "The date the Hardship Review result was calculated",
       "format": "date-time"
     },
     "reviewDate": {
       "type": "string",
-      "description": "Initial assessment date",
+      "description": "The date the Hardship Review was completed",
       "format": "date-time"
     },
     "notes": {
@@ -39,7 +39,7 @@
     "solicitorCosts": {
       "type": "object",
       "description": "Solicitor cost",
-      "$ref": "../common/solicitorCosts.json"
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts"
     },
     "disposableIncome": {
       "type": "number",
