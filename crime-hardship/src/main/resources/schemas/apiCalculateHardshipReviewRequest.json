@@ -5,10 +5,6 @@
   "title": "Calculate Hardship Request",
   "description": "Data contract for calculate Hardship Review request",
   "properties": {
-    "laaTransactionId": {
-      "type": "string",
-      "description": "The txn / correlation UUID"
-    },
     "courtType": {
       "description": "The Court Type",
       "type": "object",
