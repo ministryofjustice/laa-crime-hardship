@@ -94,9 +94,9 @@ public class CrimeHardshipController {
     public ResponseEntity<ApiHardshipResponse> update(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiUpdateHardshipReviewRequest.class)
+                            schema = @Schema(implementation = ApiUpdateHardshipRequest.class)
                     )
-            ) @Valid @RequestBody ApiUpdateHardshipReviewRequest request,
+            ) @Valid @RequestBody ApiUpdateHardshipRequest request,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 

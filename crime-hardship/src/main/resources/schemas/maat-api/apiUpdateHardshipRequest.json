@@ -12,11 +12,6 @@
     "userModified": {
       "type": "string",
       "description": "ID of the user updating the Hardship Review"
-    },
-    "updated": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The Hardship Review modification timestamp"
     }
   },
   "extends": {
