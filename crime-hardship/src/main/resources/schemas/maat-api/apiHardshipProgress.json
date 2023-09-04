@@ -42,22 +42,11 @@
     "userCreated": {
       "type": "string",
       "description": "ID of the user creating the progress item"
-    },
-    "userModified": {
-      "type": "string",
-      "description": "ID of the user updating the progress item"
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The Hardship Review Detail modification timestamp"
     }
   },
   "required": [
-    "id",
     "dateRequested",
     "dateRequired",
-    "progressAction",
-    "timestamp"
+    "progressAction"
   ]
 }

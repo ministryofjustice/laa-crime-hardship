@@ -50,14 +50,12 @@
       "description": "The Hardship Review Detail reasons code",
       "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReasons"
     },
-    "timestamp": {
+    "userCreated": {
       "type": "string",
-      "format": "date-time",
-      "description": "The Hardship Review Detail modification timestamp"
+      "description": "ID of the user creating the progress item"
     }
   },
   "required": [
-    "id",
     "frequency",
     "amount",
     "dateDue",

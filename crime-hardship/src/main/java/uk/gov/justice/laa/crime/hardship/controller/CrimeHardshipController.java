@@ -44,6 +44,7 @@ public class CrimeHardshipController {
         return ResponseEntity.ok(hardshipService.calculateHardshipForDetail(request));
     }
 
+
     @GetMapping(value = "/hardshipReviewId", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Find Hardship review")
     @ApiResponse(responseCode = "200",
@@ -59,6 +60,7 @@ public class CrimeHardshipController {
 
         return ResponseEntity.ok().build();
     }
+
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Create Hardship review")
@@ -79,6 +81,7 @@ public class CrimeHardshipController {
 
         return ResponseEntity.ok().build();
     }
+
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Update Hardship review")
