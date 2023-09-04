@@ -20,10 +20,12 @@ import java.util.List;
 public class HardshipReviewDTO {
 
     private Integer id;
+    private Integer repId;
     private Integer cmuId;
     private CourtType courtType;
     private HardshipReviewStatus reviewStatus;
     private LocalDateTime reviewDate;
+    private LocalDateTime dateCreated;
     private ApiUserSession userSession;
     private NewWorkReason reviewReason;
     private String notes;
