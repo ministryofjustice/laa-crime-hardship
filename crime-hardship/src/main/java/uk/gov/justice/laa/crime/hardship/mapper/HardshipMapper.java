@@ -22,7 +22,6 @@ public class HardshipMapper implements RequestMapper<ApiPerformHardshipResponse,
                 .withPostHardshipDisposableIncome(hardshipResult.getPostHardshipDisposableIncome());
     }
 
-    @Override
     public void toDto(HardshipReview hardship, HardshipReviewDTO reviewDTO) {
         reviewDTO.setHardship(hardship);
     }
