@@ -14,17 +14,23 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
-import uk.gov.justice.laa.crime.hardship.model.*;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiUpdateHardshipReviewRequest;
+import uk.gov.justice.laa.crime.hardship.converter.HardshipMapper;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.ApiHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/internal/v1/hardship")
 @Tag(name = "Crime Hardship", description = "Rest API for Crime Hardship.")
-public class CrimeHardshipController {
+public class HardshipController {
 
+    private final HardshipMapper mapper;
     private final HardshipService hardshipService;
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,6 +85,8 @@ public class CrimeHardshipController {
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 
+        HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
+        // Call service methods
         return ResponseEntity.ok().build();
     }
 
@@ -100,7 +108,16 @@ public class CrimeHardshipController {
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 
+        HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
+        // Call service methods
         return ResponseEntity.ok().build();
+    }
+
+    private HardshipReviewDTO preProcessRequest(HardshipReview hardship, RequestType requestType) {
+        HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
+                .requestType(requestType).build();
+        mapper.toDto(hardship, reviewDTO);
+        return reviewDTO;
     }
 
 }
