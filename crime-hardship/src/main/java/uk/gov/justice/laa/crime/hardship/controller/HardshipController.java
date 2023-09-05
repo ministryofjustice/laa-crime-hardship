@@ -73,9 +73,9 @@ public class CrimeHardshipController {
     public ResponseEntity<ApiHardshipResponse> create(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiCreateHardshipRequest.class)
+                            schema = @Schema(implementation = HardshipReview.class)
                     )
-            ) @Valid @RequestBody ApiCreateHardshipRequest request,
+            ) @Valid @RequestBody HardshipReview hardship,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 
@@ -94,9 +94,9 @@ public class CrimeHardshipController {
     public ResponseEntity<ApiHardshipResponse> update(
             @Parameter(description = "JSON object containing Hardship information",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiUpdateHardshipRequest.class)
+                            schema = @Schema(implementation = HardshipReview.class)
                     )
-            ) @Valid @RequestBody ApiUpdateHardshipRequest request,
+            ) @Valid @RequestBody HardshipReview hardship,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
 

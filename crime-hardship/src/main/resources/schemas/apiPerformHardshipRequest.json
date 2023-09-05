@@ -1,9 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiCreateHardshipRequest.json",
+  "id": "ApiPersistHardshipRequest.json",
   "type": "object",
-  "title": "Create Hardship Request",
+  "title": "Persist Hardship Request",
   "description": "Data contract for create Hardship Review request",
+  "javaType": "HardshipReview",
   "properties": {
     "repId": {
       "type": "integer",
@@ -53,6 +54,10 @@
     "totalAnnualDisposableIncome": {
       "type": "number",
       "description": "The applicants total annual disposable income"
+    },
+    "hardshipReviewId": {
+      "type": "integer",
+      "description": "The ID of the Hardship Review to update"
     },
     "otherFundingSources": {
       "type": "array",
