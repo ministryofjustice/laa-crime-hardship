@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
-import uk.gov.justice.laa.crime.hardship.converter.HardshipMapper;
+import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;

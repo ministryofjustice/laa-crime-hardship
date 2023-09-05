@@ -1,4 +1,4 @@
-package uk.gov.justice.laa.crime.hardship.converter;
+package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
