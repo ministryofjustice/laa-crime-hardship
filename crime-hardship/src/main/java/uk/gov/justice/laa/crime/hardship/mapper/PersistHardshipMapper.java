@@ -9,6 +9,7 @@ import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -39,7 +40,10 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 .withNworCode(hardship.getReviewReason().getCode())
                 .withCmuId(hardship.getCmuId())
                 .withReviewResult(hardshipResult.getResult())
-                .withResultDate(hardship.getReviewDate())
+                .withReviewDate(hardship.getReviewDate())
+                .withResultDate(
+                        hardshipResult.getResult() != null ? LocalDateTime.now() : null
+                )
                 .withNotes(hardship.getNotes())
                 .withDecisionNotes(hardship.getDecisionNotes())
                 .withSolicitorCosts(
