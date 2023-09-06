@@ -5,7 +5,6 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
-import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 
 @Component

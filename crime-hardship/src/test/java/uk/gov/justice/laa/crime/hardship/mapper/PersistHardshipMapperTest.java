@@ -33,8 +33,9 @@ class PersistHardshipMapperTest {
     @BeforeEach
     void setup() {
         this.reviewDTO = HardshipReviewDTO.builder()
-                .hardship(TestModelDataBuilder.getMinimalHardshipReview())
                 .hardshipResult(TestModelDataBuilder.getHardshipResult())
+                .hardship(TestModelDataBuilder.getMinimalHardshipReview())
+                .hardshipMetadata(TestModelDataBuilder.getHardshipMetadata())
                 .build();
     }
 
@@ -43,13 +44,14 @@ class PersistHardshipMapperTest {
 
         HardshipReview hardship = reviewDTO.getHardship();
         HardshipResult result = reviewDTO.getHardshipResult();
+        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
 
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
 
         softly.assertThat(request.getNworCode())
-                .isEqualTo(hardship.getReviewReason().getCode());
+                .isEqualTo(metadata.getReviewReason().getCode());
         softly.assertThat(request.getCmuId())
-                .isEqualTo(hardship.getCmuId());
+                .isEqualTo(metadata.getCmuId());
         softly.assertThat(request.getReviewResult())
                 .isEqualTo(result.getResult());
         softly.assertThat(request.getReviewDate())
@@ -57,11 +59,11 @@ class PersistHardshipMapperTest {
         softly.assertThat(request.getResultDate().toLocalDate())
                 .isEqualTo(LocalDateTime.now().toLocalDate());
         softly.assertThat(request.getNotes())
-                .isEqualTo(hardship.getNotes());
+                .isEqualTo(metadata.getNotes());
         softly.assertThat(request.getDecisionNotes())
-                .isEqualTo(hardship.getDecisionNotes());
+                .isEqualTo(metadata.getDecisionNotes());
         softly.assertThat(request.getStatus())
-                .isEqualTo(hardship.getReviewStatus());
+                .isEqualTo(metadata.getReviewStatus());
         softly.assertThat(request.getDisposableIncome())
                 .isEqualTo(hardship.getTotalAnnualDisposableIncome());
         softly.assertThat(request.getDisposableIncomeAfterHardship())
@@ -83,6 +85,7 @@ class PersistHardshipMapperTest {
     @Test
     void givenHardshipReviewDTOWithDetails_whenFromDtoIsInvoked_thenRequestIsMapped() {
         HardshipReview hardship = reviewDTO.getHardship();
+        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
 
         DeniedIncome deniedIncome = TestModelDataBuilder.getDeniedIncome();
         ExtraExpenditure extraExpenditure = TestModelDataBuilder.getExtraExpenditure();
@@ -106,7 +109,7 @@ class PersistHardshipMapperTest {
                         .withType(HardshipReviewDetailType.INCOME)
                         .withAmount(deniedIncome.getAmount())
                         .withFrequency(deniedIncome.getFrequency())
-                        .withUserCreated(hardship.getUserSession().getUserName())
+                        .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS),
 
                 new ApiHardshipDetail()
@@ -114,7 +117,7 @@ class PersistHardshipMapperTest {
                         .withType(HardshipReviewDetailType.EXPENDITURE)
                         .withAmount(extraExpenditure.getAmount())
                         .withFrequency(extraExpenditure.getFrequency())
-                        .withUserCreated(hardship.getUserSession().getUserName())
+                        .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.CARDS)
                         .withDetailReason(extraExpenditure.getReasonCode()),
 
@@ -122,7 +125,7 @@ class PersistHardshipMapperTest {
                         .withType(HardshipReviewDetailType.FUNDING)
                         .withAmount(otherFundingSource.getAmount())
                         .withDateDue(otherFundingSource.getDueDate())
-                        .withUserCreated(hardship.getUserSession().getUserName())
+                        .withUserCreated(metadata.getUserSession().getUserName())
                         .withOtherDescription(otherFundingSource.getDescription())
         );
 
@@ -133,9 +136,9 @@ class PersistHardshipMapperTest {
 
     @Test
     void givenHardshipReviewDTOWithProgress_whenFromDtoIsInvoked_thenRequestIsMapped() {
-        HardshipReview hardship = reviewDTO.getHardship();
+        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
         HardshipProgress progress = TestModelDataBuilder.getHardshipProgress();
-        hardship.setProgressItems(List.of(progress));
+        metadata.setProgressItems(List.of(progress));
 
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
 
@@ -146,7 +149,7 @@ class PersistHardshipMapperTest {
                         .withDateRequested(progress.getDateTaken())
                         .withDateCompleted(progress.getDateCompleted())
                         .withDateRequired(progress.getDateRequired())
-                        .withUserCreated(hardship.getUserSession().getUserName())
+                        .withUserCreated(metadata.getUserSession().getUserName())
         );
 
         assertThat(request.getReviewProgressItems())
@@ -158,32 +161,33 @@ class PersistHardshipMapperTest {
 
     @Test
     void givenHardshipReviewDTOAndCreateRequest_whenFromDtoIsInvoked_thenRequestIsMapped() {
-        HardshipReview hardship = reviewDTO.getHardship();
         reviewDTO.setRequestType(RequestType.CREATE);
+        HardshipReview hardship = reviewDTO.getHardship();
+        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
 
         ApiCreateHardshipRequest request = (ApiCreateHardshipRequest) mapper.fromDto(reviewDTO);
 
         softly.assertThat(request.getRepId())
-                .isEqualTo(hardship.getRepId());
+                .isEqualTo(metadata.getRepId());
         softly.assertThat(request.getUserCreated())
-                .isEqualTo(hardship.getUserSession().getUserName());
+                .isEqualTo(metadata.getUserSession().getUserName());
         softly.assertThat(request.getCourtType())
                 .isEqualTo(hardship.getCourtType());
         softly.assertThat(request.getFinancialAssessmentId())
-                .isEqualTo(hardship.getFinancialAssessmentId());
+                .isEqualTo(metadata.getFinancialAssessmentId());
     }
 
     @Test
     void givenHardshipReviewDTOAndUpdateRequest_whenFromDtoIsInvoked_thenRequestIsMapped() {
-        HardshipReview hardship = reviewDTO.getHardship();
         reviewDTO.setRequestType(RequestType.UPDATE);
+        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
 
         ApiUpdateHardshipRequest request = (ApiUpdateHardshipRequest) mapper.fromDto(reviewDTO);
 
         softly.assertThat(request.getId())
-                .isEqualTo(hardship.getHardshipReviewId());
+                .isEqualTo(metadata.getHardshipReviewId());
         softly.assertThat(request.getUserModified())
-                .isEqualTo(hardship.getUserSession().getUserName());
+                .isEqualTo(metadata.getUserSession().getUserName());
     }
 
     @Test
@@ -206,7 +210,7 @@ class PersistHardshipMapperTest {
 
         mapper.toDto(response, reviewDTO);
 
-        assertThat(reviewDTO.getHardship().getHardshipReviewId())
+        assertThat(reviewDTO.getHardshipMetadata().getHardshipReviewId())
                 .isEqualTo(response.getId());
     }
 }

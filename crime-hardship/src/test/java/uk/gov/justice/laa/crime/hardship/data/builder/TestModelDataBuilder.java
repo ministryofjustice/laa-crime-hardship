@@ -49,19 +49,22 @@ public class TestModelDataBuilder {
 
     public static HardshipReview getMinimalHardshipReview() {
         return new HardshipReview()
+                .withCourtType(CourtType.MAGISTRATE)
+                .withReviewDate(LocalDateTime.now())
+                .withSolicitorCosts(TestModelDataBuilder.getSolicitorsCosts())
+                .withTotalAnnualDisposableIncome(TOTAL_DISPOSABLE_INCOME);
+    }
+
+    public static HardshipMetadata getHardshipMetadata() {
+        return new HardshipMetadata()
                 .withReviewReason(NewWorkReason.PRI)
                 .withCmuId(CMU_ID)
-                .withReviewDate(LocalDateTime.now())
                 .withHardshipReviewId(HARDSHIP_ID)
                 .withNotes("Mock Note.")
                 .withDecisionNotes("Mock Decision Note.")
-                .withSolicitorCosts(TestModelDataBuilder.getSolicitorsCosts())
-                .withTotalAnnualDisposableIncome(TOTAL_DISPOSABLE_INCOME)
-                .withReviewStatus(HardshipReviewStatus.COMPLETE)
-
                 .withRepId(TestModelDataBuilder.TEST_REP_ID)
+                .withReviewStatus(HardshipReviewStatus.COMPLETE)
                 .withUserSession(TestModelDataBuilder.getUserSession())
-                .withCourtType(CourtType.MAGISTRATE)
                 .withFinancialAssessmentId(TestModelDataBuilder.FINANCIAL_ASSESSMENT_ID);
     }
 
