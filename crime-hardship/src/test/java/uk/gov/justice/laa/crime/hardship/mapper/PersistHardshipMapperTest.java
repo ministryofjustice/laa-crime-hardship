@@ -187,6 +187,19 @@ class PersistHardshipMapperTest {
     }
 
     @Test
+    void givenMinimalHardshipReviewDTOAndNoResult_whenFromDtoIsInvoked_thenRequestIsMapped() {
+        reviewDTO.setHardshipResult(null);
+        ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
+
+        softly.assertThat(request.getResultDate())
+                .isNull();
+        softly.assertThat(request.getReviewResult())
+                .isNull();
+        softly.assertThat(request.getDisposableIncomeAfterHardship())
+                .isNull();
+    }
+
+    @Test
     void givenApiPersistHardshipResponse_whenToDtoIsInvoked_thenDtoIsMapped() {
         ApiPersistHardshipResponse response = new ApiPersistHardshipResponse()
                 .withId(TestModelDataBuilder.HARDSHIP_ID);

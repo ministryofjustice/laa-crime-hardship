@@ -37,13 +37,17 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                     .withUserModified(hardship.getUserSession().getUserName());
         }
 
+        boolean isResult = hardshipResult != null;
+
         return request
                 .withNworCode(hardship.getReviewReason().getCode())
                 .withCmuId(hardship.getCmuId())
-                .withReviewResult(hardshipResult.getResult())
+                .withReviewResult(
+                        isResult ? hardshipResult.getResult() : null
+                )
                 .withReviewDate(hardship.getReviewDate())
                 .withResultDate(
-                        hardshipResult.getResult() != null ? LocalDateTime.now() : null
+                        isResult ? LocalDateTime.now() : null
                 )
                 .withNotes(hardship.getNotes())
                 .withDecisionNotes(hardship.getDecisionNotes())
@@ -58,7 +62,9 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 )
                 .withStatus(hardship.getReviewStatus())
                 .withDisposableIncome(hardship.getTotalAnnualDisposableIncome())
-                .withDisposableIncomeAfterHardship(hardshipResult.getPostHardshipDisposableIncome())
+                .withDisposableIncomeAfterHardship(
+                        isResult ? hardshipResult.getPostHardshipDisposableIncome() : null
+                )
                 .withReviewDetails(convertHardshipDetails(hardship))
                 .withReviewProgressItems(convertHardshipProgress(hardship));
     }
