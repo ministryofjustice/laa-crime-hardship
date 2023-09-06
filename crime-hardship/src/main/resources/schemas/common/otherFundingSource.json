@@ -12,6 +12,6 @@
     }
   },
   "extends": {
-    "$ref": "hardshipDetails.json"
+    "$ref": "hardshipDetail.json"
   }
 }

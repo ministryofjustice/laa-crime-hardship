@@ -69,7 +69,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                             .withAmount(item.getAmount())
                             .withOtherDescription(item.getDescription())
                             .withUserCreated(hardship.getUserSession().getUserName());
-                    if (item instanceof OtherFundingSources otherFunding) {
+                    if (item instanceof OtherFundingSource otherFunding) {
                         return detail
                                 .withDateDue(otherFunding.getDueDate());
                     } else if (item instanceof HardshipCost hardshipCost) {

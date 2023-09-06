@@ -63,7 +63,7 @@
       "type": "array",
       "description": "Other funding sources",
       "items": {
-        "$ref": "common/otherFundingSources.json"
+        "$ref": "common/otherFundingSource.json"
       }
     },
     "extraExpenditure": {
