@@ -7,6 +7,7 @@ import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.time.LocalDateTime;
@@ -69,12 +70,12 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 .flatMap(Collection::stream)
                 .map(item -> {
                     var detail = new ApiHardshipDetail()
-                            .withType(item.getType())
                             .withAmount(item.getAmount())
                             .withOtherDescription(item.getDescription())
                             .withUserCreated(hardship.getUserSession().getUserName());
                     if (item instanceof OtherFundingSource otherFunding) {
                         return detail
+                                .withType(HardshipReviewDetailType.FUNDING)
                                 .withDateDue(otherFunding.getDueDate());
                     } else if (item instanceof HardshipCost hardshipCost) {
                         detail
@@ -83,6 +84,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
 
                         if (item instanceof DeniedIncome deniedIncome) {
                             return detail
+                                    .withType(HardshipReviewDetailType.INCOME)
                                     .withDetailCode(
                                             HardshipReviewDetailCode.getFrom(
                                                     deniedIncome.getItemCode().getCode()
@@ -90,6 +92,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                                     );
                         } else if (item instanceof ExtraExpenditure expenditure) {
                             return detail
+                                    .withType(HardshipReviewDetailType.EXPENDITURE)
                                     .withDetailCode(HardshipReviewDetailCode.getFrom(
                                                     expenditure.getItemCode().getCode()
                                             )

@@ -53,8 +53,4 @@ public class HardshipReviewDTO {
     private List<HardshipReviewDetail> reviewDetails = new ArrayList<>();
     @Builder.Default
     private List<HardshipReviewProgress> reviewProgressItems = new ArrayList<>();
-
-    public LocalDateTime getTimestamp() {
-        return updated != null ? updated : dateCreated;
-    }
 }

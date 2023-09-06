@@ -87,7 +87,6 @@ public class TestModelDataBuilder {
                 .withAccepted(true)
                 .withAmount(BigDecimal.TEN)
                 .withFrequency(Frequency.MONTHLY)
-                .withType(HardshipReviewDetailType.INCOME)
                 .withReasonNote("Hospitalisation")
                 .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS);
     }
@@ -97,14 +96,12 @@ public class TestModelDataBuilder {
                 .withAccepted(true)
                 .withAmount(BigDecimal.TEN)
                 .withFrequency(Frequency.TWO_WEEKLY)
-                .withType(HardshipReviewDetailType.EXPENDITURE)
                 .withReasonCode(HardshipReviewDetailReasons.ESSENTIAL_ITEM)
                 .withItemCode(ExtraExpenditureDetailCode.CARDS);
     }
 
     public static OtherFundingSource getOtherFundingSources() {
         return new OtherFundingSource()
-                .withType(HardshipReviewDetailType.FUNDING)
                 .withAmount(BigDecimal.ONE)
                 .withDueDate(LocalDateTime.MAX)
                 .withDescription("Loan from parents");
