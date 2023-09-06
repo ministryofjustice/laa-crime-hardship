@@ -4,93 +4,16 @@
   "type": "object",
   "title": "Persist Hardship Request",
   "description": "Data contract for create Hardship Review request",
-  "javaType": "HardshipReview",
   "properties": {
-    "repId": {
-      "type": "integer",
-      "description": "MAAT / Rep Id"
-    },
-    "cmuId": {
-      "type": "integer",
-      "description": "Case Management Unit Id"
-    },
-    "courtType": {
-      "description": "The Court Type",
+    "hardship": {
       "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType"
+      "$ref": "common/hardshipReview.json",
+      "description": "The details of the Hardship Review"
     },
-    "reviewStatus": {
-      "description": "The review status",
+    "hardshipMetadata": {
       "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus"
-    },
-    "reviewDate": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The hardship review date"
-    },
-    "userSession": {
-      "type": "object",
-      "description": "The current users session",
-      "$ref": "common/apiUserSession.json"
-    },
-    "reviewReason": {
-      "description": "The review reason",
-      "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason"
-    },
-    "notes": {
-      "type": "string",
-      "description": "The review progress notes"
-    },
-    "decisionNotes": {
-      "type": "string",
-      "description": "The notes regarding the decision"
-    },
-    "financialAssessmentId": {
-      "type": "integer",
-      "description": "The ID of the financial assessment being updated"
-    },
-    "totalAnnualDisposableIncome": {
-      "type": "number",
-      "description": "The applicants total annual disposable income"
-    },
-    "hardshipReviewId": {
-      "type": "integer",
-      "description": "The ID of the Hardship Review to update"
-    },
-    "otherFundingSources": {
-      "type": "array",
-      "description": "Other funding sources",
-      "items": {
-        "$ref": "common/otherFundingSource.json"
-      }
-    },
-    "extraExpenditure": {
-      "type": "array",
-      "description": "Extra expenditure",
-      "items": {
-        "$ref": "common/extraExpenditure.json"
-      }
-    },
-    "deniedIncome": {
-      "type": "array",
-      "description": "Denied income",
-      "items": {
-        "$ref": "common/deniedIncome.json"
-      }
-    },
-    "solicitorCosts": {
-      "type": "object",
-      "description": "Solicitor cost",
-      "$ref": "common/solicitorCosts.json"
-    },
-    "progressItems": {
-      "type": "array",
-      "description": "The hardship review progress details (actions taken & responses)",
-      "items": {
-        "$ref": "common/hardshipProgress.json"
-      }
+      "$ref": "common/hardshipMetadata.json",
+      "description": "The Hardship Review metadata"
     }
   },
   "additionalProperties": false

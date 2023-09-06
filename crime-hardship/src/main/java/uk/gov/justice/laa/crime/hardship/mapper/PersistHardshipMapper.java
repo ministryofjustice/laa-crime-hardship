@@ -23,25 +23,26 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
 
         ApiPersistHardshipRequest request;
         HardshipReview hardship = reviewDTO.getHardship();
+        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
         HardshipResult hardshipResult = reviewDTO.getHardshipResult();
 
         if (RequestType.CREATE == reviewDTO.getRequestType()) {
             request = new ApiCreateHardshipRequest()
-                    .withRepId(hardship.getRepId())
-                    .withUserCreated(hardship.getUserSession().getUserName())
+                    .withRepId(metadata.getRepId())
+                    .withUserCreated(metadata.getUserSession().getUserName())
                     .withCourtType(hardship.getCourtType())
-                    .withFinancialAssessmentId(hardship.getFinancialAssessmentId());
+                    .withFinancialAssessmentId(metadata.getFinancialAssessmentId());
         } else {
             request = new ApiUpdateHardshipRequest()
-                    .withId(hardship.getHardshipReviewId())
-                    .withUserModified(hardship.getUserSession().getUserName());
+                    .withId(metadata.getHardshipReviewId())
+                    .withUserModified(metadata.getUserSession().getUserName());
         }
 
         boolean isResult = hardshipResult != null;
 
         return request
-                .withNworCode(hardship.getReviewReason().getCode())
-                .withCmuId(hardship.getCmuId())
+                .withNworCode(metadata.getReviewReason().getCode())
+                .withCmuId(metadata.getCmuId())
                 .withReviewResult(
                         isResult ? hardshipResult.getResult() : null
                 )
@@ -49,8 +50,8 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 .withResultDate(
                         isResult ? LocalDateTime.now() : null
                 )
-                .withNotes(hardship.getNotes())
-                .withDecisionNotes(hardship.getDecisionNotes())
+                .withNotes(metadata.getNotes())
+                .withDecisionNotes(metadata.getDecisionNotes())
                 .withSolicitorCosts(
                         SolicitorCosts.builder()
                                 .solicitorRate(hardship.getSolicitorCosts().getRate())
@@ -60,16 +61,16 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                                 .solicitorHours(hardship.getSolicitorCosts().getHours())
                                 .build()
                 )
-                .withStatus(hardship.getReviewStatus())
+                .withStatus(metadata.getReviewStatus())
                 .withDisposableIncome(hardship.getTotalAnnualDisposableIncome())
                 .withDisposableIncomeAfterHardship(
                         isResult ? hardshipResult.getPostHardshipDisposableIncome() : null
                 )
-                .withReviewDetails(convertHardshipDetails(hardship))
-                .withReviewProgressItems(convertHardshipProgress(hardship));
+                .withReviewProgressItems(convertHardshipProgress(metadata))
+                .withReviewDetails(convertHardshipDetails(hardship, metadata.getUserSession().getUserName()));
     }
 
-    private List<ApiHardshipDetail> convertHardshipDetails(HardshipReview hardship) {
+    private List<ApiHardshipDetail> convertHardshipDetails(HardshipReview hardship, String username) {
         return Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure(),
                         hardship.getOtherFundingSources()
                 )
@@ -78,7 +79,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                     var detail = new ApiHardshipDetail()
                             .withAmount(item.getAmount())
                             .withOtherDescription(item.getDescription())
-                            .withUserCreated(hardship.getUserSession().getUserName());
+                            .withUserCreated(username);
                     if (item instanceof OtherFundingSource otherFunding) {
                         return detail
                                 .withType(HardshipReviewDetailType.FUNDING)
@@ -110,19 +111,19 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 }).toList();
     }
 
-    private List<ApiHardshipProgress> convertHardshipProgress(HardshipReview hardship) {
-        return hardship.getProgressItems().stream()
+    private List<ApiHardshipProgress> convertHardshipProgress(HardshipMetadata metadata) {
+        return metadata.getProgressItems().stream()
                 .map(item -> new ApiHardshipProgress()
                         .withDateRequested(item.getDateTaken())
                         .withDateRequired(item.getDateRequired())
                         .withDateCompleted(item.getDateCompleted())
                         .withProgressAction(item.getAction())
                         .withProgressResponse(item.getResponse())
-                        .withUserCreated(hardship.getUserSession().getUserName())
+                        .withUserCreated(metadata.getUserSession().getUserName())
                 ).toList();
     }
 
     public void toDto(ApiPersistHardshipResponse response, HardshipReviewDTO reviewDTO) {
-        reviewDTO.getHardship().setHardshipReviewId(response.getId());
+        reviewDTO.getHardshipMetadata().setHardshipReviewId(response.getId());
     }
 }

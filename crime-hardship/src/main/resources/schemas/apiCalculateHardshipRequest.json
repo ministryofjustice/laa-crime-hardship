@@ -5,49 +5,10 @@
   "title": "Calculate Hardship Request",
   "description": "Data contract for calculate Hardship Review request",
   "properties": {
-    "courtType": {
-      "description": "The Court Type",
+    "hardship": {
       "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType"
-    },
-    "totalAnnualDisposableIncome": {
-      "type": "number",
-      "description": "The applicants total annual disposable income"
-    },
-    "reviewDate": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The hardship review date"
-    },
-    "financialAssessmentId": {
-      "type": "integer",
-      "description": "The ID of the financial assessment being updated"
-    },
-    "otherFundingSources": {
-      "type": "array",
-      "description": "Other funding sources",
-      "items": {
-        "$ref": "common/otherFundingSource.json"
-      }
-    },
-    "extraExpenditure": {
-      "type": "array",
-      "description": "Extra expenditure",
-      "items": {
-        "$ref": "common/extraExpenditure.json"
-      }
-    },
-    "deniedIncome": {
-      "type": "array",
-      "description": "Denied income",
-      "items": {
-        "$ref": "common/deniedIncome.json"
-      }
-    },
-    "solicitorCost": {
-      "type": "object",
-      "description": "Solicitor cost",
-      "$ref": "common/solicitorCosts.json"
+      "$ref": "common/hardshipReview.json",
+      "description": "The details of the Hardship Review"
     }
   },
   "additionalProperties": false
