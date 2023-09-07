@@ -24,7 +24,7 @@
       "format": "date-time"
     },
     "accepted": {
-      "type": "boolean",
+      "type": "string",
       "description": "Indicates whether the detail item has been accepted"
     },
     "otherDescription": {

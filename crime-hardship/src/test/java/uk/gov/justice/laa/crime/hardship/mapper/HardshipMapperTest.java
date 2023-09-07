@@ -51,7 +51,7 @@ class HardshipMapperTest {
     }
 
     @Test
-    void givenHardshipReviewDTO_whenToDtoIsInvoked_thenDtoIsMapped() {
+    void givenApiPerformHardshipRequest_whenToDtoIsInvoked_thenDtoIsMapped() {
         ApiPerformHardshipRequest hardship = new ApiPerformHardshipRequest()
                 .withHardshipMetadata(
                         new HardshipMetadata()

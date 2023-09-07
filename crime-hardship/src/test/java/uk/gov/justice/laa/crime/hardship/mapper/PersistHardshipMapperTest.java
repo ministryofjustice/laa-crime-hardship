@@ -91,6 +91,7 @@ class PersistHardshipMapperTest {
 
         hardship.setDeniedIncome(List.of(deniedIncome));
         hardship.setExtraExpenditure(List.of(extraExpenditure));
+        hardship.getExtraExpenditure().get(0).setAccepted(false);
         hardship.setOtherFundingSources(List.of(otherFundingSource));
 
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
@@ -103,7 +104,7 @@ class PersistHardshipMapperTest {
         List<ApiHardshipDetail> expected = List.of(
 
                 new ApiHardshipDetail()
-                        .withAccepted(true)
+                        .withAccepted("Y")
                         .withType(HardshipReviewDetailType.INCOME)
                         .withAmount(deniedIncome.getAmount())
                         .withFrequency(deniedIncome.getFrequency())
@@ -111,7 +112,7 @@ class PersistHardshipMapperTest {
                         .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS),
 
                 new ApiHardshipDetail()
-                        .withAccepted(true)
+                        .withAccepted("N")
                         .withType(HardshipReviewDetailType.EXPENDITURE)
                         .withAmount(extraExpenditure.getAmount())
                         .withFrequency(extraExpenditure.getFrequency())
@@ -130,7 +131,7 @@ class PersistHardshipMapperTest {
                         .withType(HardshipReviewDetailType.SOL_COSTS)
                         .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                         .withFrequency(Frequency.ANNUALLY)
-                        .withAccepted(true)
+                        .withAccepted("Y")
         );
 
         assertThat(reviewDetails)
