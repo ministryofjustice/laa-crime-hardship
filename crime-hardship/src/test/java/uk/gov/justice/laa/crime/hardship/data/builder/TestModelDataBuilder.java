@@ -2,7 +2,6 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
