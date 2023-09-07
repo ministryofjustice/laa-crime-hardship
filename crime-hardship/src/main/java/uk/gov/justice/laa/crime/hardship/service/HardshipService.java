@@ -67,7 +67,7 @@ public class HardshipService {
                     .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
                     .add(solicitorCosts.getVat())
                     .add(solicitorCosts.getDisbursements());
-
+            solicitorCosts.setEstimatedTotal(estimatedTotal);
             total = total.add(estimatedTotal);
         }
 

@@ -11,10 +11,7 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -101,7 +98,7 @@ class PersistHardshipMapperTest {
 
         assertThat(reviewDetails)
                 .asList()
-                .hasSize(3);
+                .hasSize(4);
 
         List<ApiHardshipDetail> expected = List.of(
 
@@ -127,10 +124,17 @@ class PersistHardshipMapperTest {
                         .withAmount(otherFundingSource.getAmount())
                         .withDateDue(otherFundingSource.getDueDate())
                         .withUserCreated(metadata.getUserSession().getUserName())
-                        .withOtherDescription(otherFundingSource.getDescription())
+                        .withOtherDescription(otherFundingSource.getDescription()),
+
+                new ApiHardshipDetail()
+                        .withType(HardshipReviewDetailType.SOL_COSTS)
+                        .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
+                        .withFrequency(Frequency.ANNUALLY)
+                        .withAccepted(true)
         );
 
-        softly.assertThat(reviewDetails)
+        assertThat(reviewDetails)
+                .asList()
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(expected);
     }

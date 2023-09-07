@@ -6,6 +6,7 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
@@ -71,44 +72,55 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
     }
 
     private List<ApiHardshipDetail> convertHardshipDetails(HardshipReview hardship, String username) {
-        return Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure(),
-                        hardship.getOtherFundingSources()
-                )
-                .flatMap(Collection::stream)
-                .map(item -> {
-                    var detail = new ApiHardshipDetail()
-                            .withAmount(item.getAmount())
-                            .withOtherDescription(item.getDescription())
-                            .withUserCreated(username);
-                    if (item instanceof OtherFundingSource otherFunding) {
-                        return detail
-                                .withType(HardshipReviewDetailType.FUNDING)
-                                .withDateDue(otherFunding.getDueDate());
-                    } else if (item instanceof HardshipCost hardshipCost) {
-                        detail
-                                .withFrequency(hardshipCost.getFrequency())
-                                .withAccepted(hardshipCost.getAccepted());
 
-                        if (item instanceof DeniedIncome deniedIncome) {
-                            return detail
-                                    .withType(HardshipReviewDetailType.INCOME)
-                                    .withDetailCode(
-                                            HardshipReviewDetailCode.getFrom(
-                                                    deniedIncome.getItemCode().getCode()
+        return Stream.concat(
+                Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure(),
+                                hardship.getOtherFundingSources()
+                        )
+                        .flatMap(Collection::stream)
+                        .map(item -> {
+                            var detail = new ApiHardshipDetail()
+                                    .withAmount(item.getAmount())
+                                    .withOtherDescription(item.getDescription())
+                                    .withUserCreated(username);
+                            if (item instanceof OtherFundingSource otherFunding) {
+                                return detail
+                                        .withType(HardshipReviewDetailType.FUNDING)
+                                        .withDateDue(otherFunding.getDueDate());
+                            } else if (item instanceof HardshipCost hardshipCost) {
+                                detail
+                                        .withFrequency(hardshipCost.getFrequency())
+                                        .withAccepted(hardshipCost.getAccepted());
+
+                                if (item instanceof DeniedIncome deniedIncome) {
+                                    return detail
+                                            .withType(HardshipReviewDetailType.INCOME)
+                                            .withDetailCode(
+                                                    HardshipReviewDetailCode.getFrom(
+                                                            deniedIncome.getItemCode().getCode()
+                                                    )
+                                            );
+                                } else if (item instanceof ExtraExpenditure expenditure) {
+                                    return detail
+                                            .withType(HardshipReviewDetailType.EXPENDITURE)
+                                            .withDetailCode(HardshipReviewDetailCode.getFrom(
+                                                            expenditure.getItemCode().getCode()
+                                                    )
                                             )
-                                    );
-                        } else if (item instanceof ExtraExpenditure expenditure) {
-                            return detail
-                                    .withType(HardshipReviewDetailType.EXPENDITURE)
-                                    .withDetailCode(HardshipReviewDetailCode.getFrom(
-                                                    expenditure.getItemCode().getCode()
-                                            )
-                                    )
-                                    .withDetailReason(expenditure.getReasonCode());
-                        }
-                    }
-                    return detail;
-                }).toList();
+                                            .withDetailReason(expenditure.getReasonCode());
+                                }
+                            }
+                            return detail;
+                        }),
+
+                Stream.of(
+                        new ApiHardshipDetail()
+                                .withType(HardshipReviewDetailType.SOL_COSTS)
+                                .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
+                                .withFrequency(Frequency.ANNUALLY)
+                                .withAccepted(true)
+                )
+        ).toList();
     }
 
     private List<ApiHardshipProgress> convertHardshipProgress(HardshipMetadata metadata) {
