@@ -4,12 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
-import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
@@ -26,50 +27,28 @@ import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewR
 @RequiredArgsConstructor
 public class HardshipService {
 
+    private final HardshipDetailMapper detailMapper;
     private final MaatCourtDataService maatCourtDataService;
 
-    public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(ApiCalculateHardshipByDetailRequest request) {
-        ApiCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new ApiCalculateHardshipByDetailResponse();
-        BigDecimal hardshipSummary = BigDecimal.ZERO;
+    public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(Integer repId,
+                                                                           HardshipReviewDetailType detailType,
+                                                                           String laaTransactionId) {
+        List<ApiHardshipDetail> response =
+                maatCourtDataService.getHardshipByDetailType(repId, detailType.getType(), laaTransactionId);
 
-        List<HardshipReviewDetail> hardshipReviewDetailList = maatCourtDataService.getHardshipByDetailType(
-                        request.getRepId(), request.getDetailType(), request.getLaaTransactionId())
-                .stream().filter(hrd -> "Y".equals(hrd.getAccepted()) && BigDecimal.ZERO.compareTo(hrd.getAmount()) != 0).toList();
-
-        for (HardshipReviewDetail hardshipReviewDetail : hardshipReviewDetailList) {
-            hardshipSummary = hardshipSummary.add(
-                    hardshipReviewDetail.getAmount().multiply(
-                            BigDecimal.valueOf(hardshipReviewDetail.getFrequency().getAnnualWeighting()))
-            );
+        BigDecimal total = BigDecimal.ZERO;
+        if (response != null) {
+            HardshipReview hardship = new HardshipReview();
+            detailMapper.toDto(response, hardship);
+            total = calculateDetails(hardship);
         }
-        apiProcessRepOrderResponse.setHardshipSummary(hardshipSummary);
-        return apiProcessRepOrderResponse;
+        return new ApiCalculateHardshipByDetailResponse()
+                .withHardshipSummary(total);
     }
 
     public HardshipResult calculateHardship(final HardshipReview hardship, final BigDecimal fullThreshold) {
 
-        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
-                .flatMap(Collection::stream)
-                .map(item -> {
-                    if (Boolean.TRUE.equals(item.getAccepted())) {
-                        return item.getAmount()
-                                .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting()));
-                    }
-                    return BigDecimal.ZERO;
-                })
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        CourtType courtType = hardship.getCourtType();
-        if (courtType == CourtType.MAGISTRATE) {
-            SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
-            BigDecimal estimatedTotal = solicitorCosts.getRate()
-                    .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
-                    .add(solicitorCosts.getVat())
-                    .add(solicitorCosts.getDisbursements());
-            solicitorCosts.setEstimatedTotal(estimatedTotal);
-            total = total.add(estimatedTotal);
-        }
+        BigDecimal total = calculateDetails(hardship);
 
         final BigDecimal disposableIncomeAfterHardship =
                 hardship.getTotalAnnualDisposableIncome()
@@ -84,5 +63,33 @@ public class HardshipService {
                 .result(result)
                 .postHardshipDisposableIncome(disposableIncomeAfterHardship)
                 .build();
+    }
+
+    private static BigDecimal calculateDetails(HardshipReview hardship) {
+        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
+                .flatMap(Collection::stream)
+                .map(item -> {
+                    if (Boolean.TRUE.equals(item.getAccepted())) {
+                        return item.getAmount()
+                                .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting()));
+                    }
+                    return BigDecimal.ZERO;
+                })
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        CourtType courtType = hardship.getCourtType();
+        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
+        if (solicitorCosts != null
+                && (courtType == CourtType.MAGISTRATE || solicitorCosts.getEstimatedTotal() != null)) {
+                BigDecimal estimatedTotal = solicitorCosts.getRate()
+                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
+                        .add(solicitorCosts.getVat())
+                        .add(solicitorCosts.getDisbursements());
+
+                solicitorCosts.setEstimatedTotal(estimatedTotal);
+                total = total.add(estimatedTotal);
+        }
+        return total;
     }
 }

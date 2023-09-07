@@ -4,12 +4,15 @@ import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.*;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -37,11 +40,13 @@ public class TestModelDataBuilder {
     public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
     public static final BigDecimal TEST_SOLICITOR_ESTIMATED_COST = BigDecimal.valueOf(2500);
 
-    public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(boolean isValid) {
+    public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(
+            boolean isValid, HardshipReviewDetailType detailType) {
+
         return new ApiCalculateHardshipByDetailRequest()
                 .withRepId(isValid ? TEST_REP_ID : null)
                 .withLaaTransactionId(MEANS_ASSESSMENT_TRANSACTION_ID)
-                .withDetailType(DETAIL_TYPE);
+                .withDetailType(detailType.getType());
     }
 
     public static HardshipReview getMinimalHardshipReview() {
@@ -142,6 +147,48 @@ public class TestModelDataBuilder {
 
     public static HardshipReview getCrownHardshipReviewWithDetails(HardshipReviewDetailType... detailTypes) {
         return getHardshipReviewWithDetails(CourtType.CROWN_COURT, detailTypes);
+    }
+
+    public static List<ApiHardshipDetail> getApiHardshipReviewDetails(HardshipReviewDetailType... detailTypes) {
+        List<ApiHardshipDetail> details = new ArrayList<>();
+
+        Arrays.stream(detailTypes).forEach(type -> {
+            switch (type) {
+                case FUNDING -> details.add(
+                        new ApiHardshipDetail()
+                                .withType(HardshipReviewDetailType.FUNDING)
+                                .withAmount(BigDecimal.TEN)
+                                .withDateDue(LocalDateTime.now())
+                );
+                case INCOME -> details.add(
+                        new ApiHardshipDetail()
+                                .withType(HardshipReviewDetailType.INCOME)
+                                .withAmount(BigDecimal.TEN)
+                                .withFrequency(Frequency.MONTHLY)
+                                .withAccepted("N")
+                                .withOtherDescription("Statutory sick pay")
+                                .withDetailCode(HardshipReviewDetailCode.SUSPENDED_WORK)
+                );
+                case EXPENDITURE -> details.add(
+                        new ApiHardshipDetail()
+                                .withType(HardshipReviewDetailType.EXPENDITURE)
+                                .withAmount(BigDecimal.TEN)
+                                .withFrequency(Frequency.TWO_WEEKLY)
+                                .withAccepted("Y")
+                                .withDetailReason(HardshipReviewDetailReasons.COVERED_BY_LIVING_EXPENSE)
+                                .withOtherDescription("Loan to family members")
+                                .withDetailCode(HardshipReviewDetailCode.OTHER)
+                );
+                case SOL_COSTS -> details.add(
+                        new ApiHardshipDetail()
+                                .withType(HardshipReviewDetailType.SOL_COSTS)
+                                .withAmount(BigDecimal.TEN)
+                                .withFrequency(Frequency.ANNUALLY)
+                                .withAccepted("Y")
+                );
+            }
+        });
+        return details;
     }
 
     private static HardshipReview getHardshipReviewWithDetails(CourtType courtType,

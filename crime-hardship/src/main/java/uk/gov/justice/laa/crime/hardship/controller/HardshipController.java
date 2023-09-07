@@ -21,6 +21,7 @@ import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRespo
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 @Slf4j
@@ -47,7 +48,14 @@ public class HardshipController {
                             schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
                     )
             ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
-        return ResponseEntity.ok(hardshipService.calculateHardshipForDetail(request));
+
+        return ResponseEntity.ok(
+                hardshipService.calculateHardshipForDetail(
+                        request.getRepId(),
+                        HardshipReviewDetailType.valueOf(request.getDetailType()),
+                        request.getLaaTransactionId()
+                )
+        );
     }
 
 
@@ -119,5 +127,4 @@ public class HardshipController {
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;
     }
-
 }
