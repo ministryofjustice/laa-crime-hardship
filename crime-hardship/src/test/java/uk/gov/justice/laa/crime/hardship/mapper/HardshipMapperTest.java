@@ -25,20 +25,14 @@ class HardshipMapperTest {
     @Test
     void givenHardshipReviewDTO_whenFromDtoIsInvoked_thenResponseIsMapped() {
 
-        HardshipReview hardship = new HardshipReview()
-                .withTotalAnnualDisposableIncome(TestModelDataBuilder.TOTAL_DISPOSABLE_INCOME);
-
-        HardshipMetadata metadata = new HardshipMetadata()
-                .withHardshipReviewId(TestModelDataBuilder.HARDSHIP_ID);
-
-        HardshipResult result = HardshipResult.builder()
-                .result(HardshipReviewResult.PASS)
-                .postHardshipDisposableIncome(TestModelDataBuilder.POST_HARDSHIP_DISPOSABLE_INCOME)
-                .build();
+        HardshipMetadata metadata = TestModelDataBuilder.getHardshipMetadata();
+        HardshipReview hardship = TestModelDataBuilder.getMinimalHardshipReview();
+        HardshipResult result = TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
 
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .hardship(hardship)
                 .hardshipResult(result)
+                .hardshipMetadata(metadata)
                 .build();
 
         ApiPerformHardshipResponse response = mapper.fromDto(reviewDTO);

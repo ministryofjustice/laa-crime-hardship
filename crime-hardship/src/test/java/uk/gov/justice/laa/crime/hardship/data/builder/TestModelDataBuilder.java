@@ -2,7 +2,6 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.*;
@@ -12,11 +11,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Stream;
 
 @Component
 public class TestModelDataBuilder {
@@ -28,23 +25,24 @@ public class TestModelDataBuilder {
     public static final String DETAIL_TYPE = "EXPENDITURE";
     public static final Integer FINANCIAL_ASSESSMENT_ID = 6781;
     public static final BigDecimal FULL_THRESHOLD = BigDecimal.valueOf(3000.0);
-    public static final BigDecimal HARDSHIP_AMOUNT = BigDecimal.valueOf(10.0);
-    public static final BigDecimal HARDSHIP_SUMMARY = BigDecimal.valueOf(100.12);
+    public static final BigDecimal HARDSHIP_AMOUNT = BigDecimal.valueOf(5000);
     public static final BigDecimal TOTAL_DISPOSABLE_INCOME = BigDecimal.valueOf(500);
     public static final BigDecimal POST_HARDSHIP_DISPOSABLE_INCOME = BigDecimal.valueOf(250);
     public static final String MEANS_ASSESSMENT_TRANSACTION_ID = "7c49ebfe-fe3a-4f2f-8dad-f7b8f03b8327";
     public static final LocalDateTime RESULT_DATE = LocalDateTime.of(2022, 12, 14, 0, 0, 0);
+
+    // Solicitors Costs
+    public static final Integer TEST_SOLICITOR_HOURS = 50;
+    public static final BigDecimal TEST_SOLICITOR_RATE = BigDecimal.valueOf(200);
+    public static final BigDecimal TEST_SOLICITOR_DISBURSEMENTS = BigDecimal.valueOf(375);
+    public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
+    public static final BigDecimal TEST_SOLICITOR_ESTIMATED_COST = BigDecimal.valueOf(2500);
 
     public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(boolean isValid) {
         return new ApiCalculateHardshipByDetailRequest()
                 .withRepId(isValid ? TEST_REP_ID : null)
                 .withLaaTransactionId(MEANS_ASSESSMENT_TRANSACTION_ID)
                 .withDetailType(DETAIL_TYPE);
-    }
-
-    public static ApiCalculateHardshipByDetailResponse getApiCalculateHardshipByDetailResponse() {
-        return new ApiCalculateHardshipByDetailResponse()
-                .withHardshipSummary(HARDSHIP_SUMMARY);
     }
 
     public static HardshipReview getMinimalHardshipReview() {
@@ -68,21 +66,21 @@ public class TestModelDataBuilder {
                 .withFinancialAssessmentId(TestModelDataBuilder.FINANCIAL_ASSESSMENT_ID);
     }
 
-    public static HardshipResult getHardshipResult() {
+    public static HardshipResult getHardshipResult(HardshipReviewResult result) {
         return HardshipResult.builder()
                 .resultDate(RESULT_DATE)
-                .result(HardshipReviewResult.PASS)
+                .result(result)
                 .postHardshipDisposableIncome(POST_HARDSHIP_DISPOSABLE_INCOME)
                 .build();
     }
 
     public static SolicitorCosts getSolicitorsCosts() {
         return new SolicitorCosts()
-                .withVat(BigDecimal.TEN)
+                .withVat(TEST_SOLICITOR_VAT)
                 .withDisbursements(BigDecimal.ZERO)
-                .withRate(BigDecimal.TEN)
-                .withHours(50)
-                .withEstimatedTotal(BigDecimal.valueOf(2000));
+                .withRate(TEST_SOLICITOR_RATE)
+                .withHours(TEST_SOLICITOR_HOURS)
+                .withEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST);
     }
 
     public static DeniedIncome getDeniedIncome() {
@@ -139,48 +137,59 @@ public class TestModelDataBuilder {
                 .build());
     }
 
-    public static HardshipReviewCalculationDTO getHardshipReviewCalculationDTO(HardshipReviewDetailType... hardshipReviewDetailTypes) {
-        var hardshipReviewCalculationDetails = Arrays.stream(hardshipReviewDetailTypes)
-                .map(TestModelDataBuilder::getHardshipReviewCalculationDetail)
-                .collect(toList());
-
-        return HardshipReviewCalculationDTO.builder()
-                .hardshipReviewCalculationDetails(hardshipReviewCalculationDetails)
-                .disposableIncome(BigDecimal.valueOf(5000.00)).build();
+    public static HardshipReview getMagsHardshipReviewWithDetails(HardshipReviewDetailType... detailTypes) {
+        return getHardshipReviewWithDetails(CourtType.MAGISTRATE, detailTypes);
     }
 
-    public static HardshipReviewCalculationDetail getHardshipReviewCalculationDetail(HardshipReviewDetailType detailType) {
-        switch (detailType) {
-            case EXPENDITURE -> {
-                return HardshipReviewCalculationDetail.builder()
-                        .detailType(HardshipReviewDetailType.EXPENDITURE)
-                        .accepted("Y")
-                        .amount(BigDecimal.valueOf(160.00))
-                        .frequency(Frequency.WEEKLY)
-                        .build();
-            }
-            case SOL_COSTS -> {
-                return HardshipReviewCalculationDetail.builder()
-                        .detailType(HardshipReviewDetailType.SOL_COSTS)
-                        .accepted("Y")
-                        .amount(BigDecimal.valueOf(2300.25))
-                        .frequency(Frequency.ANNUALLY)
-                        .build();
-            }
-            case INCOME -> {
-                return HardshipReviewCalculationDetail.builder()
-                        .detailType(HardshipReviewDetailType.INCOME)
-                        .accepted("Y")
-                        .amount(BigDecimal.valueOf(2000.00))
-                        .frequency(Frequency.ANNUALLY)
-                        .build();
-            }
-            default -> {
-                return HardshipReviewCalculationDetail.builder()
-                        .detailType(detailType)
-                        .build();
-            }
-        }
+    public static HardshipReview getCrownHardshipReviewWithDetails(HardshipReviewDetailType... detailTypes) {
+        return getHardshipReviewWithDetails(CourtType.CROWN_COURT, detailTypes);
     }
 
+    private static HardshipReview getHardshipReviewWithDetails(CourtType courtType,
+                                                               HardshipReviewDetailType... detailTypes) {
+
+        HardshipReview hardship = new HardshipReview()
+                .withCourtType(courtType)
+                .withTotalAnnualDisposableIncome(HARDSHIP_AMOUNT);
+
+        Stream.of(detailTypes)
+                .forEach(type -> {
+                    switch (type) {
+                        case EXPENDITURE -> hardship.setExtraExpenditure(
+                                List.of(
+                                        new ExtraExpenditure()
+                                                .withAccepted(true)
+                                                .withAmount(BigDecimal.valueOf(160.00))
+                                                .withFrequency(Frequency.WEEKLY)
+                                )
+                        );
+                        case SOL_COSTS -> hardship.setSolicitorCosts(
+                                new SolicitorCosts()
+                                        .withRate(TEST_SOLICITOR_RATE)
+                                        .withDisbursements(TEST_SOLICITOR_DISBURSEMENTS)
+                                        .withVat(TEST_SOLICITOR_VAT)
+                                        .withEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST)
+                                        .withHours(TEST_SOLICITOR_HOURS)
+                        );
+                        case INCOME -> hardship.setDeniedIncome(
+                                List.of(
+                                        new DeniedIncome()
+                                                .withAccepted(true)
+                                                .withAmount(BigDecimal.valueOf(2000.00))
+                                                .withFrequency(Frequency.ANNUALLY)
+                                )
+                        );
+                        case FUNDING -> hardship.setOtherFundingSources(
+                                List.of(
+                                        new OtherFundingSource()
+                                                .withAmount(BigDecimal.valueOf(1000.00))
+                                                .withDescription("Support from parents")
+                                                .withDueDate(LocalDateTime.now())
+                                )
+                        );
+                    }
+                });
+
+        return hardship;
+    }
 }

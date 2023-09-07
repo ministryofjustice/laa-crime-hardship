@@ -13,6 +13,7 @@ import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.time.LocalDateTime;
@@ -33,9 +34,9 @@ class PersistHardshipMapperTest {
     @BeforeEach
     void setup() {
         this.reviewDTO = HardshipReviewDTO.builder()
-                .hardshipResult(TestModelDataBuilder.getHardshipResult())
                 .hardship(TestModelDataBuilder.getMinimalHardshipReview())
                 .hardshipMetadata(TestModelDataBuilder.getHardshipMetadata())
+                .hardshipResult(TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS))
                 .build();
     }
 

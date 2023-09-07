@@ -3,20 +3,21 @@ package uk.gov.justice.laa.crime.hardship.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
+import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.*;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.FAIL;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.PASS;
 
@@ -45,32 +46,43 @@ public class HardshipService {
         return apiProcessRepOrderResponse;
     }
 
-    public HardshipReviewResultDTO calculateHardship(final HardshipReviewCalculationDTO hardshipReviewCalculationDTO, final BigDecimal fullThreshold) {
-        log.info("Calculating hardship for {}", hardshipReviewCalculationDTO);
-        BigDecimal hardshipSummary = BigDecimal.ZERO;
+    public HardshipResult calculateHardship(final HardshipReview hardship, final BigDecimal fullThreshold) {
 
-        if (!isEmpty(hardshipReviewCalculationDTO.getHardshipReviewCalculationDetails())) {
-            for (HardshipReviewCalculationDetail hRDetailDTO : hardshipReviewCalculationDTO.getHardshipReviewCalculationDetails()) {
-                if (Arrays.asList(INCOME, SOL_COSTS, EXPENDITURE).contains(hRDetailDTO.getDetailType())
-                        && BigDecimal.ZERO.compareTo(hRDetailDTO.getAmount()) != 0 && "Y".equals(hRDetailDTO.getAccepted())) {
-                    hardshipSummary = hardshipSummary.add(hRDetailDTO.getAmount()
-                            .multiply(BigDecimal.valueOf(hRDetailDTO.getFrequency().getAnnualWeighting())));
-                }
-            }
+        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
+                .flatMap(Collection::stream)
+                .map(item -> {
+                    if (Boolean.TRUE.equals(item.getAccepted())) {
+                        return item.getAmount()
+                                .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting()));
+                    }
+                    return BigDecimal.ZERO;
+                })
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        CourtType courtType = hardship.getCourtType();
+        if (courtType == CourtType.MAGISTRATE) {
+            SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
+            BigDecimal estimatedTotal = solicitorCosts.getRate()
+                    .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
+                    .add(solicitorCosts.getVat())
+                    .add(solicitorCosts.getDisbursements());
+
+            total = total.add(estimatedTotal);
         }
-        final BigDecimal disposableIncome = hardshipReviewCalculationDTO.getDisposableIncome();
-        final BigDecimal disposableIncomeAfterHardship = disposableIncome.subtract(hardshipSummary);
-        HardshipReviewResult reviewResult = FAIL;
 
+        final BigDecimal disposableIncomeAfterHardship =
+                hardship.getTotalAnnualDisposableIncome()
+                        .subtract(total)
+                        .setScale(2, RoundingMode.HALF_UP);
+
+        HardshipReviewResult result = FAIL;
         if (disposableIncomeAfterHardship.compareTo(fullThreshold) <= 0) {
-            reviewResult = PASS;
+            result = PASS;
         }
-        return HardshipReviewResultDTO.builder()
-                .hardshipSummary(hardshipSummary)
-                .hardshipReviewResult(reviewResult.name())
-                .disposableIncome(disposableIncome)
-                .disposableIncomeAfterHardship(disposableIncomeAfterHardship)
+        return HardshipResult.builder()
+                .result(result)
+                .postHardshipDisposableIncome(disposableIncomeAfterHardship)
                 .build();
     }
-
 }
