@@ -17,5 +17,4 @@ public class HardshipReviewDTO {
     private HardshipReview hardship;
     private HardshipMetadata hardshipMetadata;
     private HardshipResult hardshipResult;
-
 }
