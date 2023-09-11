@@ -18,8 +18,5 @@
     "$ref": "apiPersistHardshipRequest.json"
   },
   "additionalProperties": false,
-  "required": [
-    "id",
-    "userModified"
-  ]
+  "required": ["id", "userModified"]
 }

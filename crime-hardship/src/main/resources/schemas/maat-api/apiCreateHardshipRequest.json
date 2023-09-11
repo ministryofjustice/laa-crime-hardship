@@ -27,10 +27,5 @@
     "$ref": "apiPersistHardshipRequest.json"
   },
   "additionalProperties": false,
-  "required": [
-    "repId",
-    "userCreated",
-    "courtType",
-    "financialAssessmentId"
-  ]
+  "required": ["repId", "userCreated", "courtType", "financialAssessmentId"]
 }

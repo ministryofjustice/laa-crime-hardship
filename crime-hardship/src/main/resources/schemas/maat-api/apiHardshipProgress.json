@@ -44,9 +44,5 @@
       "description": "ID of the user creating the progress item"
     }
   },
-  "required": [
-    "dateRequested",
-    "dateRequired",
-    "progressAction"
-  ]
+  "required": ["dateRequested", "dateRequired", "progressAction"]
 }
