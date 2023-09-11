@@ -2,7 +2,6 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
-import uk.gov.justice.laa.crime.hardship.dto.maat_api.HardshipReviewDetail;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
@@ -39,6 +38,12 @@ public class TestModelDataBuilder {
     public static final BigDecimal TEST_SOLICITOR_DISBURSEMENTS = BigDecimal.valueOf(375);
     public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
     public static final BigDecimal TEST_SOLICITOR_ESTIMATED_COST = BigDecimal.valueOf(2500);
+
+    public static final BigDecimal TEST_EXPENDITURE_AMOUNT = BigDecimal.valueOf(75);
+    public static final Frequency TEST_EXPENDITURE_FREQUENCY = Frequency.MONTHLY;
+
+    public static final BigDecimal TEST_DENIED_INCOME_AMOUNT = BigDecimal.valueOf(125);
+    public static final Frequency TEST_DENIED_INCOME_FREQUENCY = Frequency.TWO_WEEKLY;
 
     public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(
             boolean isValid, HardshipReviewDetailType detailType) {
@@ -132,15 +137,6 @@ public class TestModelDataBuilder {
                 .withSessionId(UUID.randomUUID().toString());
     }
 
-    public static List<HardshipReviewDetail> getHardshipReviewDetailList(String accepted, double amount) {
-        return List.of(HardshipReviewDetail.builder()
-                .id(HARDSHIP_ID)
-                .accepted(accepted)
-                .amount(BigDecimal.valueOf(amount))
-                .frequency(Frequency.ANNUALLY)
-                .build());
-    }
-
     public static HardshipReview getMagsHardshipReviewWithDetails(HardshipReviewDetailType... detailTypes) {
         return getHardshipReviewWithDetails(CourtType.MAGISTRATE, detailTypes);
     }
@@ -150,6 +146,11 @@ public class TestModelDataBuilder {
     }
 
     public static List<ApiHardshipDetail> getApiHardshipReviewDetails(HardshipReviewDetailType... detailTypes) {
+        return getApiHardshipReviewDetails(BigDecimal.TEN, detailTypes);
+    }
+
+    public static List<ApiHardshipDetail> getApiHardshipReviewDetails(BigDecimal amount,
+                                                                      HardshipReviewDetailType... detailTypes) {
         List<ApiHardshipDetail> details = new ArrayList<>();
 
         Arrays.stream(detailTypes).forEach(type -> {
@@ -157,13 +158,13 @@ public class TestModelDataBuilder {
                 case FUNDING -> details.add(
                         new ApiHardshipDetail()
                                 .withType(HardshipReviewDetailType.FUNDING)
-                                .withAmount(BigDecimal.TEN)
+                                .withAmount(amount)
                                 .withDateDue(LocalDateTime.now())
                 );
                 case INCOME -> details.add(
                         new ApiHardshipDetail()
                                 .withType(HardshipReviewDetailType.INCOME)
-                                .withAmount(BigDecimal.TEN)
+                                .withAmount(amount)
                                 .withFrequency(Frequency.MONTHLY)
                                 .withAccepted("N")
                                 .withOtherDescription("Statutory sick pay")
@@ -172,7 +173,7 @@ public class TestModelDataBuilder {
                 case EXPENDITURE -> details.add(
                         new ApiHardshipDetail()
                                 .withType(HardshipReviewDetailType.EXPENDITURE)
-                                .withAmount(BigDecimal.TEN)
+                                .withAmount(amount)
                                 .withFrequency(Frequency.TWO_WEEKLY)
                                 .withAccepted("Y")
                                 .withDetailReason(HardshipReviewDetailReasons.COVERED_BY_LIVING_EXPENSE)
@@ -182,7 +183,7 @@ public class TestModelDataBuilder {
                 case SOL_COSTS -> details.add(
                         new ApiHardshipDetail()
                                 .withType(HardshipReviewDetailType.SOL_COSTS)
-                                .withAmount(BigDecimal.TEN)
+                                .withAmount(amount)
                                 .withFrequency(Frequency.ANNUALLY)
                                 .withAccepted("Y")
                 );
