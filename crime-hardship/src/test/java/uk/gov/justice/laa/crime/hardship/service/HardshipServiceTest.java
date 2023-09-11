@@ -28,6 +28,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.FULL_THRESHOLD;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_SOLICITOR_ESTIMATED_COST;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -134,6 +135,37 @@ class HardshipServiceTest {
     }
 
     @Test
+    void givenHardshipReviewWithSolicitorCostsAndCrownCourtCase_whenCalculateHardshipIsInvoked_thenSolicitorsCostsArentCalculated() {
+        HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(SOL_COSTS);
+
+        HardshipResult response =
+                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+
+        softly.assertThat(response.getPostHardshipDisposableIncome())
+                .isEqualTo(TestModelDataBuilder.HARDSHIP_AMOUNT.setScale(2, RoundingMode.HALF_UP));
+
+        softly.assertThat(response.getResult())
+                .isEqualTo(HardshipReviewResult.FAIL);
+    }
+
+    @Test
+    void givenHardshipReviewWithSolicitorCostsAndEstimatedTotal_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
+        HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
+
+        hardship.getSolicitorCosts()
+                .setEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST);
+
+        HardshipResult response =
+                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+
+        softly.assertThat(response.getPostHardshipDisposableIncome())
+                .isEqualTo(BigDecimal.valueOf(2500.00).setScale(2, RoundingMode.HALF_UP));
+
+        softly.assertThat(response.getResult())
+                .isEqualTo(HardshipReviewResult.PASS);
+    }
+
+    @Test
     void givenHardshipReviewWithSolicitorCosts_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
 
@@ -146,7 +178,6 @@ class HardshipServiceTest {
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
     }
-
 
     @Test
     void givenHardshipReviewWithSolicitorCostsAndExtraExpenditure_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {

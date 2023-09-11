@@ -209,7 +209,6 @@ public class TestModelDataBuilder {
                                         .withRate(TEST_SOLICITOR_RATE)
                                         .withDisbursements(TEST_SOLICITOR_DISBURSEMENTS)
                                         .withVat(TEST_SOLICITOR_VAT)
-                                        .withEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST)
                                         .withHours(TEST_SOLICITOR_HOURS)
                         );
                         case INCOME -> hardship.setDeniedIncome(
