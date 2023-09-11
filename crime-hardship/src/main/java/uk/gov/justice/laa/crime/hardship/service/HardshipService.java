@@ -80,15 +80,18 @@ public class HardshipService {
 
         CourtType courtType = hardship.getCourtType();
         SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
-        if (solicitorCosts != null
-                && (courtType == CourtType.MAGISTRATE || solicitorCosts.getEstimatedTotal() != null)) {
-                BigDecimal estimatedTotal = solicitorCosts.getRate()
+        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
+            BigDecimal estimatedTotal;
+            if (solicitorCosts.getEstimatedTotal() != null) {
+                estimatedTotal = solicitorCosts.getEstimatedTotal();
+            } else {
+                estimatedTotal = solicitorCosts.getRate()
                         .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
                         .add(solicitorCosts.getVat())
                         .add(solicitorCosts.getDisbursements());
-
                 solicitorCosts.setEstimatedTotal(estimatedTotal);
-                total = total.add(estimatedTotal);
+            }
+            total = total.add(estimatedTotal);
         }
         return total;
     }
