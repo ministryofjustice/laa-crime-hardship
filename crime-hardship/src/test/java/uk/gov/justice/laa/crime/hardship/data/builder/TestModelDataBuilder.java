@@ -39,12 +39,6 @@ public class TestModelDataBuilder {
     public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
     public static final BigDecimal TEST_SOLICITOR_ESTIMATED_COST = BigDecimal.valueOf(2500);
 
-    public static final BigDecimal TEST_EXPENDITURE_AMOUNT = BigDecimal.valueOf(75);
-    public static final Frequency TEST_EXPENDITURE_FREQUENCY = Frequency.MONTHLY;
-
-    public static final BigDecimal TEST_DENIED_INCOME_AMOUNT = BigDecimal.valueOf(125);
-    public static final Frequency TEST_DENIED_INCOME_FREQUENCY = Frequency.TWO_WEEKLY;
-
     public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(
             boolean isValid, HardshipReviewDetailType detailType) {
 
