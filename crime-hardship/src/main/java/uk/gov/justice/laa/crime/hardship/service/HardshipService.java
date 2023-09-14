@@ -68,13 +68,9 @@ public class HardshipService {
     private static BigDecimal calculateDetails(HardshipReview hardship) {
         BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
                 .flatMap(Collection::stream)
-                .map(item -> {
-                    if (Boolean.TRUE.equals(item.getAccepted())) {
-                        return item.getAmount()
-                                .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting()));
-                    }
-                    return BigDecimal.ZERO;
-                })
+                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
+                .map(item -> item.getAmount()
+                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
 
