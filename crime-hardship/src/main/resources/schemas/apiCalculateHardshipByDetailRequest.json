@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiStatelessCalculateHardshipByDetailRequest.json",
+  "id": "apiCalculateHardshipByDetailRequest.json",
   "type": "object",
-  "title": "Stateless Calculate Hardship By Detail Request",
-  "description": "Data Contract for Stateless Calculate Hardship By Detail Request",
+  "title": "Calculate Hardship By Detail Request",
+  "description": "Data contract for Calculate Hardship By Detail Request",
   "properties": {
     "laaTransactionId": {
       "type": "string",

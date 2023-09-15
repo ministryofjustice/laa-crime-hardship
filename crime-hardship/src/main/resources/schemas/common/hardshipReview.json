@@ -1,53 +1,50 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "apiStatelessCreateHardshipReviewRequest.json",
+  "id": "hardship.json",
   "type": "object",
-  "title": "Stateless create hardship request",
-  "description": "Data Contract for stateless create hardship",
+  "title": "Hardship Review",
+  "description": "Hardship Review Data",
+  "javaType": "HardshipReview",
   "properties": {
-    "laaTransactionId": {
-      "type": "string",
-      "description": "The txn / correlation UUID"
-    },
     "courtType": {
       "description": "The Court Type",
       "type": "object",
       "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType"
+    },
+    "totalAnnualDisposableIncome": {
+      "type": "number",
+      "description": "The applicants total annual disposable income"
     },
     "reviewDate": {
       "type": "string",
       "format": "date-time",
       "description": "The hardship review date"
     },
-    "financialAssessmentId": {
-      "type": "integer",
-      "description": "The ID of the financial assessment being updated"
-    },
     "otherFundingSources": {
       "type": "array",
       "description": "Other funding sources",
       "items": {
-        "$ref": "../common/otherFundingSources.json"
+        "$ref": "otherFundingSource.json"
       }
     },
     "extraExpenditure": {
       "type": "array",
       "description": "Extra expenditure",
       "items": {
-        "$ref": "../common/extraExpenditure.json"
+        "$ref": "extraExpenditure.json"
       }
     },
     "deniedIncome": {
       "type": "array",
       "description": "Denied income",
       "items": {
-        "$ref": "../common/deniedIncome.json"
+        "$ref": "deniedIncome.json"
       }
     },
-    "solicitorCost": {
+    "solicitorCosts": {
       "type": "object",
       "description": "Solicitor cost",
-      "$ref": "../common/solicitorCosts.json"
+      "$ref": "solicitorCosts.json"
     }
   },
   "additionalProperties": false

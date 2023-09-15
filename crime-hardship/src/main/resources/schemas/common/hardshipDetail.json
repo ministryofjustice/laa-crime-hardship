@@ -5,14 +5,13 @@
   "title": "The hardship details schema",
   "description": "Details of hardship",
   "properties": {
-    "type": {
-      "type": "object",
-      "description": "Hardship review detail type",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType"
-    },
     "amount": {
       "type": "number",
       "description": "The amount under consideration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the funding source."
     }
   },
   "required": ["type", "amount"]

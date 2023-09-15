@@ -1,4 +1,4 @@
-package uk.gov.justice.laa.crime.hardship.dto;
+package uk.gov.justice.laa.crime.hardship.dto.maat_api;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class SolicitorCosts {
     private BigDecimal solicitorRate;
-    private BigDecimal solicitorHours;
+    private Integer solicitorHours;
     private BigDecimal solicitorVat;
     private BigDecimal solicitorDisb;
     private BigDecimal solicitorEstTotalCost;

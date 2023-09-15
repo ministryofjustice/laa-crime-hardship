@@ -3,20 +3,22 @@ package uk.gov.justice.laa.crime.hardship.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDTO;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewCalculationDetail;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewResultDTO;
-import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.stateless.ApiStatelessCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
+import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
+import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.math.RoundingMode;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.*;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.FAIL;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.PASS;
 
@@ -25,52 +27,68 @@ import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewR
 @RequiredArgsConstructor
 public class HardshipService {
 
+    private final HardshipDetailMapper detailMapper;
     private final MaatCourtDataService maatCourtDataService;
 
-    public ApiStatelessCalculateHardshipByDetailResponse calculateHardshipForDetail(ApiStatelessCalculateHardshipByDetailRequest request) {
-        ApiStatelessCalculateHardshipByDetailResponse apiProcessRepOrderResponse = new ApiStatelessCalculateHardshipByDetailResponse();
-        BigDecimal hardshipSummary = BigDecimal.ZERO;
+    public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(Integer repId,
+                                                                           HardshipReviewDetailType detailType,
+                                                                           String laaTransactionId) {
+        List<ApiHardshipDetail> response =
+                maatCourtDataService.getHardshipByDetailType(repId, detailType.getType(), laaTransactionId);
 
-        List<HardshipReviewDetail> hardshipReviewDetailList = maatCourtDataService.getHardshipByDetailType(
-                        request.getRepId(), request.getDetailType(), request.getLaaTransactionId())
-                .stream().filter(hrd -> "Y".equals(hrd.getAccepted()) && BigDecimal.ZERO.compareTo(hrd.getAmount()) != 0).toList();
-
-        for (HardshipReviewDetail hardshipReviewDetail : hardshipReviewDetailList) {
-            hardshipSummary = hardshipSummary.add(
-                    hardshipReviewDetail.getAmount().multiply(
-                            BigDecimal.valueOf(hardshipReviewDetail.getFrequency().getAnnualWeighting()))
-            );
+        BigDecimal total = BigDecimal.ZERO;
+        if (response != null) {
+            HardshipReview hardship = new HardshipReview();
+            detailMapper.toDto(response, hardship);
+            total = calculateDetails(hardship);
         }
-        apiProcessRepOrderResponse.setHardshipSummary(hardshipSummary);
-        return apiProcessRepOrderResponse;
+        return new ApiCalculateHardshipByDetailResponse()
+                .withHardshipSummary(total);
     }
 
-    public HardshipReviewResultDTO calculateHardship(final HardshipReviewCalculationDTO hardshipReviewCalculationDTO, final BigDecimal fullThreshold) {
-        log.info("Calculating hardship for {}", hardshipReviewCalculationDTO);
-        BigDecimal hardshipSummary = BigDecimal.ZERO;
+    public HardshipResult calculateHardship(final HardshipReview hardship, final BigDecimal fullThreshold) {
 
-        if (!isEmpty(hardshipReviewCalculationDTO.getHardshipReviewCalculationDetails())) {
-            for (HardshipReviewCalculationDetail hRDetailDTO : hardshipReviewCalculationDTO.getHardshipReviewCalculationDetails()) {
-                if (Arrays.asList(INCOME, SOL_COSTS, EXPENDITURE).contains(hRDetailDTO.getDetailType())
-                        && BigDecimal.ZERO.compareTo(hRDetailDTO.getAmount()) != 0 && "Y".equals(hRDetailDTO.getAccepted())) {
-                    hardshipSummary = hardshipSummary.add(hRDetailDTO.getAmount()
-                            .multiply(BigDecimal.valueOf(hRDetailDTO.getFrequency().getAnnualWeighting())));
-                }
-            }
-        }
-        final BigDecimal disposableIncome = hardshipReviewCalculationDTO.getDisposableIncome();
-        final BigDecimal disposableIncomeAfterHardship = disposableIncome.subtract(hardshipSummary);
-        HardshipReviewResult reviewResult = FAIL;
+        BigDecimal total = calculateDetails(hardship);
 
+        final BigDecimal disposableIncomeAfterHardship =
+                hardship.getTotalAnnualDisposableIncome()
+                        .subtract(total)
+                        .setScale(2, RoundingMode.HALF_UP);
+
+        HardshipReviewResult result = FAIL;
         if (disposableIncomeAfterHardship.compareTo(fullThreshold) <= 0) {
-            reviewResult = PASS;
+            result = PASS;
         }
-        return HardshipReviewResultDTO.builder()
-                .hardshipSummary(hardshipSummary)
-                .hardshipReviewResult(reviewResult.name())
-                .disposableIncome(disposableIncome)
-                .disposableIncomeAfterHardship(disposableIncomeAfterHardship)
+        return HardshipResult.builder()
+                .result(result)
+                .postHardshipDisposableIncome(disposableIncomeAfterHardship)
                 .build();
     }
 
+    private static BigDecimal calculateDetails(HardshipReview hardship) {
+        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
+                .flatMap(Collection::stream)
+                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
+                .map(item -> item.getAmount()
+                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        CourtType courtType = hardship.getCourtType();
+        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
+        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
+            BigDecimal estimatedTotal;
+            if (solicitorCosts.getEstimatedTotal() != null) {
+                estimatedTotal = solicitorCosts.getEstimatedTotal();
+            } else {
+                estimatedTotal = solicitorCosts.getRate()
+                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
+                        .add(solicitorCosts.getVat())
+                        .add(solicitorCosts.getDisbursements());
+                solicitorCosts.setEstimatedTotal(estimatedTotal);
+            }
+            total = total.add(estimatedTotal);
+        }
+        return total;
+    }
 }
