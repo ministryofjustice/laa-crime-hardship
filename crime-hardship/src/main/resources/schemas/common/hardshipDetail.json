@@ -5,19 +5,13 @@
   "title": "The hardship details schema",
   "description": "Details of hardship",
   "properties": {
-    "type": {
-      "type": "string",
-      "enum": [
-        "ACTION",
-        "SOL_COSTS",
-        "INCOME",
-        "EXPENDITURE",
-        "FUNDING"
-      ]
-    },
     "amount": {
       "type": "number",
       "description": "The amount under consideration"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description of the funding source."
     }
   },
   "required": ["type", "amount"]

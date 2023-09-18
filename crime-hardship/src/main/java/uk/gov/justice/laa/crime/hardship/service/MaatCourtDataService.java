@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
 import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDetail;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 
 import java.util.List;
 import java.util.Map;
@@ -23,9 +23,9 @@ public class MaatCourtDataService {
     private final ServicesConfiguration configuration;
     private static final String RESPONSE_STRING = "Response from Court Data API: %s";
 
-    public List<HardshipReviewDetail> getHardshipByDetailType(Integer repId, String detailType, String laaTransactionId) {
+    public List<ApiHardshipDetail> getHardshipByDetailType(Integer repId, String detailType, String laaTransactionId) {
 
-        List<HardshipReviewDetail> response = maatAPIClient.get(
+        List<ApiHardshipDetail> response = maatAPIClient.get(
                 new ParameterizedTypeReference<>() {
                 },
                 configuration.getMaatApi().getHardshipEndpoints().getHardshipDetailUrl(),

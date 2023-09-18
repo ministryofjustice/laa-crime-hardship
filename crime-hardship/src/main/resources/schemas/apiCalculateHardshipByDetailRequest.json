@@ -3,7 +3,7 @@
   "id": "apiCalculateHardshipByDetailRequest.json",
   "type": "object",
   "title": "Calculate Hardship By Detail Request",
-  "description": "Data Contract for Calculate Hardship By Detail Request",
+  "description": "Data contract for Calculate Hardship By Detail Request",
   "properties": {
     "laaTransactionId": {
       "type": "string",

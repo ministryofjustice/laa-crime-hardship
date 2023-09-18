@@ -6,25 +6,13 @@
   "description": "Details of hardship progress",
   "properties": {
     "action": {
-      "type": "string",
-      "enum": [
-        "FURTHER INFO",
-        "ORIG APP REQUESTED",
-        "ORIG APP RETURNED",
-        "SOLICITOR INFORMED",
-        "ADDITIONAL EVIDENCE",
-        "REJECTED APP",
-        "OTHER"
-      ],
+      "type": "object",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewProgressAction",
       "description": "The hardship review progress action codes"
     },
     "response": {
-      "type": "string",
-      "enum": [
-        "FURTHER RECEIVED",
-        "ORIGINAL RECEIVED",
-        "ADDITIONAL PROVIDED"
-      ],
+      "type": "object",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewProgressResponse",
       "description": "The hardship review progress response codes"
     },
     "dateTaken": {
@@ -44,4 +32,3 @@
     }
   }
 }
-

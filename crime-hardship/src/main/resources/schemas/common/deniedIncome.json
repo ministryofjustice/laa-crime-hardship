@@ -10,13 +10,9 @@
       "description": "The denied income reason note"
     },
     "itemCode": {
-      "type": "string",
-      "enum": [
-        "MEDICAL GROUNDS",
-        "SUSPENDED WORK",
-        "OTHER INC"
-      ],
-      "description": "The hardship denied income codes"
+      "type": "object",
+      "description": "The hardship denied income codes",
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.DeniedIncomeDetailCode"
     }
   },
   "extends": {
