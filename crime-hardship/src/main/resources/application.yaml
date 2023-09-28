@@ -63,6 +63,7 @@ services:
     hardship-endpoints:
       hardship-detail-url: ${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
       persist-hardship-url: ${services.maat-api.assessments-domain}/hardship
+      hardship-url: ${services.maat-api.assessments-domain}/hardship/{hardshipId}
 
 springdoc:
   packagesToScan: uk.gov.justice.laa.crime.hardship

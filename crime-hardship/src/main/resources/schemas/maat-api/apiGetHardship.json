@@ -1,0 +1,63 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "ApiGetHardship.json",
+  "type": "object",
+  "title": "Get Hardship Schema",
+  "description": "Data contract for retrieving a Hardship Review in the Court Data API",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "description": "Hardship Review ID"
+    },
+    "cmuId": {
+      "type": "integer",
+      "description": ""
+    },
+    "notes": {
+      "type": "string",
+      "description": ""
+    },
+    "decisionNotes": {
+      "type": "string",
+      "description": ""
+    },
+    "reviewDate": {
+      "type": "string",
+      "description": "",
+      "format": "date-time"
+    },
+    "reviewResult": {
+      "type": "string",
+      "description": ""
+    },
+    "disposableIncome": {
+      "type": "number",
+      "description": ""
+    },
+    "disposableIncomeAfterHardship": {
+      "type": "number",
+      "description": ""
+    },
+    "newWorkReason": {
+      "type": "object",
+      "description": ""
+    },
+    "solicitorCosts": {
+      "type": "object",
+      "description": ""
+    },
+    "status": {
+      "type": "object",
+      "description": ""
+    },
+    "reviewDetails":{
+      "type": "object",
+      "description": ""
+    },
+    "reviewProgressItems": {
+      "type": "object",
+      "description": ""
+    }
+  },
+  "required": []
+}
