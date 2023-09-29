@@ -16,5 +16,6 @@
       "description": "The Hardship Review metadata"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "required": ["repId", "detailType"]
 }
