@@ -21,7 +21,6 @@ import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRespo
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
-import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
@@ -34,7 +33,6 @@ public class HardshipController {
 
     private final HardshipMapper mapper;
     private final HardshipService hardshipService;
-    private final HardshipValidationService hardshipValidationService;
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Calculate Crime Hardship for Detail")
@@ -94,6 +92,7 @@ public class HardshipController {
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
         // Call service methods
         return ResponseEntity.ok().build();
@@ -116,13 +115,13 @@ public class HardshipController {
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
             @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
         // Call service methods
         return ResponseEntity.ok().build();
     }
 
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
-        hardshipValidationService.checkHardship(hardship);
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .requestType(requestType).build();
         mapper.toDto(hardship, reviewDTO);

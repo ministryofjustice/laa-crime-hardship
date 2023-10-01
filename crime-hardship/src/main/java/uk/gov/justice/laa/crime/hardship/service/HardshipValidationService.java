@@ -20,6 +20,14 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class HardshipValidationService {
 
+    public static final String HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE = "Review Date must be entered for completed hardship";
+    public static final String NEW_WORK_REASON_VALIDATION_MESSAGE = "Review Reason must be entered for hardship";
+    public static final String SOLICITOR_DETAILS_VALIDATION_MESSAGE = "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";
+    public static final String FUNDING_SOURCES_VALIDATION_MESSAGE = "Amount and Date Expected must be entered for each detail in section ";
+    public static final String DENIEW_INCOME_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
+    public static final String EXPENDITURE_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
+    public static final String PROGRESSION_ITEMS_VALIDATION_MESSAGE = "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress";
+
     public void checkHardship(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         validateHardshipReviewStatus(apiPerformHardshipRequest);
         validateHardshipReviewNewWorkReason(apiPerformHardshipRequest);
@@ -32,13 +40,13 @@ public class HardshipValidationService {
 
     private void validateHardshipReviewStatus(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         if(hardshipStatusIsCompleteWithoutReviewDate(apiPerformHardshipRequest)){
-            throw new ValidationException("Review Date must be entered for completed hardship");
+            throw new ValidationException(HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE);
         }
     }
 
     private void validateHardshipReviewNewWorkReason(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         if (isNull(apiPerformHardshipRequest.getHardshipMetadata().getReviewReason())) {
-            throw new ValidationException("Review Reason must be entered for hardship");
+            throw new ValidationException(NEW_WORK_REASON_VALIDATION_MESSAGE);
         }
     }
 
@@ -51,7 +59,7 @@ public class HardshipValidationService {
             solicitorHours = Optional.ofNullable(solicitorCosts.getHours()).orElse(0);
         }
         if (solicitorRateSpecifiedWithoutSolicitorHours(solicitorRate, solicitorHours)) {
-            throw new ValidationException("Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified");
+            throw new ValidationException(SOLICITOR_DETAILS_VALIDATION_MESSAGE);
         }
     }
 
@@ -59,7 +67,7 @@ public class HardshipValidationService {
         List<OtherFundingSource> fundingSources = apiPerformHardshipRequest.getHardship().getOtherFundingSources();
         Optional.ofNullable(fundingSources).orElse(List.of()).forEach(funding -> {
             if (fundingDescriptionWithoutFundingAmountOrDueDate(funding))
-                throw new ValidationException("Amount and Date Expected must be entered for each detail in section "+funding.getDescription());
+                throw new ValidationException(FUNDING_SOURCES_VALIDATION_MESSAGE +funding.getDescription());
         });
     }
 
@@ -67,7 +75,7 @@ public class HardshipValidationService {
         List<DeniedIncome> deniedIncomes = apiPerformHardshipRequest.getHardship().getDeniedIncome();
         Optional.ofNullable(deniedIncomes).orElse(List.of()).forEach(deniedIncome -> {
             if(deniedIncomeWithoutAmountOrFrequencyOrReasonNote(deniedIncome))
-                throw new ValidationException("Amount, Frequency, and Reason must be entered for each detail in section "+deniedIncome.getItemCode().getDescription());
+                throw new ValidationException(DENIEW_INCOME_VALIDATION_MESSAGE +deniedIncome.getItemCode().getDescription());
         });
     }
 
@@ -75,7 +83,7 @@ public class HardshipValidationService {
         List<ExtraExpenditure> expenditures = apiPerformHardshipRequest.getHardship().getExtraExpenditure();
         Optional.ofNullable(expenditures).orElse(List.of()).forEach(expenditure -> {
             if(expenditureWithoutAmountOrFrequencyOrReasonCode(expenditure))
-                throw new ValidationException("Amount, Frequency, and Reason must be entered for each detail in section "+expenditure.getItemCode().getDescription());
+                throw new ValidationException(EXPENDITURE_VALIDATION_MESSAGE +expenditure.getItemCode().getDescription());
 
         });
     }
@@ -84,7 +92,7 @@ public class HardshipValidationService {
         List<HardshipProgress> progressionItems = apiPerformHardshipRequest.getHardshipMetadata().getProgressItems();
         Optional.ofNullable(progressionItems).orElse(List.of()).forEach(progression -> {
             if(progressionItemWithoutRequiredDateOrResponseOrDateTaken(progression))
-                throw new ValidationException("Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress");
+                throw new ValidationException(PROGRESSION_ITEMS_VALIDATION_MESSAGE);
 
         });
     }

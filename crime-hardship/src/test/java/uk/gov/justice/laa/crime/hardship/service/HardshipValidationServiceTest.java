@@ -28,11 +28,17 @@ class HardshipValidationServiceTest {
     void setUp() {
         hardshipValidationService = new HardshipValidationService();
     }
-    @Test
-    void validateHardshipReviewStatus_validationException() {
-        ValidationException validationException = assertThrows(ValidationException.class, ()->hardshipValidationService.
-                checkHardship(new ApiPerformHardshipRequest(new HardshipReview().withReviewDate(null),
-                        new HardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE))));
+
+    @ParameterizedTest
+    @MethodSource("apiPerformHardshipRequestDataForNoValidationException")
+    void hardshipValidationServiceWithNoValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
+        assertDoesNotThrow(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest));
+    }
+
+    @ParameterizedTest
+    @MethodSource("hardshipReviewStatusDataForValidationException")
+    void validateHardshipReviewStatus_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
+        ValidationException validationException = assertThrows(ValidationException.class, ()->hardshipValidationService.checkHardship(apiPerformHardshipRequest));
         assertEquals("Review Date must be entered for completed hardship", validationException.getMessage());
     }
 
@@ -42,14 +48,8 @@ class HardshipValidationServiceTest {
         assertDoesNotThrow(()-> hardshipValidationService.checkHardship(apiPerformHardshipRequest));
     }
 
-    @Test
-    void hardshipValidationServiceWithNoValidationException() {
-        assertDoesNotThrow(() -> hardshipValidationService.
-                checkHardship(new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata())));
-    }
-
-    @Test
+    @ParameterizedTest
+    @MethodSource("newWorkReasonDataForValidationException")
     void validateHardshipReviewNewWorkReason() {
         ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
                 checkHardship(new ApiPerformHardshipRequest(new HardshipReview(),
@@ -79,11 +79,18 @@ class HardshipValidationServiceTest {
         assertEquals("Amount and Date Expected must be entered for each detail in section Funding Source", validationException.getMessage());
     }
 
+    private static Stream<Arguments> apiPerformHardshipRequestDataForNoValidationException() {
+        return Stream.of(
+                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata())));
+    }
+
     @ParameterizedTest
     @MethodSource("fundingSourcesDataForNoValidationException")
     void validateFundingSources_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         assertDoesNotThrow(()->hardshipValidationService.checkHardship(apiPerformHardshipRequest));
     }
+
     @ParameterizedTest
     @MethodSource("deniedIncomeDataForValidationException")
     void validateDeniedIncome_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
@@ -126,104 +133,96 @@ class HardshipValidationServiceTest {
         assertDoesNotThrow(()->hardshipValidationService.checkHardship(apiPerformHardshipRequest));
     }
 
-    private static Stream<Arguments> progressionItemDataForNoValidationException() {
+    private static Stream<Arguments> hardshipReviewStatusDataForValidationException() {
         return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                        .withAction(null)
-                                        .withDateRequired(null)
-                                        .withResponse(null)
-                                        .withDateTaken(null))
-                        )),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata().withProgressItems(null)))),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                        .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                        .withDateRequired(LocalDateTime.now())
-                                        .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                        .withDateTaken(LocalDateTime.now())))))
-        );
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().withReviewDate(null),
+                        new HardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE))
+                ));
     }
-    private static Stream<Arguments> progressionItemDataForValidationException() {
+
+    private static Stream<Arguments> hardshipReviewStatusDataForNoValidationException() {
         return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                                TestModelDataBuilder.getMinimalHardshipReview(),
-                                TestModelDataBuilder.getHardshipMetadata()
-                                        .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                .withDateRequired(null)
-                                                .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                                .withDateTaken(LocalDateTime.now()))))),
-                Arguments.of(new ApiPerformHardshipRequest(
-                                TestModelDataBuilder.getMinimalHardshipReview(),
-                                TestModelDataBuilder.getHardshipMetadata()
-                                        .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                .withDateRequired(LocalDateTime.now())
-                                                .withResponse(null)
-                                                .withDateTaken(LocalDateTime.now()))))),
-                Arguments.of(new ApiPerformHardshipRequest(
-                                TestModelDataBuilder.getMinimalHardshipReview(),
-                                TestModelDataBuilder.getHardshipMetadata()
-                                        .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                .withDateRequired(LocalDateTime.now())
-                                                .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                                .withDateTaken(null)))))
+                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getMinimalHardshipReview().withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE))),
+                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getMinimalHardshipReview().withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.IN_PROGRESS))));
+    }
+
+    private static Stream<Arguments> newWorkReasonDataForValidationException() {
+        return Stream.of(
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview(),
+                        new HardshipMetadata().withReviewReason(null))));
+    }
+
+    private static Stream<Arguments> solicitorDataForNoValidationException() {
+        return Stream.of(
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
+                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ZERO).withHours(0)),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
+                        withSolicitorCosts(new SolicitorCosts().withRate(null).withHours(0)),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
+                        withSolicitorCosts(null),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW)))
         );
     }
 
-    private static Stream<Arguments> expenditureDataForNoValidationException() {
+    private static Stream<Arguments> solicitorDataForValidationException() {
         return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(null)
-                                        .withFrequency(null)
-                                        .withAmount(null)
-                                        .withReasonCode(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withExtraExpenditure(null),
-                        TestModelDataBuilder.getHardshipMetadata()))
-        );
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
+                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(0)),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
+                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
+                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))));
     }
-    private static Stream<Arguments> expenditureDataForValidationException() {
+
+    private static Stream<Arguments> fundingSourcesDataForValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
-                                        .withFrequency(null)
-                                        .withAmount(BigDecimal.ONE)
-                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
+                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
+                                        .withDescription("Funding Source")
+                                        .withAmount(BigDecimal.ZERO).withDueDate(null))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
-                                        .withFrequency(Frequency.ANNUALLY)
-                                        .withAmount(BigDecimal.ONE)
-                                        .withReasonCode(null))),
+                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
+                                        .withDescription("Funding Source")
+                                        .withAmount(null).withDueDate(null))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
-                                        .withFrequency(Frequency.ANNUALLY)
-                                        .withAmount(null)
-                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
+                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
+                                        .withDescription("Funding Source")
+                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
                         TestModelDataBuilder.getHardshipMetadata()))
         );
     }
 
+    private static Stream<Arguments> fundingSourcesDataForNoValidationException() {
+        return Stream.of(
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview()
+                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
+                                        .withDescription(null)
+                                        .withAmount(null).withDueDate(null))),
+                        TestModelDataBuilder.getHardshipMetadata())),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview()
+                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
+                                        .withDescription("")
+                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
+                        TestModelDataBuilder.getHardshipMetadata())),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview()
+                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
+                                        .withDescription("Funding Source")
+                                        .withAmount(BigDecimal.ONE).withDueDate(LocalDateTime.now()))),
+                        TestModelDataBuilder.getHardshipMetadata()))
+        );
+    }
     private static Stream<Arguments> deniedIncomeDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -240,6 +239,7 @@ class HardshipValidationServiceTest {
                         TestModelDataBuilder.getHardshipMetadata()))
         );
     }
+
     private static Stream<Arguments> deniedIncomeDataForValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -269,83 +269,103 @@ class HardshipValidationServiceTest {
         );
     }
 
-    private static Stream<Arguments> hardshipReviewStatusDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getMinimalHardshipReview().withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE))),
-                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getMinimalHardshipReview().withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.IN_PROGRESS))));
-    }
-
-    private static Stream<Arguments> fundingSourcesDataForNoValidationException() {
+    private static Stream<Arguments> expenditureDataForValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription(null)
-                                        .withAmount(null).withDueDate(null))),
+                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
+                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withFrequency(null)
+                                        .withAmount(BigDecimal.ONE)
+                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("")
-                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
+                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
+                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withFrequency(Frequency.ANNUALLY)
+                                        .withAmount(BigDecimal.ONE)
+                                        .withReasonCode(null))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(BigDecimal.ONE).withDueDate(LocalDateTime.now()))),
+                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
+                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withFrequency(Frequency.ANNUALLY)
+                                        .withAmount(null)
+                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata()))
         );
     }
 
-
-    private static Stream<Arguments> fundingSourcesDataForValidationException() {
+    private static Stream<Arguments> expenditureDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(BigDecimal.ZERO).withDueDate(null))),
+                                .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
+                                        .withItemCode(null)
+                                        .withFrequency(null)
+                                        .withAmount(null)
+                                        .withReasonCode(null))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(null).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
+                                .withExtraExpenditure(null),
                         TestModelDataBuilder.getHardshipMetadata()))
         );
     }
 
-    private static Stream<Arguments> solicitorDataForValidationException() {
+    private static Stream<Arguments> progressionItemDataForValidationException() {
         return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(0)),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))));
-    }
-
-    private static Stream<Arguments> solicitorDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ZERO).withHours(0)),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(null).withHours(0)),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(null),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW)))
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata()
+                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
+                                        .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(null)
+                                        .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
+                                        .withDateTaken(LocalDateTime.now()))))),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata()
+                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
+                                        .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(LocalDateTime.now())
+                                        .withResponse(null)
+                                        .withDateTaken(LocalDateTime.now()))))),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata()
+                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
+                                        .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(LocalDateTime.now())
+                                        .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
+                                        .withDateTaken(null)))))
         );
     }
 
+    private static Stream<Arguments> progressionItemDataForNoValidationException() {
+        return Stream.of(
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata()
+                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
+                                        .withAction(null)
+                                        .withDateRequired(null)
+                                        .withResponse(null)
+                                        .withDateTaken(null))
+                        )),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata().withProgressItems(null)))),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        TestModelDataBuilder.getMinimalHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata()
+                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
+                                        .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(LocalDateTime.now())
+                                        .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
+                                        .withDateTaken(LocalDateTime.now())))))
+        );
+    }
 }
