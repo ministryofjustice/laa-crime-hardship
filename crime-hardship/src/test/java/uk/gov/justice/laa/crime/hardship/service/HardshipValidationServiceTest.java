@@ -50,10 +50,8 @@ class HardshipValidationServiceTest {
 
     @ParameterizedTest
     @MethodSource("newWorkReasonDataForValidationException")
-    void validateHardshipReviewNewWorkReason() {
-        ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
-                checkHardship(new ApiPerformHardshipRequest(new HardshipReview(),
-                        new HardshipMetadata().withReviewReason(null))));
+    void validateHardshipReviewNewWorkReason(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
+        ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest));
         assertEquals("Review Reason must be entered for hardship", validationException.getMessage());
     }
 
@@ -77,12 +75,6 @@ class HardshipValidationServiceTest {
         ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
                 checkHardship(apiPerformHardshipRequest));
         assertEquals("Amount and Date Expected must be entered for each detail in section Funding Source", validationException.getMessage());
-    }
-
-    private static Stream<Arguments> apiPerformHardshipRequestDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata())));
     }
 
     @ParameterizedTest
@@ -131,6 +123,12 @@ class HardshipValidationServiceTest {
     @MethodSource("progressionItemDataForNoValidationException")
     void validateProgressionItem_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         assertDoesNotThrow(()->hardshipValidationService.checkHardship(apiPerformHardshipRequest));
+    }
+
+    private static Stream<Arguments> apiPerformHardshipRequestDataForNoValidationException() {
+        return Stream.of(
+                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
+                        TestModelDataBuilder.getHardshipMetadata())));
     }
 
     private static Stream<Arguments> hardshipReviewStatusDataForValidationException() {
