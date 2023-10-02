@@ -24,8 +24,7 @@ public class HardshipValidationService {
     public static final String NEW_WORK_REASON_VALIDATION_MESSAGE = "Review Reason must be entered for hardship";
     public static final String SOLICITOR_DETAILS_VALIDATION_MESSAGE = "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";
     public static final String FUNDING_SOURCES_VALIDATION_MESSAGE = "Amount and Date Expected must be entered for each detail in section ";
-    public static final String DENIEW_INCOME_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
-    public static final String EXPENDITURE_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
+    public static final String EXPENDITURE_OR_DENIED_INCOME_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
     public static final String PROGRESSION_ITEMS_VALIDATION_MESSAGE = "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress";
 
     public void checkHardship(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
@@ -39,7 +38,7 @@ public class HardshipValidationService {
     }
 
     private void validateHardshipReviewStatus(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        if(hardshipStatusIsCompleteWithoutReviewDate(apiPerformHardshipRequest)){
+        if (hardshipStatusIsCompleteWithoutReviewDate(apiPerformHardshipRequest)) {
             throw new ValidationException(HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE);
         }
     }
@@ -54,7 +53,7 @@ public class HardshipValidationService {
         var solicitorCosts = apiPerformHardshipRequest.getHardship().getSolicitorCosts();
         var solicitorRate = BigDecimal.ZERO;
         var solicitorHours = 0;
-        if(solicitorCosts != null) {
+        if (solicitorCosts != null) {
             solicitorRate = Optional.ofNullable(solicitorCosts.getRate()).orElse(BigDecimal.ZERO);
             solicitorHours = Optional.ofNullable(solicitorCosts.getHours()).orElse(0);
         }
@@ -67,23 +66,23 @@ public class HardshipValidationService {
         List<OtherFundingSource> fundingSources = apiPerformHardshipRequest.getHardship().getOtherFundingSources();
         Optional.ofNullable(fundingSources).orElse(List.of()).forEach(funding -> {
             if (fundingDescriptionWithoutFundingAmountOrDueDate(funding))
-                throw new ValidationException(FUNDING_SOURCES_VALIDATION_MESSAGE +funding.getDescription());
+                throw new ValidationException(FUNDING_SOURCES_VALIDATION_MESSAGE + funding.getDescription());
         });
     }
 
     private void validateDeniedIncome(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         List<DeniedIncome> deniedIncomes = apiPerformHardshipRequest.getHardship().getDeniedIncome();
         Optional.ofNullable(deniedIncomes).orElse(List.of()).forEach(deniedIncome -> {
-            if(deniedIncomeWithoutAmountOrFrequencyOrReasonNote(deniedIncome))
-                throw new ValidationException(DENIEW_INCOME_VALIDATION_MESSAGE +deniedIncome.getItemCode().getDescription());
+            if (deniedIncomeWithoutAmountOrFrequencyOrReasonNote(deniedIncome))
+                throw new ValidationException(EXPENDITURE_OR_DENIED_INCOME_VALIDATION_MESSAGE + deniedIncome.getItemCode().getDescription());
         });
     }
 
     private void validateExpenditure(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         List<ExtraExpenditure> expenditures = apiPerformHardshipRequest.getHardship().getExtraExpenditure();
         Optional.ofNullable(expenditures).orElse(List.of()).forEach(expenditure -> {
-            if(expenditureWithoutAmountOrFrequencyOrReasonCode(expenditure))
-                throw new ValidationException(EXPENDITURE_VALIDATION_MESSAGE +expenditure.getItemCode().getDescription());
+            if (expenditureWithoutAmountOrFrequencyOrReasonCode(expenditure))
+                throw new ValidationException(EXPENDITURE_OR_DENIED_INCOME_VALIDATION_MESSAGE + expenditure.getItemCode().getDescription());
 
         });
     }
@@ -91,7 +90,7 @@ public class HardshipValidationService {
     private void validateProgressionItems(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         List<HardshipProgress> progressionItems = apiPerformHardshipRequest.getHardshipMetadata().getProgressItems();
         Optional.ofNullable(progressionItems).orElse(List.of()).forEach(progression -> {
-            if(progressionItemWithoutRequiredDateOrResponseOrDateTaken(progression))
+            if (progressionItemWithoutRequiredDateOrResponseOrDateTaken(progression))
                 throw new ValidationException(PROGRESSION_ITEMS_VALIDATION_MESSAGE);
 
         });
