@@ -56,6 +56,18 @@ public class TestModelDataBuilder {
                 .withTotalAnnualDisposableIncome(TOTAL_DISPOSABLE_INCOME);
     }
 
+    public static HardshipReview getHardshipReview() {
+        return new HardshipReview()
+                .withCourtType(CourtType.MAGISTRATE)
+                .withReviewDate(LocalDateTime.now())
+                .withSolicitorCosts(TestModelDataBuilder.getSolicitorsCosts())
+                .withTotalAnnualDisposableIncome(TOTAL_DISPOSABLE_INCOME)
+                .withSolicitorCosts(getSolicitorsCosts())
+                .withDeniedIncome(List.of(getDeniedIncome()))
+                .withExtraExpenditure(List.of(getExtraExpenditure().withDescription("Extra Expenditure")))
+                .withOtherFundingSources(List.of(getOtherFundingSources()));
+    }
+
     public static HardshipMetadata getHardshipMetadata() {
         return new HardshipMetadata()
                 .withReviewReason(NewWorkReason.PRI)
