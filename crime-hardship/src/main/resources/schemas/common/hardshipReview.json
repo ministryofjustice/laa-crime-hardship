@@ -47,5 +47,6 @@
       "$ref": "solicitorCosts.json"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "required": ["courtType", "totalAnnualDisposableIncome", "reviewDate"]
 }
