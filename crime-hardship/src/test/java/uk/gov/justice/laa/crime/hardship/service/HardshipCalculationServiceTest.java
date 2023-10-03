@@ -33,13 +33,13 @@ import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewD
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SoftAssertionsExtension.class)
-class HardshipServiceTest {
+class HardshipCalculationServiceTest {
 
     @InjectSoftAssertions
     private SoftAssertions softly;
 
     @InjectMocks
-    private HardshipService hardshipService;
+    private HardshipCalculationService hardshipCalculationService;
 
     @Mock
     private MaatCourtDataService maatCourtDataService;
@@ -57,7 +57,7 @@ class HardshipServiceTest {
         when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
                 .thenReturn(hardshipDetails);
 
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(
+        ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
                 request.getRepId(),
                 HardshipReviewDetailType.valueOf(request.getDetailType()),
                 request.getLaaTransactionId()
@@ -78,7 +78,7 @@ class HardshipServiceTest {
         when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
                 .thenReturn(hardshipDetails);
 
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(
+        ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
                 request.getRepId(),
                 HardshipReviewDetailType.valueOf(request.getDetailType()),
                 request.getLaaTransactionId()
@@ -96,7 +96,7 @@ class HardshipServiceTest {
         when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
                 .thenReturn(null);
 
-        ApiCalculateHardshipByDetailResponse response = hardshipService.calculateHardshipForDetail(
+        ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
                 request.getRepId(),
                 HardshipReviewDetailType.valueOf(request.getDetailType()),
                 request.getLaaTransactionId()
@@ -111,7 +111,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(EXPENDITURE);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-3320.00).setScale(2, RoundingMode.HALF_UP));
@@ -125,7 +125,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(INCOME);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(3000.00).setScale(2, RoundingMode.HALF_UP));
@@ -139,7 +139,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(SOL_COSTS);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(TestModelDataBuilder.HARDSHIP_AMOUNT.setScale(2, RoundingMode.HALF_UP));
@@ -156,7 +156,7 @@ class HardshipServiceTest {
                 .setEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(2500.00).setScale(2, RoundingMode.HALF_UP));
@@ -170,7 +170,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-5625.0).setScale(2, RoundingMode.HALF_UP));
@@ -184,7 +184,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS, EXPENDITURE);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-13945.00).setScale(2, RoundingMode.HALF_UP));
@@ -198,7 +198,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS, EXPENDITURE, INCOME);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-15945.00).setScale(2, RoundingMode.HALF_UP));
@@ -215,7 +215,7 @@ class HardshipServiceTest {
                 .setAmount(BigDecimal.ZERO);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
@@ -232,7 +232,7 @@ class HardshipServiceTest {
                 .setAccepted(false);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
@@ -246,7 +246,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails();
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
@@ -260,7 +260,7 @@ class HardshipServiceTest {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(FUNDING);
 
         HardshipResult response =
-                hardshipService.calculateHardship(hardship, FULL_THRESHOLD);
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
