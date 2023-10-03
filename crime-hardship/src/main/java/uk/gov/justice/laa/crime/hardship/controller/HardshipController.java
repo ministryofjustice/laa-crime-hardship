@@ -21,6 +21,7 @@ import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRespo
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
+import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
@@ -32,6 +33,7 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 public class HardshipController {
 
     private final HardshipMapper mapper;
+    private final HardshipValidationService hardshipValidationService;
     private final HardshipCalculationService hardshipCalculationService;
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -124,7 +126,7 @@ public class HardshipController {
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .requestType(requestType).build();
-
+        hardshipValidationService.checkHardship(hardship);
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;
     }
