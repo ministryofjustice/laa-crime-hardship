@@ -4,91 +4,36 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
-import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
+import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.FAIL;
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.PASS;
+import java.time.LocalDateTime;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class HardshipService {
 
-    private final HardshipDetailMapper detailMapper;
+    private final PersistHardshipMapper mapper;
     private final MaatCourtDataService maatCourtDataService;
+    private final HardshipCalculationService hardshipCalculationService;
 
-    public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(Integer repId,
-                                                                           HardshipReviewDetailType detailType,
-                                                                           String laaTransactionId) {
-        List<ApiHardshipDetail> response =
-                maatCourtDataService.getHardshipByDetailType(repId, detailType.getType(), laaTransactionId);
-
-        BigDecimal total = BigDecimal.ZERO;
-        if (response != null) {
-            HardshipReview hardship = new HardshipReview();
-            detailMapper.toDto(response, hardship);
-            total = calculateDetails(hardship);
-        }
-        return new ApiCalculateHardshipByDetailResponse()
-                .withHardshipSummary(total);
-    }
-
-    public HardshipResult calculateHardship(final HardshipReview hardship, final BigDecimal fullThreshold) {
-
-        BigDecimal total = calculateDetails(hardship);
-
-        final BigDecimal disposableIncomeAfterHardship =
-                hardship.getTotalAnnualDisposableIncome()
-                        .subtract(total)
-                        .setScale(2, RoundingMode.HALF_UP);
-
-        HardshipReviewResult result = FAIL;
-        if (disposableIncomeAfterHardship.compareTo(fullThreshold) <= 0) {
-            result = PASS;
-        }
-        return HardshipResult.builder()
-                .result(result)
-                .postHardshipDisposableIncome(disposableIncomeAfterHardship)
-                .build();
-    }
-
-    private static BigDecimal calculateDetails(HardshipReview hardship) {
-        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
-                .flatMap(Collection::stream)
-                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
-                .map(item -> item.getAmount()
-                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        CourtType courtType = hardship.getCourtType();
-        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
-        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
-            BigDecimal estimatedTotal;
-            if (solicitorCosts.getEstimatedTotal() != null) {
-                estimatedTotal = solicitorCosts.getEstimatedTotal();
-            } else {
-                estimatedTotal = solicitorCosts.getRate()
-                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
-                        .add(solicitorCosts.getVat())
-                        .add(solicitorCosts.getDisbursements());
-                solicitorCosts.setEstimatedTotal(estimatedTotal);
-            }
-            total = total.add(estimatedTotal);
-        }
-        return total;
+    public HardshipReviewDTO create(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
+        HardshipReview hardship = hardshipReviewDTO.getHardship();
+        // TODO: Full threshold should be retrieved from CMA (LCAM-960)
+        HardshipResult result = hardshipCalculationService.calculateHardship(hardship, BigDecimal.valueOf(3398.00));
+        result.setResultDate(LocalDateTime.now());
+        hardshipReviewDTO.setHardshipResult(result);
+        ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
+        ApiPersistHardshipResponse response =
+                maatCourtDataService.persistHardship(request, laaTransactionId, RequestType.CREATE);
+        mapper.toDto(response, hardshipReviewDTO);
+        // Call Contribution service and CCP from Orchestration layer
+        return hardshipReviewDTO;
     }
 }
