@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
+import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
+import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
@@ -31,10 +34,40 @@ public class HardshipService {
         return persist(hardshipReviewDTO, laaTransactionId, RequestType.UPDATE);
     }
 
+    public ApiFindHardshipResponse getHardship(Integer hardshipId, String laaTransactionId) {
+        return maatCourtDataService.getHardship(hardshipId, laaTransactionId);
+    }
+
     public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
         hardshipReviewDTO.getHardshipMetadata().setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
         if (hardshipReviewDTO.getHardshipResult() != null) {
             hardshipReviewDTO.getHardshipResult().setResult(null);
+        }
+    }
+
+    private static BigDecimal calculateDetails(HardshipReview hardship) {
+        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
+                .flatMap(Collection::stream)
+                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
+                .map(item -> item.getAmount()
+                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        CourtType courtType = hardship.getCourtType();
+        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
+        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
+            BigDecimal estimatedTotal;
+            if (solicitorCosts.getEstimatedTotal() != null) {
+                estimatedTotal = solicitorCosts.getEstimatedTotal();
+            } else {
+                estimatedTotal = solicitorCosts.getRate()
+                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
+                        .add(solicitorCosts.getVat())
+                        .add(solicitorCosts.getDisbursements());
+                solicitorCosts.setEstimatedTotal(estimatedTotal);
+            }
+            total = total.add(estimatedTotal);
         }
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =

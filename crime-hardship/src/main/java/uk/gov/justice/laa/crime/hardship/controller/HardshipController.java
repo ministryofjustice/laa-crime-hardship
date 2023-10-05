@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,10 @@ import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRespo
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
+import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
+import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
+import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
@@ -63,6 +68,30 @@ public class HardshipController {
         );
     }
 
+    @GetMapping(value = "/hardshipReviewId", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Find Hardship review")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
+            )
+    )
+    @ApiResponse(responseCode = "404",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorDTO.class)
+            )
+    )
+    @DefaultHTTPErrorResponse
+    public ResponseEntity<ApiFindHardshipResponse> find(
+            @PathVariable int hardshipReviewId,
+            @Parameter(description = "Used to trace calls between services")
+            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+
+        MDC.put("laaTransactionId", laaTransactionId);
+        log.info("Request received to retrieve hardship review: {}", hardshipReviewId);
+
+        return ResponseEntity.ok(hardshipService.getHardship(hardshipReviewId, laaTransactionId));
+    }
+
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Create Hardship review")
     @ApiResponse(responseCode = "200",
@@ -84,7 +113,6 @@ public class HardshipController {
         reviewDTO = hardshipService.create(reviewDTO, laaTransactionId);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
-
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Update Hardship review")
