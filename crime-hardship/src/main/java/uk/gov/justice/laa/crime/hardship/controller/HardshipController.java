@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
+import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
@@ -74,7 +75,7 @@ public class HardshipController {
     public ResponseEntity<ApiPerformHardshipResponse> find(
             @PathVariable int hardshipReviewId,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         return ResponseEntity.ok().build();
     }
@@ -95,7 +96,7 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
         reviewDTO = hardshipService.create(reviewDTO, laaTransactionId);
@@ -118,7 +119,7 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
         // Call service methods
