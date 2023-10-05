@@ -15,6 +15,7 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
@@ -61,6 +62,7 @@ public class HardshipCalculationService {
         }
         return HardshipResult.builder()
                 .result(result)
+                .resultDate(LocalDate.now())
                 .postHardshipDisposableIncome(disposableIncomeAfterHardship)
                 .build();
     }
