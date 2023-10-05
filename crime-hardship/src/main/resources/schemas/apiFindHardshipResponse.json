@@ -54,7 +54,7 @@
       "description": "The review status",
       "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus"
     },
-    "reviewDetails":{
+    "reviewDetails": {
       "type": "array",
       "description": "Hardship review detail items",
       "items": {
