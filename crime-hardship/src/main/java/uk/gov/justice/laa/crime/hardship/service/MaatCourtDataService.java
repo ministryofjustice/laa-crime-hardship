@@ -9,6 +9,9 @@ import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
 import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,32 @@ public class MaatCourtDataService {
                 repId,
                 detailType
         );
+        log.info(String.format(RESPONSE_STRING, response));
+        return response;
+    }
+
+    public ApiPersistHardshipResponse persistHardship(ApiPersistHardshipRequest request,
+                                                      String laaTransactionId,
+                                                      RequestType requestType) {
+
+        ApiPersistHardshipResponse response;
+        if (requestType == RequestType.CREATE) {
+            response = maatAPIClient.post(
+                    request,
+                    new ParameterizedTypeReference<>() {
+                    },
+                    configuration.getMaatApi().getHardshipEndpoints().getPersistHardshipUrl(),
+                    Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId)
+            );
+        } else {
+            response = maatAPIClient.put(
+                    request,
+                    new ParameterizedTypeReference<>() {
+                    },
+                    configuration.getMaatApi().getHardshipEndpoints().getPersistHardshipUrl(),
+                    Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId)
+            );
+        }
         log.info(String.format(RESPONSE_STRING, response));
         return response;
     }

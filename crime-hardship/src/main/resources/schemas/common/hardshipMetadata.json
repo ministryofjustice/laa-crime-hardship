@@ -52,5 +52,13 @@
       }
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "required": [
+    "cmuId",
+    "repId",
+    "reviewStatus",
+    "userSession",
+    "reviewReason",
+    "financialAssessmentId"
+  ]
 }
