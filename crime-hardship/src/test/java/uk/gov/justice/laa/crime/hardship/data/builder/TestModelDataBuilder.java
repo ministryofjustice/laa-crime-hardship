@@ -30,7 +30,7 @@ public class TestModelDataBuilder {
     public static final BigDecimal TOTAL_DISPOSABLE_INCOME = BigDecimal.valueOf(500);
     public static final BigDecimal POST_HARDSHIP_DISPOSABLE_INCOME = BigDecimal.valueOf(250);
     public static final String MEANS_ASSESSMENT_TRANSACTION_ID = "7c49ebfe-fe3a-4f2f-8dad-f7b8f03b8327";
-    public static final LocalDateTime RESULT_DATE = LocalDateTime.of(2022, 12, 14, 0, 0, 0);
+    public static final LocalDate RESULT_DATE = LocalDate.of(2022, 12, 14);
 
     // Solicitors Costs
     public static final Integer TEST_SOLICITOR_HOURS = 50;

@@ -7,10 +7,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
+import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.MockServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.util.List;
 
@@ -40,6 +44,28 @@ class MaatCourtDataServiceTest {
         maatCourtDataService.getHardshipByDetailType(
                 TestModelDataBuilder.TEST_REP_ID, TestModelDataBuilder.DETAIL_TYPE, LAA_TRANSACTION_ID
         );
-        verify(maatCourtDataClient, atLeastOnce()).get(any(), anyString(), anyMap(), anyInt(), anyString());
+        verify(maatCourtDataClient).get(any(), anyString(), anyMap(), anyInt(), anyString());
+    }
+
+    @Test
+    void givenCreateRequest_whenPersistHardshipIsInvoked_thenResponseIsReturned() {
+        ApiPersistHardshipResponse expected = new ApiPersistHardshipResponse();
+        when(maatCourtDataClient.post(any(), any(), anyString(), anyMap()))
+                .thenReturn(expected);
+        maatCourtDataService.persistHardship(
+                new ApiPersistHardshipRequest(), Constants.LAA_TRANSACTION_ID, RequestType.CREATE
+        );
+        verify(maatCourtDataClient).post(any(), any(), anyString(), anyMap());
+    }
+
+    @Test
+    void givenUpdateRequest_whenPersistHardshipIsInvoked_thenResponseIsReturned() {
+        ApiPersistHardshipResponse expected = new ApiPersistHardshipResponse();
+        when(maatCourtDataClient.put(any(), any(), anyString(), anyMap()))
+                .thenReturn(expected);
+        maatCourtDataService.persistHardship(
+                new ApiPersistHardshipRequest(), Constants.LAA_TRANSACTION_ID, RequestType.UPDATE
+        );
+        verify(maatCourtDataClient).put(any(), any(), anyString(), anyMap());
     }
 }

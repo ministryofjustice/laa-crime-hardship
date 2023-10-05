@@ -7,14 +7,14 @@ import lombok.NoArgsConstructor;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class HardshipResult {
-    private LocalDateTime resultDate;
+    private LocalDate resultDate;
     private HardshipReviewResult result;
     private BigDecimal postHardshipDisposableIncome;
 }

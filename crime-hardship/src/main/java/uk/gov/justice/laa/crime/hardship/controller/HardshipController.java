@@ -14,13 +14,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
+import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
+import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
@@ -33,6 +36,8 @@ public class HardshipController {
 
     private final HardshipMapper mapper;
     private final HardshipService hardshipService;
+    private final HardshipValidationService hardshipValidationService;
+    private final HardshipCalculationService hardshipCalculationService;
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Calculate Crime Hardship for Detail")
@@ -50,7 +55,7 @@ public class HardshipController {
             ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
 
         return ResponseEntity.ok(
-                hardshipService.calculateHardshipForDetail(
+                hardshipCalculationService.calculateHardshipForDetail(
                         request.getRepId(),
                         HardshipReviewDetailType.valueOf(request.getDetailType()),
                         request.getLaaTransactionId()
@@ -70,7 +75,7 @@ public class HardshipController {
     public ResponseEntity<ApiPerformHardshipResponse> find(
             @PathVariable int hardshipReviewId,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         return ResponseEntity.ok().build();
     }
@@ -91,11 +96,11 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
-        // Call service methods
-        return ResponseEntity.ok().build();
+        reviewDTO = hardshipService.create(reviewDTO, laaTransactionId);
+        return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
 
@@ -114,7 +119,7 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
         // Call service methods
@@ -124,6 +129,7 @@ public class HardshipController {
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .requestType(requestType).build();
+        hardshipValidationService.checkHardship(hardship);
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;
     }
