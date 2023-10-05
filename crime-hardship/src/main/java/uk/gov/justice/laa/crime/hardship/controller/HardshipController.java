@@ -122,8 +122,8 @@ public class HardshipController {
             @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
-        // Call service methods
-        return ResponseEntity.ok().build();
+        reviewDTO = hardshipService.update(reviewDTO, laaTransactionId);
+        return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {

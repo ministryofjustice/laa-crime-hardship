@@ -23,13 +23,21 @@ public class HardshipService {
     private final HardshipCalculationService hardshipCalculationService;
 
     public HardshipReviewDTO create(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
+        return persist(hardshipReviewDTO, laaTransactionId, RequestType.CREATE);
+    }
+
+    public HardshipReviewDTO update(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
+        return persist(hardshipReviewDTO, laaTransactionId, RequestType.UPDATE);
+    }
+
+    private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId, RequestType requestType) {
         HardshipReview hardship = hardshipReviewDTO.getHardship();
         // TODO: Full threshold should be retrieved from CMA (LCAM-960)
         HardshipResult result = hardshipCalculationService.calculateHardship(hardship, BigDecimal.valueOf(3398.00));
         hardshipReviewDTO.setHardshipResult(result);
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, laaTransactionId, RequestType.CREATE);
+                maatCourtDataService.persistHardship(request, laaTransactionId, requestType);
         mapper.toDto(response, hardshipReviewDTO);
         // Call Contribution service and CCP from Orchestration layer
         return hardshipReviewDTO;
