@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import uk.gov.justice.laa.crime.hardship.common.Constants;
 
 public class RequestBuilderUtils {
 
@@ -23,6 +24,7 @@ public class RequestBuilderUtils {
                         .content(content);
         if (withAuth) {
             requestBuilder.header(HttpHeaders.AUTHORIZATION, "Bearer " + MOCK_TOKEN);
+            requestBuilder.header(Constants.LAA_TRANSACTION_ID, "laa-transaction-id");
         }
         return requestBuilder;
     }
