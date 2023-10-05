@@ -12,7 +12,6 @@ import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRespon
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Slf4j
 @Service
@@ -27,7 +26,6 @@ public class HardshipService {
         HardshipReview hardship = hardshipReviewDTO.getHardship();
         // TODO: Full threshold should be retrieved from CMA (LCAM-960)
         HardshipResult result = hardshipCalculationService.calculateHardship(hardship, BigDecimal.valueOf(3398.00));
-        result.setResultDate(LocalDateTime.now());
         hardshipReviewDTO.setHardshipResult(result);
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =

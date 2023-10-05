@@ -21,6 +21,7 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -118,6 +119,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -132,6 +136,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -146,6 +153,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.FAIL);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -163,6 +173,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -177,6 +190,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -191,6 +207,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -205,6 +224,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -222,6 +244,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.FAIL);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -239,6 +264,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.FAIL);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -253,6 +281,9 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.FAIL);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 
     @Test
@@ -267,5 +298,8 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.FAIL);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
     }
 }
