@@ -11,7 +11,8 @@ public class MockServicesConfiguration {
 
         ServicesConfiguration.MaatApi.HardshipEndpoints hardshipEndpoints =
                 new ServicesConfiguration.MaatApi.HardshipEndpoints(
-                        "/hardship/repId/{repId}/detailType/{detailType}"
+                        "/hardship/repId/{repId}/detailType/{detailType}",
+                        "/hardship"
                 );
 
         maatApiConfiguration.setBaseUrl(host);
