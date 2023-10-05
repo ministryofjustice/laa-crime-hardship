@@ -10,11 +10,13 @@ public class RequestBuilderUtils {
 
     private static final String MOCK_TOKEN = "token";
 
-    public static MockHttpServletRequestBuilder buildRequestGivenContent(HttpMethod method, String content, String endpointUrl) {
+    public static MockHttpServletRequestBuilder buildRequestGivenContent(HttpMethod method, String content,
+                                                                         String endpointUrl) {
         return buildRequestGivenContent(method, content, endpointUrl, true);
     }
 
-    public static MockHttpServletRequestBuilder buildRequestGivenContent(HttpMethod method, String content, String endpointUrl, boolean withAuth) {
+    public static MockHttpServletRequestBuilder buildRequestGivenContent(HttpMethod method, String content,
+                                                                         String endpointUrl, boolean withAuth) {
         MockHttpServletRequestBuilder requestBuilder =
                 MockMvcRequestBuilders.request(method, endpointUrl)
                         .contentType(MediaType.APPLICATION_JSON)
