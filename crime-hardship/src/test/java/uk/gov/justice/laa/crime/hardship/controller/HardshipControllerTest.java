@@ -18,9 +18,6 @@ import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
-
-import java.math.BigDecimal;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -54,17 +51,11 @@ class HardshipControllerTest {
 
     @Test
     void givenValidRequest_whenCreateIsInvoked_thenOkResponseIsReturned() throws Exception {
-        ApiPerformHardshipRequest request = new ApiPerformHardshipRequest()
-                .withHardship(TestModelDataBuilder.getHardshipReview())
-                .withHardshipMetadata(TestModelDataBuilder.getHardshipMetadata());
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        ApiPerformHardshipResponse response = new ApiPerformHardshipResponse()
-                .withHardshipReviewId(1000)
-                .withReviewResult(HardshipReviewResult.PASS)
-                .withDisposableIncome(BigDecimal.valueOf(3500))
-                .withPostHardshipDisposableIncome(BigDecimal.TEN);
+        ApiPerformHardshipResponse response = TestModelDataBuilder.getApiPerformHardshipResponse();
 
         when(hardshipMapper.fromDto(any(HardshipReviewDTO.class)))
                 .thenReturn(response);
@@ -91,9 +82,7 @@ class HardshipControllerTest {
 
     @Test
     void givenFailedApiCall_whenCreateIsInvoked_thenInternalServerErrorResponseIsReturned() throws Exception {
-        ApiPerformHardshipRequest request = new ApiPerformHardshipRequest()
-                .withHardship(TestModelDataBuilder.getHardshipReview())
-                .withHardshipMetadata(TestModelDataBuilder.getHardshipMetadata());
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         when(hardshipService.create(any(HardshipReviewDTO.class), anyString()))
                 .thenThrow(new APIClientException("Call to Court Data API failed."));
@@ -101,6 +90,50 @@ class HardshipControllerTest {
         String requestBody = objectMapper.writeValueAsString(request);
 
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void givenValidRequest_whenUpdateIsInvoked_thenOkResponseIsReturned() throws Exception {
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        ApiPerformHardshipResponse response = TestModelDataBuilder.getApiPerformHardshipResponse();
+
+        when(hardshipMapper.fromDto(any(HardshipReviewDTO.class)))
+                .thenReturn(response);
+
+        when(hardshipService.update(any(HardshipReviewDTO.class), anyString()))
+                .thenReturn(new HardshipReviewDTO());
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+    }
+
+    @Test
+    void givenInvalidRequest_whenUpdateIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
+        ApiPerformHardshipRequest request = new ApiPerformHardshipRequest()
+                .withHardship(TestModelDataBuilder.getHardshipReview());
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenFailedApiCall_whenUpdateIsInvoked_thenInternalServerErrorResponseIsReturned() throws Exception {
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+
+        when(hardshipService.update(any(HardshipReviewDTO.class), anyString()))
+                .thenThrow(new APIClientException("Call to Court Data API failed."));
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
                 .andExpect(status().isInternalServerError());
     }
 }

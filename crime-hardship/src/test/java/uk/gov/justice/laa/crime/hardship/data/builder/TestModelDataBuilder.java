@@ -2,8 +2,10 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
 
 import java.math.BigDecimal;
@@ -46,6 +48,26 @@ public class TestModelDataBuilder {
                 .withRepId(isValid ? TEST_REP_ID : null)
                 .withLaaTransactionId(MEANS_ASSESSMENT_TRANSACTION_ID)
                 .withDetailType(detailType.getType());
+    }
+
+    public static ApiPerformHardshipRequest getApiPerformHardshipRequest() {
+        return new ApiPerformHardshipRequest()
+                .withHardship(getHardshipReview())
+                .withHardshipMetadata(getHardshipMetadata());
+    }
+
+    public static ApiPersistHardshipResponse getApiPersistHardshipResponse() {
+        return new ApiPersistHardshipResponse()
+                .withId(1000)
+                .withDateCreated(LocalDateTime.now());
+    }
+
+    public static ApiPerformHardshipResponse getApiPerformHardshipResponse() {
+        return new ApiPerformHardshipResponse()
+                .withHardshipReviewId(1000)
+                .withReviewResult(HardshipReviewResult.PASS)
+                .withDisposableIncome(BigDecimal.valueOf(3500))
+                .withPostHardshipDisposableIncome(BigDecimal.TEN);
     }
 
     public static HardshipReview getMinimalHardshipReview() {
@@ -244,4 +266,12 @@ public class TestModelDataBuilder {
 
         return hardship;
     }
+
+    public static HardshipReviewDTO getHardshipReviewDTO() {
+        return HardshipReviewDTO.builder()
+                .hardship(TestModelDataBuilder.getHardshipReview())
+                .hardshipMetadata(TestModelDataBuilder.getHardshipMetadata())
+                .build();
+    }
+
 }
