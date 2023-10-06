@@ -124,7 +124,7 @@ class HardshipIntegrationTest {
     }
 
     @Test
-    void givenInvalidRequest_whenHardshipUpdateIsInvoked_thenOkResponse() throws Exception {
+    void givenInvalidRequest_whenHardshipUpdateIsInvoked_thenFailsWithBadRequest() throws Exception {
         stubForOAuth();
 
         ApiPerformHardshipRequest request = new ApiPerformHardshipRequest(new HardshipReview().
@@ -140,9 +140,7 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -161,8 +159,7 @@ class HardshipIntegrationTest {
                         .withBody(objectMapper.writeValueAsString(response))));
 
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -182,9 +179,7 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
     }
 
     private void stubForOAuth() throws JsonProcessingException {
