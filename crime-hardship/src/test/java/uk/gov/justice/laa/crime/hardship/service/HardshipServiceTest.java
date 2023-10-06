@@ -41,9 +41,9 @@ class HardshipServiceTest {
     @Mock
     private HardshipCalculationService calculationService;
 
-    public static final HardshipResult HARDSHIP_RESULT = TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
+    private static final HardshipResult HARDSHIP_RESULT = TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
 
-    public HardshipReviewDTO reviewDTO;
+    private HardshipReviewDTO reviewDTO;
 
     @BeforeEach
     void setUp(){
