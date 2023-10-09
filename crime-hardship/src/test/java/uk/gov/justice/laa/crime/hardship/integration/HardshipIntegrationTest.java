@@ -206,6 +206,37 @@ class HardshipIntegrationTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void givenAnEmptyContent_whenRollbackHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL+"/rollback"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAnEmptyOAuthToken_whenUpdateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL+"/rollback", false))
+                .andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
+    void givenAValidRequest_whenRollbackHardshipIsInvoked_thenOkResponse() throws Exception {
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        ApiPersistHardshipResponse response = TestModelDataBuilder.getApiPersistHardshipResponse();
+
+        wiremock.stubFor(put(urlEqualTo("/api/internal/v1/assessment/hardship")).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(response))));
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL+"/rollback")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.reviewResult").doesNotExist())
+                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+    }
+
     private void stubForOAuth() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, Object> token = Map.of(
