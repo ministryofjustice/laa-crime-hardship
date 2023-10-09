@@ -16,6 +16,7 @@ import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
@@ -52,14 +53,33 @@ class HardshipServiceTest {
     }
     @Test
     void givenValidParameters_whenCreateIsInvoked_thenHardshipIsPersisted() {
+        when(calculationService.calculateHardship(any(HardshipReview.class), any(BigDecimal.class)))
+                .thenReturn(HARDSHIP_RESULT);
         HardshipReviewDTO result = hardshipService.create(reviewDTO, Constants.LAA_TRANSACTION_ID);
         assertResult(result);
     }
 
     @Test
     void givenValidParameters_whenUpdateIsInvoked_thenHardshipIsUpdated() {
+        when(calculationService.calculateHardship(any(HardshipReview.class), any(BigDecimal.class)))
+                .thenReturn(HARDSHIP_RESULT);
         HardshipReviewDTO result = hardshipService.update(reviewDTO, Constants.LAA_TRANSACTION_ID);
         assertResult(result);
+    }
+
+    @Test
+    void givenValidParameters_whenRollbackIsInvoked_thenHardshipStatusIsInProgressAndResultIsNull() {
+        reviewDTO.setHardshipResult(HardshipResult.builder().result(HardshipReviewResult.PASS).build());
+        HardshipReviewDTO result = hardshipService.rollback(reviewDTO, Constants.LAA_TRANSACTION_ID);
+        assertThat(result.getHardshipResult().getResult()).isNull();
+        assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void givenValidParametersWithNullHardshipResult_whenRollbackIsInvoked_thenHardshipStatusIsInProgressAndResultIsNull() {
+        HardshipReviewDTO result = hardshipService.rollback(reviewDTO, Constants.LAA_TRANSACTION_ID);
+        assertThat(result.getHardshipResult()).isNull();
+        assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
     }
 
     private static void assertResult(HardshipReviewDTO result) {
@@ -67,9 +87,6 @@ class HardshipServiceTest {
     }
 
     private void setUpMockForHardshipPersistence() {
-        when(calculationService.calculateHardship(any(HardshipReview.class), any(BigDecimal.class)))
-                .thenReturn(HARDSHIP_RESULT);
-
         when(maatCourtDataService.persistHardship(any(ApiPersistHardshipRequest.class), anyString(),any(RequestType.class)))
                 .thenReturn(TestModelDataBuilder.getApiPersistHardshipResponse());
     }

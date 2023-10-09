@@ -7,6 +7,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -37,13 +38,14 @@ import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewD
 import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @DirtiesContext
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(CrimeHardshipTestConfiguration.class)
 @SpringBootTest(classes = CrimeHardshipApplication.class, webEnvironment = DEFINED_PORT)
+@AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
     private MockMvc mvc;
-    private static final WireMockServer wiremock = new WireMockServer(9999);
+    @Autowired
+    private WireMockServer wiremock;
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
 
     private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
@@ -62,19 +64,9 @@ class HardshipIntegrationTest {
         wiremock.resetAll();
     }
 
-    @AfterAll
-    static void clean() {
-        wiremock.shutdown();
-    }
-
-    @BeforeAll
-    void init() throws JsonProcessingException {
-        wiremock.start();
-        stubForOAuth();
-    }
-
     @BeforeEach
-    public void setup() {
+    public void setup() throws JsonProcessingException {
+        stubForOAuth();
         this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .addFilter(springSecurityFilterChain).build();
     }
@@ -131,6 +123,8 @@ class HardshipIntegrationTest {
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+
+        verify(exactly(1), putRequestedFor(urlEqualTo("/api/internal/v1/assessment/hardship")));
     }
 
     @Test
@@ -161,6 +155,7 @@ class HardshipIntegrationTest {
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+        verify(exactly(1), postRequestedFor(urlEqualTo("/api/internal/v1/assessment/hardship")));
     }
 
     @Test
@@ -194,6 +189,7 @@ class HardshipIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipSummary").value(260));
+        verify(exactly(1), getRequestedFor(urlEqualTo("/api/internal/v1/assessment/hardship/repId/" + TEST_REP_ID + "/detailType/" + DETAIL_TYPE)));
     }
 
     @Test
@@ -204,6 +200,38 @@ class HardshipIntegrationTest {
 
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAnEmptyContent_whenRollbackHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL+"/rollback"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAnEmptyOAuthToken_whenUpdateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL+"/rollback", false))
+                .andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
+    void givenAValidRequest_whenRollbackHardshipIsInvoked_thenOkResponse() throws Exception {
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        ApiPersistHardshipResponse response = TestModelDataBuilder.getApiPersistHardshipResponse();
+
+        wiremock.stubFor(put(urlEqualTo("/api/internal/v1/assessment/hardship")).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(response))));
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL+"/rollback")).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.reviewResult").doesNotExist())
+                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+        verify(exactly(1), putRequestedFor(urlEqualTo("/api/internal/v1/assessment/hardship")));
     }
 
     private void stubForOAuth() throws JsonProcessingException {
