@@ -108,7 +108,7 @@ public class HardshipController {
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
-    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/rollback", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Rollback Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,

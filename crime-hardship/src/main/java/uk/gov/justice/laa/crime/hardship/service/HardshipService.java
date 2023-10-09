@@ -34,13 +34,10 @@ public class HardshipService {
     }
 
     public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
-
         hardshipReviewDTO.getHardshipMetadata().setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
-
         ofNullable(hardshipReviewDTO.getHardshipResult())
                 .orElse(new HardshipResult())
                 .setResult(null);
-
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
                 maatCourtDataService.persistHardship(request, laaTransactionId, RequestType.UPDATE);

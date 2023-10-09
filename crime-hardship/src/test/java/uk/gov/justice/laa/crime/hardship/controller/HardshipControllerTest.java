@@ -183,4 +183,51 @@ class HardshipControllerTest {
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP))
                 .andExpect(status().isInternalServerError());
     }
+
+
+    @Test
+    void givenValidRequest_whenRollbackIsInvoked_thenOkResponseIsReturned() throws Exception {
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        ApiPerformHardshipResponse response = TestModelDataBuilder.getApiPerformHardshipResponse();
+        response.setReviewResult(null);
+
+        when(hardshipMapper.fromDto(any(HardshipReviewDTO.class)))
+                .thenReturn(response);
+
+        when(hardshipService.rollback(any(HardshipReviewDTO.class), anyString()))
+                .thenReturn(new HardshipReviewDTO());
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL+"/rollback"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.reviewResult").doesNotExist())
+                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+    }
+
+    @Test
+    void givenInvalidRequest_whenRollbackIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
+        ApiPerformHardshipRequest request = new ApiPerformHardshipRequest()
+                .withHardship(TestModelDataBuilder.getHardshipReview());
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL+"/rollback"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenFailedApiCall_whenRollbackIsInvoked_thenInternalServerErrorResponseIsReturned() throws Exception {
+        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+
+        when(hardshipService.rollback(any(HardshipReviewDTO.class), anyString()))
+                .thenThrow(new APIClientException("Call to Court Data API failed."));
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL+"/rollback"))
+                .andExpect(status().isInternalServerError());
+    }
 }
