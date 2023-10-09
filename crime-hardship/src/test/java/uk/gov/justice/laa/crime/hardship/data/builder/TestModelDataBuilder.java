@@ -190,13 +190,13 @@ public class TestModelDataBuilder {
             switch (type) {
                 case FUNDING -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.FUNDING)
+                                .withDetailType(HardshipReviewDetailType.FUNDING)
                                 .withAmount(amount)
                                 .withDateDue(LocalDateTime.now())
                 );
                 case INCOME -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.INCOME)
+                                .withDetailType(HardshipReviewDetailType.INCOME)
                                 .withAmount(amount)
                                 .withFrequency(Frequency.MONTHLY)
                                 .withAccepted("N")
@@ -205,7 +205,7 @@ public class TestModelDataBuilder {
                 );
                 case EXPENDITURE -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.EXPENDITURE)
+                                .withDetailType(HardshipReviewDetailType.EXPENDITURE)
                                 .withAmount(amount)
                                 .withFrequency(Frequency.TWO_WEEKLY)
                                 .withAccepted("Y")
@@ -215,7 +215,7 @@ public class TestModelDataBuilder {
                 );
                 case SOL_COSTS -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.SOL_COSTS)
+                                .withDetailType(HardshipReviewDetailType.SOL_COSTS)
                                 .withAmount(amount)
                                 .withFrequency(Frequency.ANNUALLY)
                                 .withAccepted("Y")
