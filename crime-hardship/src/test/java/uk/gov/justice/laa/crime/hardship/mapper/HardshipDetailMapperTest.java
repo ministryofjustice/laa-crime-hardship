@@ -8,10 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.DeniedIncomeDetailCode;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.ExtraExpenditureDetailCode;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -113,7 +113,7 @@ class HardshipDetailMapperTest {
     @Test
     void givenApiHardshipDetailListInvalidDetailType_whenToDtoIsInvoked_thenExceptionIsThrown() {
         ApiHardshipDetail detail = new ApiHardshipDetail()
-                .withType(HardshipReviewDetailType.ACTION);
+                .withDetailType(HardshipReviewDetailType.ACTION);
 
         assertThatThrownBy(
                 () -> mapper.toDto(List.of(detail), new HardshipReview())

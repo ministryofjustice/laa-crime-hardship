@@ -105,7 +105,7 @@ class PersistHardshipMapperTest {
 
                 new ApiHardshipDetail()
                         .withAccepted("Y")
-                        .withType(HardshipReviewDetailType.INCOME)
+                        .withDetailType(HardshipReviewDetailType.INCOME)
                         .withAmount(deniedIncome.getAmount())
                         .withFrequency(deniedIncome.getFrequency())
                         .withUserCreated(metadata.getUserSession().getUserName())
@@ -113,7 +113,7 @@ class PersistHardshipMapperTest {
 
                 new ApiHardshipDetail()
                         .withAccepted("N")
-                        .withType(HardshipReviewDetailType.EXPENDITURE)
+                        .withDetailType(HardshipReviewDetailType.EXPENDITURE)
                         .withAmount(extraExpenditure.getAmount())
                         .withFrequency(extraExpenditure.getFrequency())
                         .withUserCreated(metadata.getUserSession().getUserName())
@@ -121,14 +121,14 @@ class PersistHardshipMapperTest {
                         .withDetailReason(extraExpenditure.getReasonCode()),
 
                 new ApiHardshipDetail()
-                        .withType(HardshipReviewDetailType.FUNDING)
+                        .withDetailType(HardshipReviewDetailType.FUNDING)
                         .withAmount(otherFundingSource.getAmount())
                         .withDateDue(otherFundingSource.getDueDate())
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withOtherDescription(otherFundingSource.getDescription()),
 
                 new ApiHardshipDetail()
-                        .withType(HardshipReviewDetailType.SOL_COSTS)
+                        .withDetailType(HardshipReviewDetailType.SOL_COSTS)
                         .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                         .withFrequency(Frequency.ANNUALLY)
                         .withAccepted("Y")
