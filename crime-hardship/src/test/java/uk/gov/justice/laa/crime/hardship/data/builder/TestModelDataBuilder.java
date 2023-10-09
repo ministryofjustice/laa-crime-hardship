@@ -70,6 +70,11 @@ public class TestModelDataBuilder {
                 .withPostHardshipDisposableIncome(BigDecimal.TEN);
     }
 
+    public static ApiCalculateHardshipByDetailResponse getApiCalculateHardshipByDetailResponse() {
+        return new ApiCalculateHardshipByDetailResponse()
+                .withHardshipSummary(BigDecimal.valueOf(3500));
+    }
+
     public static HardshipReview getMinimalHardshipReview() {
         return new HardshipReview()
                 .withCourtType(CourtType.MAGISTRATE)
