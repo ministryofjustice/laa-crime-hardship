@@ -31,6 +31,8 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.DETAIL_TYPE;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_REP_ID;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
 import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
 
@@ -114,7 +116,7 @@ class HardshipIntegrationTest {
     }
 
     @Test
-    void givenValidRequest_whenHardshipUpdateIsInvoked_thenOkResponse() throws Exception {
+    void givenValidRequest_whenUpdateHardshipIsInvoked_thenOkResponse() throws Exception {
         ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         String requestBody = objectMapper.writeValueAsString(request);
@@ -128,22 +130,23 @@ class HardshipIntegrationTest {
 
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
     }
 
     @Test
-    void givenInvalidRequest_whenHardshipUpdateIsInvoked_thenFailsWithBadRequest() throws Exception {
+    void givenInvalidRequest_whenUpdateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
         ApiPerformHardshipRequest request = new ApiPerformHardshipRequest(new HardshipReview().
                 withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
                 new HardshipMetadata().withReviewReason(NewWorkReason.NEW));
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void givenValidRequest_whenHardshipCreateIsInvoked_thenOkResponse() throws Exception {
+    void givenValidRequest_whenCreateHardshipIsInvoked_thenOkResponse() throws Exception {
         ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         String requestBody = objectMapper.writeValueAsString(request);
@@ -155,19 +158,21 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
     }
 
     @Test
-    void givenInvalidRequest_whenHardshipCreateIsInvoked_thenFailsWithBadRequest() throws Exception {
+    void givenInvalidRequest_whenCreateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
         ApiPerformHardshipRequest request = new ApiPerformHardshipRequest(new HardshipReview().
                 withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
                 new HardshipMetadata().withReviewReason(NewWorkReason.NEW));
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
+                .andExpect(status().isBadRequest());
     }
 
 
@@ -180,12 +185,13 @@ class HardshipIntegrationTest {
 
         List<ApiHardshipDetail> hardshipDetails = TestModelDataBuilder.getApiHardshipReviewDetails(EXPENDITURE);
 
-        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/repId/"+request.getRepId()+"/detailType/"+request.getDetailType())).willReturn(
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/repId/"+TEST_REP_ID+"/detailType/"+DETAIL_TYPE)).willReturn(
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(hardshipDetails))));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP)).andExpect(status().isOk())
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipSummary").value(260));
     }
@@ -196,7 +202,8 @@ class HardshipIntegrationTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+                .andExpect(status().isBadRequest());
     }
 
     private void stubForOAuth() throws JsonProcessingException {
