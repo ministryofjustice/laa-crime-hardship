@@ -71,14 +71,14 @@ class HardshipServiceTest {
     void givenValidParameters_whenRollbackIsInvoked_thenHardshipStatusIsInProgressAndResultIsNull() {
         reviewDTO.setHardshipResult(HardshipResult.builder().result(HardshipReviewResult.PASS).build());
         HardshipReviewDTO result = hardshipService.rollback(reviewDTO, Constants.LAA_TRANSACTION_ID);
-        assertThat(result.getHardshipResult().getResult()).isEqualTo(null);
+        assertThat(result.getHardshipResult().getResult()).isNull();
         assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
     }
 
     @Test
     void givenValidParametersWithNullHardshipResult_whenRollbackIsInvoked_thenHardshipStatusIsInProgressAndResultIsNull() {
         HardshipReviewDTO result = hardshipService.rollback(reviewDTO, Constants.LAA_TRANSACTION_ID);
-        assertThat(result.getHardshipResult()).isEqualTo(null);
+        assertThat(result.getHardshipResult()).isNull();
         assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
     }
 

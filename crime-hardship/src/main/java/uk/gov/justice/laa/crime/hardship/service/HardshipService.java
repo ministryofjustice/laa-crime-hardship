@@ -14,8 +14,6 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
 
-import static java.util.Optional.ofNullable;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,7 +33,7 @@ public class HardshipService {
 
     public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
         hardshipReviewDTO.getHardshipMetadata().setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
-        if(hardshipReviewDTO.getHardshipResult() != null) {
+        if (hardshipReviewDTO.getHardshipResult() != null) {
             hardshipReviewDTO.getHardshipResult().setResult(null);
         }
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
