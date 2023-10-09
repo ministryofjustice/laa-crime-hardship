@@ -185,7 +185,7 @@ class HardshipIntegrationTest {
 
         List<ApiHardshipDetail> hardshipDetails = TestModelDataBuilder.getApiHardshipReviewDetails(EXPENDITURE);
 
-        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/repId/"+TEST_REP_ID+"/detailType/"+DETAIL_TYPE)).willReturn(
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/repId/" + TEST_REP_ID + "/detailType/" + DETAIL_TYPE)).willReturn(
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(hardshipDetails))));
