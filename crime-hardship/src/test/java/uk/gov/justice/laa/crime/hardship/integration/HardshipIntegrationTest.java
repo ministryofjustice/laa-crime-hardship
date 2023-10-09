@@ -18,21 +18,20 @@ import org.springframework.web.context.WebApplicationContext;
 import uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication;
 import uk.gov.justice.laa.crime.hardship.config.CrimeHardshipTestConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
-import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
+import uk.gov.justice.laa.crime.hardship.model.*;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
 import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @DirtiesContext
@@ -44,6 +43,8 @@ class HardshipIntegrationTest {
     private MockMvc mvc;
     private static final WireMockServer wiremock = new WireMockServer(9999);
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
+
+    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -65,8 +66,9 @@ class HardshipIntegrationTest {
     }
 
     @BeforeAll
-    void init() {
+    void init() throws JsonProcessingException {
         wiremock.start();
+        stubForOAuth();
     }
 
     @BeforeEach
@@ -77,36 +79,42 @@ class HardshipIntegrationTest {
 
     @Test
     void givenAEmptyContent_whenUpdateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        stubForOAuth();
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenAEmptyOAuthToken_whenUpdateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
-        stubForOAuth();
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL, false))
                 .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
+    void givenAEmptyContent_whenCalculateHardshipForDetailIsInvoked_thenFailsWithBadRequest() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL_CALCULATE_HARDSHIP))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAEmptyOAuthToken_whenCalculateHardshipForDetailIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL_CALCULATE_HARDSHIP, false))
+                .andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
     void givenAEmptyContent_whenCreateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        stubForOAuth();
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenAEmptyOAuthToken_whenCreateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
-        stubForOAuth();
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL, false))
                 .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
     void givenValidRequest_whenHardshipUpdateIsInvoked_thenOkResponse() throws Exception {
-        stubForOAuth();
-
         ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         String requestBody = objectMapper.writeValueAsString(request);
@@ -125,28 +133,17 @@ class HardshipIntegrationTest {
 
     @Test
     void givenInvalidRequest_whenHardshipUpdateIsInvoked_thenFailsWithBadRequest() throws Exception {
-        stubForOAuth();
-
         ApiPerformHardshipRequest request = new ApiPerformHardshipRequest(new HardshipReview().
                 withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
                 new HardshipMetadata().withReviewReason(NewWorkReason.NEW));
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        ApiPersistHardshipResponse response = TestModelDataBuilder.getApiPersistHardshipResponse();
-
-        wiremock.stubFor(put(urlEqualTo("/api/internal/v1/assessment/hardship")).willReturn(
-                WireMock.ok()
-                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
-                        .withBody(objectMapper.writeValueAsString(response))));
-
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
     }
 
     @Test
     void givenValidRequest_whenHardshipCreateIsInvoked_thenOkResponse() throws Exception {
-        stubForOAuth();
-
         ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         String requestBody = objectMapper.writeValueAsString(request);
@@ -164,22 +161,42 @@ class HardshipIntegrationTest {
 
     @Test
     void givenInvalidRequest_whenHardshipCreateIsInvoked_thenFailsWithBadRequest() throws Exception {
-        stubForOAuth();
-
         ApiPerformHardshipRequest request = new ApiPerformHardshipRequest(new HardshipReview().
                 withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
                 new HardshipMetadata().withReviewReason(NewWorkReason.NEW));
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        ApiPersistHardshipResponse response = TestModelDataBuilder.getApiPersistHardshipResponse();
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
+    }
 
-        wiremock.stubFor(post(urlEqualTo("/api/internal/v1/assessment/hardship")).willReturn(
+
+    @Test
+    void givenValidRequest_whenCalculateHardshipForDetailIsInvoked_thenOkResponse() throws Exception {
+        ApiCalculateHardshipByDetailRequest request =
+                TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true, EXPENDITURE);
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        List<ApiHardshipDetail> hardshipDetails = TestModelDataBuilder.getApiHardshipReviewDetails(EXPENDITURE);
+
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/repId/"+request.getRepId()+"/detailType/"+request.getDetailType())).willReturn(
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
-                        .withBody(objectMapper.writeValueAsString(response))));
+                        .withBody(objectMapper.writeValueAsString(hardshipDetails))));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP)).andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.hardshipSummary").value(260));
+    }
+
+    @Test
+    void givenInvalidRequest_whenCalculateHardshipForDetailIsInvoked_thenFailsWithBadRequest() throws Exception {
+        ApiCalculateHardshipByDetailRequest request = new ApiCalculateHardshipByDetailRequest();
+
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isBadRequest());
     }
 
     private void stubForOAuth() throws JsonProcessingException {

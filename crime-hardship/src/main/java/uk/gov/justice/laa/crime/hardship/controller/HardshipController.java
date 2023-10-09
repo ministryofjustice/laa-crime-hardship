@@ -63,24 +63,6 @@ public class HardshipController {
         );
     }
 
-
-    @GetMapping(value = "/hardshipReviewId", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(description = "Find Hardship review")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
-            )
-    )
-    @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiPerformHardshipResponse> find(
-            @PathVariable int hardshipReviewId,
-            @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
-
-        return ResponseEntity.ok().build();
-    }
-
-
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Create Hardship review")
     @ApiResponse(responseCode = "200",
