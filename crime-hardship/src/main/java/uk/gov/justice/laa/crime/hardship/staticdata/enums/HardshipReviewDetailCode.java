@@ -35,14 +35,10 @@ public enum HardshipReviewDetailCode {
     OTHER_INC("OTHER INC", "Other", HardshipReviewDetailType.INCOME.getType());
 
     @JsonPropertyDescription("Hardship review detail codes that are valid")
+    @JsonValue
     private final String code;
     private final String description;
     private final String type;
-
-    @JsonValue
-    public String getCode() {
-        return this.code;
-    }
 
     public static HardshipReviewDetailCode getFrom(String code) {
         if (StringUtils.isBlank(code)) { return null; }

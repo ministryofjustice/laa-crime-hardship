@@ -1,6 +1,9 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -24,8 +27,20 @@ public enum HardshipReviewDetailReasons {
     NOT_IN_COMPUTATION_PERIOD("Not in computation period", HardshipReviewDetailType.EXPENDITURE.getType());
 
     @JsonPropertyDescription("Hardship review detail reasons")
+    @JsonValue
     private final String reason;
     private final String type;
+
+    @JsonCreator
+    public static HardshipReviewDetailReasons getValues(@JsonProperty("id") String id, @JsonProperty("reason") String reason) {
+        for (HardshipReviewDetailReasons enumReason : HardshipReviewDetailReasons.values()) {
+            if (enumReason.reason.equals(reason)) {
+                return enumReason;
+            }
+        }
+
+        return null;
+    }
 
     public static HardshipReviewDetailReasons getFrom(String reason) {
         if (StringUtils.isBlank(reason)) return null;
