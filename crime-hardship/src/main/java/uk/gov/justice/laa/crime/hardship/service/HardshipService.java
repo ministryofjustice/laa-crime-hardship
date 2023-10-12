@@ -43,32 +43,6 @@ public class HardshipService {
         if (hardshipReviewDTO.getHardshipResult() != null) {
             hardshipReviewDTO.getHardshipResult().setResult(null);
         }
-    }
-
-    private static BigDecimal calculateDetails(HardshipReview hardship) {
-        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
-                .flatMap(Collection::stream)
-                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
-                .map(item -> item.getAmount()
-                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        CourtType courtType = hardship.getCourtType();
-        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
-        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
-            BigDecimal estimatedTotal;
-            if (solicitorCosts.getEstimatedTotal() != null) {
-                estimatedTotal = solicitorCosts.getEstimatedTotal();
-            } else {
-                estimatedTotal = solicitorCosts.getRate()
-                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
-                        .add(solicitorCosts.getVat())
-                        .add(solicitorCosts.getDisbursements());
-                solicitorCosts.setEstimatedTotal(estimatedTotal);
-            }
-            total = total.add(estimatedTotal);
-        }
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
                 maatCourtDataService.persistHardship(request, laaTransactionId, RequestType.UPDATE);
