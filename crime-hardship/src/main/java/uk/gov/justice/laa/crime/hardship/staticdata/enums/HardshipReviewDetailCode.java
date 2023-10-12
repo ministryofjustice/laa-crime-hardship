@@ -28,7 +28,8 @@ public enum HardshipReviewDetailCode {
     UNI_HOUSING("UNI HOUSING", "University Housing Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PRESCRIPTION("PRESCRIPTION", "Prescription Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PENSION_PAY("PENSION PAY", "Pension Payments", HardshipReviewDetailType.EXPENDITURE.getType()),
-    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    // Typo in the data that is already in the table
+    MEDICAL_COSTS("MEDIAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     OTHER("OTHER", "Other", HardshipReviewDetailType.EXPENDITURE.getType()),
     MEDICAL_GROUNDS("MEDICAL GROUNDS", "Medical Grounds", HardshipReviewDetailType.INCOME.getType()),
     SUSPENDED_WORK("SUSPENDED WORK", "Suspended from work", HardshipReviewDetailType.INCOME.getType()),
