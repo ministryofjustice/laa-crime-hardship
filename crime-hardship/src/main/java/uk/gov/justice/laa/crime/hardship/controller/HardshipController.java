@@ -68,7 +68,7 @@ public class HardshipController {
         );
     }
 
-    @GetMapping(value = "/hardshipReviewId", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{hardshipReviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Find Hardship review")
     @ApiResponse(responseCode = "200",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
