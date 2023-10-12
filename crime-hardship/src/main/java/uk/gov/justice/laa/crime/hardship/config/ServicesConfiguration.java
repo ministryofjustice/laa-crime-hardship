@@ -18,6 +18,9 @@ public class ServicesConfiguration {
     @NotNull
     private boolean oAuthEnabled;
 
+    @NotNull
+    private CmaApi cmaApi;
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -36,6 +39,27 @@ public class ServicesConfiguration {
 
             @NotNull
             private String hardshipDetailUrl;
+        }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CmaApi {
+
+        @NotNull
+        private String baseUrl;
+
+        @NotNull
+        private CmaEndpoints cmaEndpoints;
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class CmaEndpoints {
+
+            @NotNull
+            private String fullAssessmentThresholdUrl;
         }
     }
 }

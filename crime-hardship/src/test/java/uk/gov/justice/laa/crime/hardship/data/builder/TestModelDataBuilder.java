@@ -21,7 +21,9 @@ public class TestModelDataBuilder {
 
     public static final Integer CMU_ID = 50;
     public static final Integer HARDSHIP_ID = 1234;
+    public static final LocalDateTime ASSESSMENT_DATE = LocalDateTime.of(2022, 12, 14, 0, 0, 0);
     public static final Integer TEST_REP_ID = 91919;
+
     public static final String TEST_USER_NAME = "mock-u";
     public static final String DETAIL_TYPE = "EXPENDITURE";
     public static final Integer FINANCIAL_ASSESSMENT_ID = 6781;

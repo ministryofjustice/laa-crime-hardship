@@ -14,15 +14,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.model.*;
+import uk.gov.justice.laa.crime.hardship.service.CrimeMeansAssessmentService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
@@ -33,6 +36,7 @@ public class HardshipController {
 
     private final HardshipMapper mapper;
     private final HardshipService hardshipService;
+    private final CrimeMeansAssessmentService crimeMeansAssessmentService;
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Calculate Crime Hardship for Detail")
@@ -56,6 +60,30 @@ public class HardshipController {
                         request.getLaaTransactionId()
                 )
         );
+    }
+
+    @PostMapping(value = "/calculate-hardship", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Generic Client Agnostic Calculate Crime Hardship")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ApiCalculateHardshipResponse.class)
+            )
+    )
+    @DefaultHTTPErrorResponse
+    public ResponseEntity<ApiCalculateHardshipResponse> calculateHardship(
+            @Parameter(description = "Generic Client Agnostic Calculate Crime Hardship",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiCalculateHardshipRequest.class)
+                    )
+            ) @Valid @RequestBody ApiCalculateHardshipRequest request) {
+
+        BigDecimal fullThreshold = crimeMeansAssessmentService
+                .getFullAssessmentThreshold(request.getHardship().getReviewDate());
+        HardshipResult hardshipResult = hardshipService.calculateHardship(
+                request.getHardship(), fullThreshold);
+        return ResponseEntity.ok(new ApiCalculateHardshipResponse()
+                .withReviewResult(hardshipResult.getResult())
+                .withPostHardshipDisposableIncome(hardshipResult.getPostHardshipDisposableIncome()));
     }
 
 
