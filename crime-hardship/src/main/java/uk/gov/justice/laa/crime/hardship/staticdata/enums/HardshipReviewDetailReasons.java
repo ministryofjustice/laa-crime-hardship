@@ -33,13 +33,7 @@ public enum HardshipReviewDetailReasons {
 
     @JsonCreator
     public static HardshipReviewDetailReasons getValues(@JsonProperty("id") String id, @JsonProperty("reason") String reason) {
-        for (HardshipReviewDetailReasons enumReason : HardshipReviewDetailReasons.values()) {
-            if (enumReason.reason.equals(reason)) {
-                return enumReason;
-            }
-        }
-
-        return null;
+        return getFrom(reason);
     }
 
     public static HardshipReviewDetailReasons getFrom(String reason) {

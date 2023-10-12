@@ -1,7 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -21,12 +20,13 @@ public enum HardshipReviewProgressAction {
     OTHER("OTHER", "Other");
 
     @JsonPropertyDescription("This will have the hardship review progress action")
+    @JsonValue
     private final String action;
     private final String description;
 
-    @JsonValue
-    public String getValue() {
-        return this.action;
+    @JsonCreator
+    public static HardshipReviewProgressAction getValues(@JsonProperty("action") String action, @JsonProperty("description") String description) {
+        return getFrom(action);
     }
 
     public static HardshipReviewProgressAction getFrom(String action) {
