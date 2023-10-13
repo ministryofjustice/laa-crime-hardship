@@ -7,6 +7,8 @@ import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 
+import static java.util.Optional.ofNullable;
+
 @Component
 public class HardshipMapper implements RequestMapper<ApiPerformHardshipResponse, HardshipReviewDTO>,
         ResponseMapper<ApiPerformHardshipRequest, HardshipReviewDTO> {
@@ -17,10 +19,12 @@ public class HardshipMapper implements RequestMapper<ApiPerformHardshipResponse,
         HardshipResult hardshipResult = reviewDTO.getHardshipResult();
 
         return new ApiPerformHardshipResponse()
-                .withReviewResult(hardshipResult.getResult())
+                .withReviewResult(ofNullable(hardshipResult)
+                        .map(HardshipResult::getResult).orElse(null))
                 .withDisposableIncome(hardship.getTotalAnnualDisposableIncome())
                 .withHardshipReviewId(reviewDTO.getHardshipMetadata().getHardshipReviewId())
-                .withPostHardshipDisposableIncome(hardshipResult.getPostHardshipDisposableIncome());
+                .withPostHardshipDisposableIncome(ofNullable(hardshipResult)
+                        .map(HardshipResult::getPostHardshipDisposableIncome).orElse(null));
     }
 
     public void toDto(ApiPerformHardshipRequest request, HardshipReviewDTO reviewDTO) {

@@ -35,7 +35,7 @@
       "type": "string",
       "description": "The reason note"
     },
-    "type": {
+    "detailType": {
       "type": "object",
       "description": "Hardship review detail type",
       "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType"
@@ -55,5 +55,5 @@
       "description": "ID of the user creating the progress item"
     }
   },
-  "required": ["frequency", "amount", "dateDue", "type", "detailCode", "detailReason", "timestamp"]
+  "required": ["frequency", "amount", "dateDue", "detailType", "detailCode", "detailReason", "timestamp"]
 }

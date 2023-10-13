@@ -1,6 +1,5 @@
 package uk.gov.justice.laa.crime.hardship.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,18 +13,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
+import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.CrimeMeansAssessmentService;
+import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
+import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @RestController
@@ -37,6 +37,8 @@ public class HardshipController {
     private final HardshipMapper mapper;
     private final HardshipService hardshipService;
     private final CrimeMeansAssessmentService crimeMeansAssessmentService;
+    private final HardshipValidationService hardshipValidationService;
+    private final HardshipCalculationService hardshipCalculationService;
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Calculate Crime Hardship for Detail")
@@ -54,7 +56,7 @@ public class HardshipController {
             ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
 
         return ResponseEntity.ok(
-                hardshipService.calculateHardshipForDetail(
+                hardshipCalculationService.calculateHardshipForDetail(
                         request.getRepId(),
                         HardshipReviewDetailType.valueOf(request.getDetailType()),
                         request.getLaaTransactionId()
@@ -77,30 +79,16 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiCalculateHardshipRequest request) {
 
+        hardshipValidationService.checkHardshipDate(request);
         BigDecimal fullThreshold = crimeMeansAssessmentService
                 .getFullAssessmentThreshold(request.getHardship().getReviewDate());
-        HardshipResult hardshipResult = hardshipService.calculateHardship(
+
+        HardshipResult hardshipResult = hardshipCalculationService.calculateHardship(
                 request.getHardship(), fullThreshold);
+
         return ResponseEntity.ok(new ApiCalculateHardshipResponse()
                 .withReviewResult(hardshipResult.getResult())
                 .withPostHardshipDisposableIncome(hardshipResult.getPostHardshipDisposableIncome()));
-    }
-
-
-    @GetMapping(value = "/hardshipReviewId", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(description = "Find Hardship review")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
-            )
-    )
-    @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiPerformHardshipResponse> find(
-            @PathVariable int hardshipReviewId,
-            @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
-
-        return ResponseEntity.ok().build();
     }
 
 
@@ -119,11 +107,11 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
-        // Call service methods
-        return ResponseEntity.ok().build();
+        reviewDTO = hardshipService.create(reviewDTO, laaTransactionId);
+        return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
 
@@ -142,16 +130,39 @@ public class HardshipController {
                     )
             ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
-        // Call service methods
-        return ResponseEntity.ok().build();
+        reviewDTO = hardshipService.update(reviewDTO, laaTransactionId);
+        return ResponseEntity.ok(mapper.fromDto(reviewDTO));
+    }
+
+    @PutMapping(value = "/rollback", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Rollback Hardship review")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
+            )
+    )
+    @DefaultHTTPErrorResponse
+    public ResponseEntity<ApiPerformHardshipResponse> rollback(
+            @Parameter(description = "JSON object containing Hardship information",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiPerformHardshipRequest.class)
+                    )
+            ) @Valid @RequestBody ApiPerformHardshipRequest hardship,
+            @Parameter(description = "Used to trace calls between services")
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
+
+        HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
+        reviewDTO = hardshipService.rollback(reviewDTO, laaTransactionId);
+        return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .requestType(requestType).build();
+        hardshipValidationService.checkHardship(hardship);
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;
     }

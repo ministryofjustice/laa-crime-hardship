@@ -2,8 +2,10 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
 
 import java.math.BigDecimal;
@@ -32,7 +34,7 @@ public class TestModelDataBuilder {
     public static final BigDecimal TOTAL_DISPOSABLE_INCOME = BigDecimal.valueOf(500);
     public static final BigDecimal POST_HARDSHIP_DISPOSABLE_INCOME = BigDecimal.valueOf(250);
     public static final String MEANS_ASSESSMENT_TRANSACTION_ID = "7c49ebfe-fe3a-4f2f-8dad-f7b8f03b8327";
-    public static final LocalDateTime RESULT_DATE = LocalDateTime.of(2022, 12, 14, 0, 0, 0);
+    public static final LocalDate RESULT_DATE = LocalDate.of(2022, 12, 14);
 
     // Solicitors Costs
     public static final Integer TEST_SOLICITOR_HOURS = 50;
@@ -41,6 +43,17 @@ public class TestModelDataBuilder {
     public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
     public static final BigDecimal TEST_SOLICITOR_ESTIMATED_COST = BigDecimal.valueOf(2500);
 
+    public static ApiCalculateHardshipRequest getApiCalculateHardshipRequest() {
+        return new ApiCalculateHardshipRequest()
+                .withHardship(getHardshipReview());
+    }
+
+    public static ApiCalculateHardshipResponse getApiCalculateHardshipResponse() {
+        return new ApiCalculateHardshipResponse()
+                .withReviewResult(getHardshipResult(HardshipReviewResult.PASS).getResult())
+                .withPostHardshipDisposableIncome(BigDecimal.TEN);
+    }
+
     public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(
             boolean isValid, HardshipReviewDetailType detailType) {
 
@@ -48,6 +61,31 @@ public class TestModelDataBuilder {
                 .withRepId(isValid ? TEST_REP_ID : null)
                 .withLaaTransactionId(MEANS_ASSESSMENT_TRANSACTION_ID)
                 .withDetailType(detailType.getType());
+    }
+
+    public static ApiPerformHardshipRequest getApiPerformHardshipRequest() {
+        return new ApiPerformHardshipRequest()
+                .withHardship(getHardshipReview())
+                .withHardshipMetadata(getHardshipMetadata());
+    }
+
+    public static ApiPersistHardshipResponse getApiPersistHardshipResponse() {
+        return new ApiPersistHardshipResponse()
+                .withId(1000)
+                .withDateCreated(LocalDateTime.now());
+    }
+
+    public static ApiPerformHardshipResponse getApiPerformHardshipResponse() {
+        return new ApiPerformHardshipResponse()
+                .withHardshipReviewId(1000)
+                .withReviewResult(HardshipReviewResult.PASS)
+                .withDisposableIncome(BigDecimal.valueOf(3500))
+                .withPostHardshipDisposableIncome(BigDecimal.TEN);
+    }
+
+    public static ApiCalculateHardshipByDetailResponse getApiCalculateHardshipByDetailResponse() {
+        return new ApiCalculateHardshipByDetailResponse()
+                .withHardshipSummary(BigDecimal.valueOf(3500));
     }
 
     public static HardshipReview getMinimalHardshipReview() {
@@ -165,13 +203,13 @@ public class TestModelDataBuilder {
             switch (type) {
                 case FUNDING -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.FUNDING)
+                                .withDetailType(HardshipReviewDetailType.FUNDING)
                                 .withAmount(amount)
                                 .withDateDue(LocalDateTime.now())
                 );
                 case INCOME -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.INCOME)
+                                .withDetailType(HardshipReviewDetailType.INCOME)
                                 .withAmount(amount)
                                 .withFrequency(Frequency.MONTHLY)
                                 .withAccepted("N")
@@ -180,7 +218,7 @@ public class TestModelDataBuilder {
                 );
                 case EXPENDITURE -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.EXPENDITURE)
+                                .withDetailType(HardshipReviewDetailType.EXPENDITURE)
                                 .withAmount(amount)
                                 .withFrequency(Frequency.TWO_WEEKLY)
                                 .withAccepted("Y")
@@ -190,7 +228,7 @@ public class TestModelDataBuilder {
                 );
                 case SOL_COSTS -> details.add(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.SOL_COSTS)
+                                .withDetailType(HardshipReviewDetailType.SOL_COSTS)
                                 .withAmount(amount)
                                 .withFrequency(Frequency.ANNUALLY)
                                 .withAccepted("Y")
@@ -246,4 +284,12 @@ public class TestModelDataBuilder {
 
         return hardship;
     }
+
+    public static HardshipReviewDTO getHardshipReviewDTO() {
+        return HardshipReviewDTO.builder()
+                .hardship(TestModelDataBuilder.getHardshipReview())
+                .hardshipMetadata(TestModelDataBuilder.getHardshipMetadata())
+                .build();
+    }
+
 }

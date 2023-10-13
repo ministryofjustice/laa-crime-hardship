@@ -14,7 +14,7 @@ public class HardshipDetailMapper implements ResponseMapper<List<ApiHardshipDeta
     public void toDto(List<ApiHardshipDetail> response, HardshipReview hardship) {
         response
                 .forEach(item -> {
-                    switch (item.getType()) {
+                    switch (item.getDetailType()) {
                         case EXPENDITURE -> hardship.getExtraExpenditure().add(
                                 new ExtraExpenditure()
                                         .withAmount(item.getAmount())
@@ -49,7 +49,7 @@ public class HardshipDetailMapper implements ResponseMapper<List<ApiHardshipDeta
                                         .withEstimatedTotal(item.getAmount())
                         );
 
-                        default -> throw new IllegalStateException("Unexpected value: " + item.getType());
+                        default -> throw new IllegalStateException("Unexpected value: " + item.getDetailType());
                     }
                 });
     }

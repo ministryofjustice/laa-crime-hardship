@@ -85,7 +85,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                                     .withUserCreated(username);
                             if (item instanceof OtherFundingSource otherFunding) {
                                 return detail
-                                        .withType(HardshipReviewDetailType.FUNDING)
+                                        .withDetailType(HardshipReviewDetailType.FUNDING)
                                         .withDateDue(otherFunding.getDueDate());
                             } else if (item instanceof HardshipCost hardshipCost) {
                                 detail
@@ -94,7 +94,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
 
                                 if (item instanceof DeniedIncome deniedIncome) {
                                     return detail
-                                            .withType(HardshipReviewDetailType.INCOME)
+                                            .withDetailType(HardshipReviewDetailType.INCOME)
                                             .withDetailCode(
                                                     HardshipReviewDetailCode.getFrom(
                                                             deniedIncome.getItemCode().getCode()
@@ -102,7 +102,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                                             );
                                 } else if (item instanceof ExtraExpenditure expenditure) {
                                     return detail
-                                            .withType(HardshipReviewDetailType.EXPENDITURE)
+                                            .withDetailType(HardshipReviewDetailType.EXPENDITURE)
                                             .withDetailCode(HardshipReviewDetailCode.getFrom(
                                                             expenditure.getItemCode().getCode()
                                                     )
@@ -115,7 +115,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
 
                 Stream.of(
                         new ApiHardshipDetail()
-                                .withType(HardshipReviewDetailType.SOL_COSTS)
+                                .withDetailType(HardshipReviewDetailType.SOL_COSTS)
                                 .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                                 .withFrequency(Frequency.ANNUALLY)
                                 .withAccepted("Y")

@@ -68,11 +68,12 @@ services:
     assessments-domain: ${services.maat-api.base-url}/api/internal/v1/assessment
     hardship-endpoints:
       hardship-detail-url: ${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
+      persist-hardship-url: ${services.maat-api.assessments-domain}/hardship
   cma-api:
     base-url: ${CMA_API_BASE_URL}
-    means-assessments-domain: ${services.maat-api.base-url}/api/internal/v1/assessment/means
+    means-assessments-domain: ${services.cma-api.base-url}/api/internal/v1/assessment/means
     cma-endpoints:
-      get-full-assessment-threshold-url: ${services.cma.means-assessments-domain}/fullAssessmentThreshold/{assessmentDate}
+      full-assessment-threshold-url: ${services.cma-api.means-assessments-domain}/fullAssessmentThreshold/{assessmentDate}
 
 springdoc:
   packagesToScan: uk.gov.justice.laa.crime.hardship

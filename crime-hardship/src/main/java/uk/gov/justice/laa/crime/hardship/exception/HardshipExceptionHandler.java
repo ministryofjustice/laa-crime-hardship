@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import uk.gov.justice.laa.crime.commons.exception.APIClientException;
 import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
 
 @Slf4j
@@ -18,5 +19,11 @@ public class HardshipExceptionHandler {
     public ResponseEntity<ErrorDTO> handleValidationException(ValidationException exception) {
         log.error("Validation exception: {}", exception.getMessage());
         return buildErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+    @ExceptionHandler(APIClientException.class)
+    public ResponseEntity<ErrorDTO> handleApiClientException(APIClientException exception) {
+        log.error("API client exception: {}", exception.getMessage());
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
     }
 }
