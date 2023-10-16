@@ -23,7 +23,9 @@ public class TestModelDataBuilder {
 
     public static final Integer CMU_ID = 50;
     public static final Integer HARDSHIP_ID = 1234;
+    public static final LocalDateTime ASSESSMENT_DATE = LocalDateTime.of(2022, 12, 14, 0, 0, 0);
     public static final Integer TEST_REP_ID = 91919;
+
     public static final String TEST_USER_NAME = "mock-u";
     public static final String DETAIL_TYPE = "EXPENDITURE";
     public static final Integer FINANCIAL_ASSESSMENT_ID = 6781;
@@ -40,6 +42,17 @@ public class TestModelDataBuilder {
     public static final BigDecimal TEST_SOLICITOR_DISBURSEMENTS = BigDecimal.valueOf(375);
     public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
     public static final BigDecimal TEST_SOLICITOR_ESTIMATED_COST = BigDecimal.valueOf(2500);
+
+    public static ApiCalculateHardshipRequest getApiCalculateHardshipRequest() {
+        return new ApiCalculateHardshipRequest()
+                .withHardship(getHardshipReview());
+    }
+
+    public static ApiCalculateHardshipResponse getApiCalculateHardshipResponse() {
+        return new ApiCalculateHardshipResponse()
+                .withReviewResult(getHardshipResult(HardshipReviewResult.PASS).getResult())
+                .withPostHardshipDisposableIncome(BigDecimal.TEN);
+    }
 
     public static ApiCalculateHardshipByDetailRequest getApiCalculateHardshipByDetailRequest(
             boolean isValid, HardshipReviewDetailType detailType) {

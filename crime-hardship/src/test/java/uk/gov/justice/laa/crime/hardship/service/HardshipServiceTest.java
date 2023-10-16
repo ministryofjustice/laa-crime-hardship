@@ -30,27 +30,27 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SoftAssertionsExtension.class)
 class HardshipServiceTest {
 
+    private static final HardshipResult HARDSHIP_RESULT = TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
     @InjectMocks
     private HardshipService hardshipService;
-
     @Spy
     private PersistHardshipMapper mapper;
-
     @Mock
     private MaatCourtDataService maatCourtDataService;
-
     @Mock
     private HardshipCalculationService calculationService;
-
-    private static final HardshipResult HARDSHIP_RESULT = TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
-
     private HardshipReviewDTO reviewDTO;
 
+    private static void assertResult(HardshipReviewDTO result) {
+        assertThat(result.getHardshipResult()).isEqualTo(HARDSHIP_RESULT);
+    }
+
     @BeforeEach
-    void setUp(){
+    void setUp() {
         reviewDTO = TestModelDataBuilder.getHardshipReviewDTO();
         setUpMockForHardshipPersistence();
     }
+
     @Test
     void givenValidParameters_whenCreateIsInvoked_thenHardshipIsPersisted() {
         when(calculationService.calculateHardship(any(HardshipReview.class), any(BigDecimal.class)))
@@ -82,12 +82,8 @@ class HardshipServiceTest {
         assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
     }
 
-    private static void assertResult(HardshipReviewDTO result) {
-        assertThat(result.getHardshipResult()).isEqualTo(HARDSHIP_RESULT);
-    }
-
     private void setUpMockForHardshipPersistence() {
-        when(maatCourtDataService.persistHardship(any(ApiPersistHardshipRequest.class), anyString(),any(RequestType.class)))
+        when(maatCourtDataService.persistHardship(any(ApiPersistHardshipRequest.class), anyString(), any(RequestType.class)))
                 .thenReturn(TestModelDataBuilder.getApiPersistHardshipResponse());
     }
 }

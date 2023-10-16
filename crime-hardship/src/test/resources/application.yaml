@@ -26,8 +26,14 @@ spring:
         provider:
           maat-api:
             token-uri: http://localhost:9999/oauth2/token
+          cma:
+            token-uri: http://localhost:9999/oauth2/token
         registration:
           maat-api:
+            client-id: dummy-client
+            client-secret: dummy-secret
+            authorization-grant-type: client_credentials
+          cma:
             client-id: dummy-client
             client-secret: dummy-secret
             authorization-grant-type: client_credentials
@@ -50,6 +56,13 @@ services:
     hardship-endpoints:
       hardship-detail-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
       persist-hardship-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship
+  cma-api:
+    oAuthEnabled: true
+    base-url: http://localhost:9999
+    means-assessments-domain: ${services.cma-api.base-url}/api/internal/v1/assessment/means
+    cma-endpoints:
+      full-assessment-threshold-url: ${services.cma-api.means-assessments-domain}/fullAssessmentThreshold/{assessmentDate}
+
 retry-config:
   max-retries: 2
   min-back-off-period: 3
