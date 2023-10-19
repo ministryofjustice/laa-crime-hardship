@@ -50,6 +50,7 @@ services:
     hardship-endpoints:
       hardship-detail-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
       persist-hardship-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship
+      hardship-url: ${services.maat-api.baseUrl}/${services.maat-api.assessments-domain}/hardship/{hardshipReviewId}
 retry-config:
   max-retries: 2
   min-back-off-period: 3

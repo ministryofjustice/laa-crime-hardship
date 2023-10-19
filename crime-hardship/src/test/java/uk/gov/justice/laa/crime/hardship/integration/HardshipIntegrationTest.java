@@ -32,9 +32,9 @@ import java.util.UUID;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.DETAIL_TYPE;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_REP_ID;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.*;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
+import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequest;
 import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @DirtiesContext
@@ -93,6 +93,36 @@ class HardshipIntegrationTest {
     void givenAEmptyOAuthToken_whenCalculateHardshipForDetailIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL_CALCULATE_HARDSHIP, false))
                 .andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
+    void givenValidHardshipId_whenFindIsInvoked_thenHardshipReviewIsReturned() throws Exception {
+        ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/" + HARDSHIP_ID)).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(response))));
+
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + HARDSHIP_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(response.getId()));
+    }
+
+    @Test
+    void givenEmptyAuthToken_whenFindIsInvoked_thenFailsWithUnauthorisedRequest() throws Exception {
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + HARDSHIP_ID, false))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void givenUnknownHardshipReviewId_whenFindIsInvoked_thenInternalSeverErrorResponse() throws Exception {
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/" + HARDSHIP_ID)).willReturn(
+                WireMock.badRequest()));
+
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + HARDSHIP_ID))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").value("Call to service MAAT-API failed."));
     }
 
     @Test

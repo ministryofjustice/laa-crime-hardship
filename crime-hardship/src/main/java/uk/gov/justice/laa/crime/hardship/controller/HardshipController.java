@@ -73,11 +73,6 @@ public class HardshipController {
                     schema = @Schema(implementation = ApiPerformHardshipResponse.class)
             )
     )
-    @ApiResponse(responseCode = "404",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ErrorDTO.class)
-            )
-    )
     @DefaultHTTPErrorResponse
     public ResponseEntity<ApiFindHardshipResponse> find(
             @PathVariable int hardshipReviewId,
