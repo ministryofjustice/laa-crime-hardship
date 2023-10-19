@@ -156,7 +156,7 @@ public class TestModelDataBuilder {
                 .withAccepted(true)
                 .withAmount(BigDecimal.TEN)
                 .withFrequency(Frequency.TWO_WEEKLY)
-                .withReasonCode(HardshipReviewDetailReasons.ESSENTIAL_ITEM)
+                .withReasonCode(HardshipReviewDetailReason.ESSENTIAL_ITEM)
                 .withItemCode(ExtraExpenditureDetailCode.CARDS);
     }
 
@@ -226,7 +226,7 @@ public class TestModelDataBuilder {
                                 .withAmount(amount)
                                 .withFrequency(Frequency.TWO_WEEKLY)
                                 .withAccepted("Y")
-                                .withDetailReason(HardshipReviewDetailReasons.COVERED_BY_LIVING_EXPENSE)
+                                .withDetailReason(HardshipReviewDetailReason.COVERED_BY_LIVING_EXPENSE)
                                 .withOtherDescription("Loan to family members")
                                 .withDetailCode(HardshipReviewDetailCode.OTHER)
                 );

@@ -49,7 +49,7 @@
     "detailReason": {
       "type": "object",
       "description": "The Hardship Review Detail reasons code",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReasons"
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReason"
     },
     "userCreated": {
       "type": "string",

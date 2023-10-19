@@ -1,7 +1,5 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
@@ -12,7 +10,7 @@ import java.util.stream.Stream;
 
 @Getter
 @AllArgsConstructor
-public enum HardshipReviewDetailReasons {
+public enum HardshipReviewDetailReason {
 
 
     EVIDENCE_SUPPLIED("Evidence Supplied", HardshipReviewDetailType.EXPENDITURE.getType()),
@@ -31,10 +29,10 @@ public enum HardshipReviewDetailReasons {
     private final String reason;
     private final String type;
 
-    public static HardshipReviewDetailReasons getFrom(String reason) {
+    public static HardshipReviewDetailReason getFrom(String reason) {
         if (StringUtils.isBlank(reason)) return null;
 
-        return Stream.of(HardshipReviewDetailReasons.values())
+        return Stream.of(HardshipReviewDetailReason.values())
                 .filter(hardshipReviewDetailReason -> hardshipReviewDetailReason.reason.equals(reason))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Hardship review detail reason: %s does not exist.", reason)));
