@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
-import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
@@ -34,7 +32,7 @@ public class HardshipService {
         return persist(hardshipReviewDTO, laaTransactionId, RequestType.UPDATE);
     }
 
-    public ApiFindHardshipResponse getHardship(Integer hardshipId, String laaTransactionId) {
+    public ApiFindHardshipResponse find(Integer hardshipId, String laaTransactionId) {
         return maatCourtDataService.getHardship(hardshipId, laaTransactionId);
     }
 

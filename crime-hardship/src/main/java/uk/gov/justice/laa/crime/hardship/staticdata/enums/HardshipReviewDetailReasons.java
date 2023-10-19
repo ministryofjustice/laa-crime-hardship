@@ -31,11 +31,6 @@ public enum HardshipReviewDetailReasons {
     private final String reason;
     private final String type;
 
-    @JsonCreator
-    public static HardshipReviewDetailReasons getValues(@JsonProperty("id") String id, @JsonProperty("reason") String reason) {
-        return getFrom(reason);
-    }
-
     public static HardshipReviewDetailReasons getFrom(String reason) {
         if (StringUtils.isBlank(reason)) return null;
 

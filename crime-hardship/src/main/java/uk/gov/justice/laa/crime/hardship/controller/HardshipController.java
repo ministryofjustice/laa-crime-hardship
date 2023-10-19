@@ -24,8 +24,6 @@ import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
-import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
-import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
@@ -89,7 +87,7 @@ public class HardshipController {
         MDC.put("laaTransactionId", laaTransactionId);
         log.info("Request received to retrieve hardship review: {}", hardshipReviewId);
 
-        return ResponseEntity.ok(hardshipService.getHardship(hardshipReviewId, laaTransactionId));
+        return ResponseEntity.ok(hardshipService.find(hardshipReviewId, laaTransactionId));
     }
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)

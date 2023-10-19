@@ -11,6 +11,7 @@ import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.MockServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
+import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
@@ -67,5 +68,15 @@ class MaatCourtDataServiceTest {
                 new ApiPersistHardshipRequest(), Constants.LAA_TRANSACTION_ID, RequestType.UPDATE
         );
         verify(maatCourtDataClient).put(any(), any(), anyString(), anyMap());
+    }
+
+    @Test
+    void givenValidHardshipReviewId_whenGetHardshipIsInvoked_thenResponseIsReturned() {
+        ApiFindHardshipResponse expected = new ApiFindHardshipResponse();
+        when(maatCourtDataClient.get(any(), anyString(), anyMap(), anyInt())).thenReturn(expected);
+
+        maatCourtDataService.getHardship(TestModelDataBuilder.HARDSHIP_ID, LAA_TRANSACTION_ID);
+
+        verify(maatCourtDataClient).get(any(), anyString(), anyMap(), anyInt());
     }
 }

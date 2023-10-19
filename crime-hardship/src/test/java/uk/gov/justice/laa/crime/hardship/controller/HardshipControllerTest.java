@@ -13,10 +13,7 @@ import uk.gov.justice.laa.crime.commons.exception.APIClientException;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
@@ -25,6 +22,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
+import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequest;
 import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @WebMvcTest(HardshipController.class)
@@ -53,6 +51,33 @@ class HardshipControllerTest {
     @MockBean
     private HardshipValidationService validationService;
 
+
+
+    @Test
+    void givenValidHardshipReviewId_whenFindIsInvoked_thenOkResponseIsReturned() throws Exception {
+        ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
+        when(hardshipService.find(anyInt(), anyString())).thenReturn(response);
+
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + TestModelDataBuilder.HARDSHIP_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(response.getId()));
+    }
+
+    @Test
+    void givenInvalidHardshipReviewId_whenFindIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/invalidId"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenFailedApiCall_whenFindIsInvoked_thenInternalServerErrorIsReturned() throws Exception {
+        when(hardshipService.find(anyInt(), anyString()))
+                .thenThrow(new APIClientException("Call to Court Data APi failed."));
+
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + TestModelDataBuilder.HARDSHIP_ID))
+                .andExpect(status().isInternalServerError());
+    }
 
     @Test
     void givenValidRequest_whenCreateIsInvoked_thenOkResponseIsReturned() throws Exception {

@@ -75,6 +75,23 @@ public class TestModelDataBuilder {
                 .withHardshipSummary(BigDecimal.valueOf(3500));
     }
 
+    public static ApiFindHardshipResponse getApiFindHardshipResponse() {
+        return new ApiFindHardshipResponse()
+                .withId(HARDSHIP_ID)
+                .withCmuId(999)
+                .withNotes("Test note.")
+                .withDecisionNotes("Test decision note.")
+                .withReviewDate(LocalDateTime.now())
+                .withReviewResult(HardshipReviewResult.PASS)
+                .withDisposableIncome(BigDecimal.valueOf(999.99))
+                .withDisposableIncomeAfterHardship(BigDecimal.valueOf(99.99))
+                .withNewWorkReason(NewWorkReason.PRI)
+                .withSolicitorCosts(TestModelDataBuilder.getSolicitorsCosts())
+                .withStatus(HardshipReviewStatus.COMPLETE)
+                .withReviewDetails(getApiHardshipReviewDetails(BigDecimal.valueOf(99.99), HardshipReviewDetailType.EXPENDITURE))
+                .withReviewProgressItems(null);
+    }
+
     public static HardshipReview getMinimalHardshipReview() {
         return new HardshipReview()
                 .withCourtType(CourtType.MAGISTRATE)
