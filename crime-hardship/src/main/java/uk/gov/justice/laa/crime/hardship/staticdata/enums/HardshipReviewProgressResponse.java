@@ -20,11 +20,6 @@ public enum HardshipReviewProgressResponse {
     private String response;
     private String description;
 
-    @JsonCreator
-    public static HardshipReviewProgressResponse getValues(@JsonProperty("response") String response, @JsonProperty("description") String description) {
-        return getFrom(response);
-    }
-
     public static HardshipReviewProgressResponse getFrom(String response) {
         if (StringUtils.isBlank(response)) return null;
 

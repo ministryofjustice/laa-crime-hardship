@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum HardshipReviewDetailReason {
 
-
     EVIDENCE_SUPPLIED("Evidence Supplied", HardshipReviewDetailType.EXPENDITURE.getType()),
     ESSENTIAL_NEED_FOR_WORK("Essential - need for work", HardshipReviewDetailType.EXPENDITURE.getType()),
     ESSENTIAL_ITEM("Essential Item", HardshipReviewDetailType.EXPENDITURE.getType()),

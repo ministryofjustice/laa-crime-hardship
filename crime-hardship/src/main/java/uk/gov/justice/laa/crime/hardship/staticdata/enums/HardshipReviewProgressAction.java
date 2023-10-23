@@ -24,11 +24,6 @@ public enum HardshipReviewProgressAction {
     private final String action;
     private final String description;
 
-    @JsonCreator
-    public static HardshipReviewProgressAction getValues(@JsonProperty("action") String action, @JsonProperty("description") String description) {
-        return getFrom(action);
-    }
-
     public static HardshipReviewProgressAction getFrom(String action) {
         if (StringUtils.isBlank(action)) return null;
 
