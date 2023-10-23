@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -31,6 +33,7 @@ import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.*;
 import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
@@ -43,13 +46,12 @@ import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRe
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
+    private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
+    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
+    private static final String ENDPOINT_URL_CALC_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship";
     private MockMvc mvc;
     @Autowired
     private WireMockServer wiremock;
-    private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
-
-    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -234,13 +236,13 @@ class HardshipIntegrationTest {
 
     @Test
     void givenAnEmptyContent_whenRollbackHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL+"/rollback"))
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL + "/rollback"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenAnEmptyOAuthToken_whenUpdateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL+"/rollback", false))
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, "{}", ENDPOINT_URL + "/rollback", false))
                 .andExpect(status().isUnauthorized()).andReturn();
     }
 
@@ -257,7 +259,7 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL+"/rollback")).andExpect(status().isOk())
+        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL + "/rollback")).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.reviewResult").doesNotExist())
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
@@ -280,5 +282,37 @@ class HardshipIntegrationTest {
                 )
         );
     }
+
+
+    @Test
+    void givenAEmptyContent_whenCalculateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL_CALC_HARDSHIP))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAEmptyOAuthToken_whenCalculateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, "{}", ENDPOINT_URL_CALC_HARDSHIP, false))
+                .andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
+    void givenValidRequest_whenCalculateHardshipIsInvoked_thenOkResponse() throws Exception {
+        ApiCalculateHardshipRequest request = TestModelDataBuilder.getApiCalculateHardshipRequest();
+        request.getHardship().setReviewDate(TestModelDataBuilder.ASSESSMENT_DATE);
+        String requestBody = objectMapper.writeValueAsString(request);
+
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/means/fullAssessmentThreshold/2022-12-14")).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(BigDecimal.TEN))));
+
+        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALC_HARDSHIP))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.postHardshipDisposableIncome").value(-2380.0));
+        verify(exactly(1), getRequestedFor(urlEqualTo("/api/internal/v1/assessment/means/fullAssessmentThreshold/2022-12-14")));
+    }
+
 
 }

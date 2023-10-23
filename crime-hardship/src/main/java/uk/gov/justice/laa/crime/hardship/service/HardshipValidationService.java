@@ -28,6 +28,38 @@ public class HardshipValidationService {
     public static final String EXPENDITURE_OR_DENIED_INCOME_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
     public static final String PROGRESSION_ITEMS_VALIDATION_MESSAGE = "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress";
 
+    private static boolean progressionItemWithoutRequiredDateOrResponseOrDateTaken(HardshipProgress progression) {
+        return (nonNull(progression.getAction()) &&
+                (isNull(progression.getDateRequired()) || isNull(progression.getResponse()) ||
+                        isNull(progression.getDateTaken())));
+    }
+
+    private static boolean expenditureWithoutAmountOrFrequencyOrReasonCode(ExtraExpenditure expenditure) {
+        return (nonNull(expenditure.getItemCode()) &&
+                (isNull(expenditure.getAmount()) || isNull(expenditure.getFrequency()) ||
+                        isNull(expenditure.getReasonCode())));
+    }
+
+    private static boolean hardshipStatusIsCompleteWithoutReviewDate(ApiPerformHardshipRequest apiPerformHardshipRequest) {
+        return ((apiPerformHardshipRequest.getHardshipMetadata().getReviewStatus() == HardshipReviewStatus.COMPLETE)
+                && isNull(apiPerformHardshipRequest.getHardship().getReviewDate()));
+    }
+
+    private static boolean solicitorRateSpecifiedWithoutSolicitorHours(BigDecimal solicitorRate, Integer solicitorHours) {
+        return (solicitorRate.compareTo(BigDecimal.ZERO) > 0) && (solicitorHours.intValue() == 0);
+    }
+
+    private static boolean fundingDescriptionWithoutFundingAmountOrDueDate(OtherFundingSource funding) {
+        return StringUtils.isNotEmpty(funding.getDescription()) &&
+                (isNull(funding.getAmount()) || isNull(funding.getDueDate()));
+    }
+
+    private static boolean deniedIncomeWithoutAmountOrFrequencyOrReasonNote(DeniedIncome deniedIncome) {
+        return (nonNull(deniedIncome.getItemCode()) &&
+                (isNull(deniedIncome.getAmount()) || isNull(deniedIncome.getFrequency()) ||
+                        StringUtils.isEmpty(deniedIncome.getReasonNote())));
+    }
+
     public void checkHardship(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         validateHardshipReviewStatus(apiPerformHardshipRequest);
         validateHardshipReviewNewWorkReason(apiPerformHardshipRequest);
@@ -36,6 +68,12 @@ public class HardshipValidationService {
         validateDeniedIncome(apiPerformHardshipRequest);
         validateExpenditure(apiPerformHardshipRequest);
         validateProgressionItems(apiPerformHardshipRequest);
+    }
+
+    public void checkHardshipDate(ApiCalculateHardshipRequest apiCalculateHardshipRequest) {
+        if (apiCalculateHardshipRequest.getHardship() == null || apiCalculateHardshipRequest.getHardship().getReviewDate() == null) {
+            throw new ValidationException(HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE);
+        }
     }
 
     private void validateHardshipReviewStatus(ApiPerformHardshipRequest apiPerformHardshipRequest) {
@@ -95,38 +133,6 @@ public class HardshipValidationService {
                 throw new ValidationException(PROGRESSION_ITEMS_VALIDATION_MESSAGE);
 
         });
-    }
-
-    private static boolean progressionItemWithoutRequiredDateOrResponseOrDateTaken(HardshipProgress progression) {
-        return (nonNull(progression.getAction()) &&
-                (isNull(progression.getDateRequired()) || isNull(progression.getResponse()) ||
-                        isNull(progression.getDateTaken())));
-    }
-
-    private static boolean expenditureWithoutAmountOrFrequencyOrReasonCode(ExtraExpenditure expenditure) {
-        return (nonNull(expenditure.getItemCode()) &&
-                (isNull(expenditure.getAmount()) || isNull(expenditure.getFrequency()) ||
-                        isNull(expenditure.getReasonCode())));
-    }
-
-    private static boolean hardshipStatusIsCompleteWithoutReviewDate(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        return ((apiPerformHardshipRequest.getHardshipMetadata().getReviewStatus() == HardshipReviewStatus.COMPLETE)
-                && isNull(apiPerformHardshipRequest.getHardship().getReviewDate()));
-    }
-
-    private static boolean solicitorRateSpecifiedWithoutSolicitorHours(BigDecimal solicitorRate, Integer solicitorHours) {
-        return (solicitorRate.compareTo(BigDecimal.ZERO) > 0) && (solicitorHours.intValue() == 0);
-    }
-
-    private static boolean fundingDescriptionWithoutFundingAmountOrDueDate(OtherFundingSource funding) {
-        return StringUtils.isNotEmpty(funding.getDescription()) &&
-                (isNull(funding.getAmount()) || isNull(funding.getDueDate()));
-    }
-
-    private static boolean deniedIncomeWithoutAmountOrFrequencyOrReasonNote(DeniedIncome deniedIncome) {
-        return (nonNull(deniedIncome.getItemCode()) &&
-                (isNull(deniedIncome.getAmount()) || isNull(deniedIncome.getFrequency()) ||
-                        StringUtils.isEmpty(deniedIncome.getReasonNote())));
     }
 
 }

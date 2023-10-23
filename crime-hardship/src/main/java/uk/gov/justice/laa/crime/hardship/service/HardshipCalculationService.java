@@ -31,6 +31,33 @@ public class HardshipCalculationService {
     private final HardshipDetailMapper detailMapper;
     private final MaatCourtDataService maatCourtDataService;
 
+    private static BigDecimal calculateDetails(HardshipReview hardship) {
+        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
+                .flatMap(Collection::stream)
+                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
+                .map(item -> item.getAmount()
+                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
+                .reduce(BigDecimal::add)
+                .orElse(BigDecimal.ZERO);
+
+        CourtType courtType = hardship.getCourtType();
+        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
+        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
+            BigDecimal estimatedTotal;
+            if (solicitorCosts.getEstimatedTotal() != null) {
+                estimatedTotal = solicitorCosts.getEstimatedTotal();
+            } else {
+                estimatedTotal = solicitorCosts.getRate()
+                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
+                        .add(solicitorCosts.getVat())
+                        .add(solicitorCosts.getDisbursements());
+                solicitorCosts.setEstimatedTotal(estimatedTotal);
+            }
+            total = total.add(estimatedTotal);
+        }
+        return total;
+    }
+
     public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(Integer repId,
                                                                            HardshipReviewDetailType detailType,
                                                                            String laaTransactionId) {
@@ -65,32 +92,5 @@ public class HardshipCalculationService {
                 .resultDate(LocalDate.now())
                 .postHardshipDisposableIncome(disposableIncomeAfterHardship)
                 .build();
-    }
-
-    private static BigDecimal calculateDetails(HardshipReview hardship) {
-        BigDecimal total = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
-                .flatMap(Collection::stream)
-                .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
-                .map(item -> item.getAmount()
-                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
-                .reduce(BigDecimal::add)
-                .orElse(BigDecimal.ZERO);
-
-        CourtType courtType = hardship.getCourtType();
-        SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
-        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
-            BigDecimal estimatedTotal;
-            if (solicitorCosts.getEstimatedTotal() != null) {
-                estimatedTotal = solicitorCosts.getEstimatedTotal();
-            } else {
-                estimatedTotal = solicitorCosts.getRate()
-                        .multiply(BigDecimal.valueOf(solicitorCosts.getHours()))
-                        .add(solicitorCosts.getVat())
-                        .add(solicitorCosts.getDisbursements());
-                solicitorCosts.setEstimatedTotal(estimatedTotal);
-            }
-            total = total.add(estimatedTotal);
-        }
-        return total;
     }
 }

@@ -20,6 +20,20 @@ env:
     value: {{ .Values.cccApi.baseUrl }}
   - name: CCC_API_OAUTH_URL
     value: {{ .Values.cccApi.oauthUrl }}
+  - name: CMA_API_BASE_URL
+    value: {{ .Values.cmaApi.baseUrl }}
+  - name: CMA_API_OAUTH_URL
+    value: {{ .Values.cmaApi.oauthUrl }}
+  - name: CMA_API_OAUTH_CLIENT_ID
+    valueFrom:
+      secretKeyRef:
+        name: cma-api-oauth-client-id
+        key: CMA_API_OAUTH_CLIENT_ID
+  - name: CMA_API_OAUTH_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: cma-api-oauth-client-secret
+        key: CMA_API_OAUTH_CLIENT_SECRET
   - name: MAAT_API_OAUTH_CLIENT_ID
     valueFrom:
       secretKeyRef:

@@ -1,6 +1,5 @@
 package uk.gov.justice.laa.crime.hardship.controller;
 
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,12 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
 import uk.gov.justice.laa.crime.hardship.common.Constants;
+import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.model.*;
+import uk.gov.justice.laa.crime.hardship.service.CrimeMeansAssessmentService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
@@ -29,6 +27,8 @@ import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @RestController
@@ -39,6 +39,7 @@ public class HardshipController {
 
     private final HardshipMapper mapper;
     private final HardshipService hardshipService;
+    private final CrimeMeansAssessmentService crimeMeansAssessmentService;
     private final HardshipValidationService hardshipValidationService;
     private final HardshipCalculationService hardshipCalculationService;
 
@@ -66,6 +67,7 @@ public class HardshipController {
         );
     }
 
+
     @GetMapping(value = "/{hardshipReviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Find Hardship review")
     @ApiResponse(responseCode = "200",
@@ -84,6 +86,35 @@ public class HardshipController {
 
         return ResponseEntity.ok(hardshipService.find(hardshipReviewId, laaTransactionId));
     }
+
+
+    @PostMapping(value = "/calculate-hardship", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Generic Client Agnostic Calculate Crime Hardship")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ApiCalculateHardshipResponse.class)
+            )
+    )
+    @DefaultHTTPErrorResponse
+    public ResponseEntity<ApiCalculateHardshipResponse> calculateHardship(
+            @Parameter(description = "Generic Client Agnostic Calculate Crime Hardship",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiCalculateHardshipRequest.class)
+                    )
+            ) @Valid @RequestBody ApiCalculateHardshipRequest request) {
+
+        hardshipValidationService.checkHardshipDate(request);
+        BigDecimal fullThreshold = crimeMeansAssessmentService
+                .getFullAssessmentThreshold(request.getHardship().getReviewDate());
+
+        HardshipResult hardshipResult = hardshipCalculationService.calculateHardship(
+                request.getHardship(), fullThreshold);
+
+        return ResponseEntity.ok(new ApiCalculateHardshipResponse()
+                .withReviewResult(hardshipResult.getResult())
+                .withPostHardshipDisposableIncome(hardshipResult.getPostHardshipDisposableIncome()));
+    }
+
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Create Hardship review")
@@ -107,6 +138,7 @@ public class HardshipController {
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
+
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Update Hardship review")
     @ApiResponse(responseCode = "200",
@@ -128,6 +160,7 @@ public class HardshipController {
         reviewDTO = hardshipService.update(reviewDTO, laaTransactionId);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
+
 
     @PutMapping(value = "/rollback", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Rollback Hardship review")
