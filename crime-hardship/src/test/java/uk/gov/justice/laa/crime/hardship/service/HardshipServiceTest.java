@@ -1,14 +1,12 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.event.annotation.BeforeTestExecution;
 import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
@@ -44,7 +42,8 @@ class HardshipServiceTest {
     @Mock
     private HardshipCalculationService calculationService;
 
-    private static final HardshipResult HARDSHIP_RESULT = TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
+    private static final HardshipResult HARDSHIP_RESULT =
+            TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
 
     private HardshipReviewDTO reviewDTO;
 

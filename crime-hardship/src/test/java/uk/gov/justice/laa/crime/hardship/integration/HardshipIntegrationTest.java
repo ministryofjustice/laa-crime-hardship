@@ -46,12 +46,15 @@ import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRe
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
-    private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
-    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
-    private static final String ENDPOINT_URL_CALC_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship";
     private MockMvc mvc;
+    private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
+    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP =
+            "/api/internal/v1/hardship/calculate-hardship-for-detail";
+    private static final String ENDPOINT_URL_CALC_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship";
+
     @Autowired
     private WireMockServer wiremock;
+
     @Autowired
     private ObjectMapper objectMapper;
 
