@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,9 +69,10 @@ class HardshipServiceTest {
         ApiFindHardshipResponse expected =  new ApiFindHardshipResponse();
         when(maatCourtDataService.getHardship(anyInt(), anyString())).thenReturn(expected);
 
-        hardshipService.find(TestModelDataBuilder.HARDSHIP_ID, Constants.LAA_TRANSACTION_ID);
+        ApiFindHardshipResponse apiFindHardshipResponse =
+                hardshipService.find(TestModelDataBuilder.HARDSHIP_ID, Constants.LAA_TRANSACTION_ID);
 
-        verify(maatCourtDataService).getHardship(anyInt(), anyString());
+        assertThat(apiFindHardshipResponse.getId()).isEqualTo(expected.getId());
     }
 
     @Test
