@@ -27,6 +27,7 @@ import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRespon
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason;
 
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -46,6 +47,7 @@ import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRe
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
+    public static final String ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD = "/api/internal/v1/assessment/means/fullAssessmentThreshold/";
     private MockMvc mvc;
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
     private static final String ENDPOINT_URL_CALCULATE_HARDSHIP =
@@ -150,6 +152,12 @@ class HardshipIntegrationTest {
 
         ApiPersistHardshipResponse response = TestModelDataBuilder.getApiPersistHardshipResponse();
 
+        wiremock.stubFor(get(urlEqualTo(ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD
+                + request.getHardship().getReviewDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(BigDecimal.TEN))));
+
         wiremock.stubFor(put(urlEqualTo("/api/internal/v1/assessment/hardship")).willReturn(
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
@@ -186,6 +194,12 @@ class HardshipIntegrationTest {
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
+
+        wiremock.stubFor(get(urlEqualTo(ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD
+                + request.getHardship().getReviewDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(BigDecimal.TEN))));
 
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
                 .andExpect(status().isOk())
@@ -305,7 +319,8 @@ class HardshipIntegrationTest {
         request.getHardship().setReviewDate(TestModelDataBuilder.ASSESSMENT_DATE);
         String requestBody = objectMapper.writeValueAsString(request);
 
-        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/means/fullAssessmentThreshold/2022-12-14")).willReturn(
+        wiremock.stubFor(get(urlEqualTo(ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD
+                + TestModelDataBuilder.ASSESSMENT_DATE.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))).willReturn(
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(BigDecimal.TEN))));
@@ -316,6 +331,5 @@ class HardshipIntegrationTest {
                 .andExpect(jsonPath("$.postHardshipDisposableIncome").value(-2380.0));
         verify(exactly(1), getRequestedFor(urlEqualTo("/api/internal/v1/assessment/means/fullAssessmentThreshold/2022-12-14")));
     }
-
 
 }

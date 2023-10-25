@@ -20,6 +20,7 @@ import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -41,6 +42,9 @@ class HardshipServiceTest {
     @Mock
     private HardshipCalculationService calculationService;
 
+    @Mock
+    private CrimeMeansAssessmentService crimeMeansAssessmentService;
+
     private static final HardshipResult HARDSHIP_RESULT =
             TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS);
 
@@ -49,6 +53,8 @@ class HardshipServiceTest {
     @Test
     void givenValidParameters_whenCreateIsInvoked_thenHardshipIsPersisted() {
         setUpPersistence();
+        when(crimeMeansAssessmentService.getFullAssessmentThreshold(any(LocalDateTime.class)))
+                .thenReturn(BigDecimal.TEN);
         when(calculationService.calculateHardship(any(HardshipReview.class), any(BigDecimal.class)))
                 .thenReturn(HARDSHIP_RESULT);
         HardshipReviewDTO result = hardshipService.create(reviewDTO, Constants.LAA_TRANSACTION_ID);
@@ -58,6 +64,8 @@ class HardshipServiceTest {
     @Test
     void givenValidParameters_whenUpdateIsInvoked_thenHardshipIsUpdated() {
         setUpPersistence();
+        when(crimeMeansAssessmentService.getFullAssessmentThreshold(any(LocalDateTime.class)))
+                .thenReturn(BigDecimal.TEN);
         when(calculationService.calculateHardship(any(HardshipReview.class), any(BigDecimal.class)))
                 .thenReturn(HARDSHIP_RESULT);
         HardshipReviewDTO result = hardshipService.update(reviewDTO, Constants.LAA_TRANSACTION_ID);
