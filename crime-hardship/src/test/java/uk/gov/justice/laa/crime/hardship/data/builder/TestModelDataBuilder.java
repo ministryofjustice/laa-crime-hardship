@@ -88,6 +88,23 @@ public class TestModelDataBuilder {
                 .withHardshipSummary(BigDecimal.valueOf(3500));
     }
 
+    public static ApiFindHardshipResponse getApiFindHardshipResponse() {
+        return new ApiFindHardshipResponse()
+                .withId(HARDSHIP_ID)
+                .withCmuId(999)
+                .withNotes("Test note.")
+                .withDecisionNotes("Test decision note.")
+                .withReviewDate(LocalDateTime.now())
+                .withReviewResult(HardshipReviewResult.PASS)
+                .withDisposableIncome(BigDecimal.valueOf(999.99))
+                .withDisposableIncomeAfterHardship(BigDecimal.valueOf(99.99))
+                .withNewWorkReason(NewWorkReason.PRI)
+                .withSolicitorCosts(TestModelDataBuilder.getSolicitorsCosts())
+                .withStatus(HardshipReviewStatus.COMPLETE)
+                .withReviewDetails(getApiHardshipReviewDetails(BigDecimal.valueOf(99.99), HardshipReviewDetailType.EXPENDITURE))
+                .withReviewProgressItems(null);
+    }
+
     public static HardshipReview getMinimalHardshipReview() {
         return new HardshipReview()
                 .withCourtType(CourtType.MAGISTRATE)
@@ -152,7 +169,7 @@ public class TestModelDataBuilder {
                 .withAccepted(true)
                 .withAmount(BigDecimal.TEN)
                 .withFrequency(Frequency.TWO_WEEKLY)
-                .withReasonCode(HardshipReviewDetailReasons.ESSENTIAL_ITEM)
+                .withReasonCode(HardshipReviewDetailReason.ESSENTIAL_ITEM)
                 .withItemCode(ExtraExpenditureDetailCode.CARDS);
     }
 
@@ -222,7 +239,7 @@ public class TestModelDataBuilder {
                                 .withAmount(amount)
                                 .withFrequency(Frequency.TWO_WEEKLY)
                                 .withAccepted("Y")
-                                .withDetailReason(HardshipReviewDetailReasons.COVERED_BY_LIVING_EXPENSE)
+                                .withDetailReason(HardshipReviewDetailReason.COVERED_BY_LIVING_EXPENSE)
                                 .withOtherDescription("Loan to family members")
                                 .withDetailCode(HardshipReviewDetailCode.OTHER)
                 );

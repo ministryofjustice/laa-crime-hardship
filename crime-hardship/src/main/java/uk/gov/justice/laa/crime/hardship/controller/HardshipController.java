@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,6 +64,27 @@ public class HardshipController {
                 )
         );
     }
+
+
+    @GetMapping(value = "/{hardshipReviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(description = "Find Hardship review")
+    @ApiResponse(responseCode = "200",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
+            )
+    )
+    @DefaultHTTPErrorResponse
+    public ResponseEntity<ApiFindHardshipResponse> find(
+            @PathVariable int hardshipReviewId,
+            @Parameter(description = "Used to trace calls between services")
+            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+
+        MDC.put("laaTransactionId", laaTransactionId);
+        log.info("Request received to retrieve hardship review: {}", hardshipReviewId);
+
+        return ResponseEntity.ok(hardshipService.find(hardshipReviewId, laaTransactionId));
+    }
+
 
     @PostMapping(value = "/calculate-hardship", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Generic Client Agnostic Calculate Crime Hardship")
@@ -136,6 +158,7 @@ public class HardshipController {
         reviewDTO = hardshipService.update(reviewDTO, laaTransactionId);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
+
 
     @PutMapping(value = "/rollback", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Rollback Hardship review")

@@ -68,15 +68,15 @@ class PersistHardshipMapperTest {
                 .isEqualTo(result.getPostHardshipDisposableIncome());
 
         var solicitorsCosts = request.getSolicitorCosts();
-        softly.assertThat(solicitorsCosts.getSolicitorDisb())
+        softly.assertThat(solicitorsCosts.getDisbursements())
                 .isEqualTo(hardship.getSolicitorCosts().getDisbursements());
-        softly.assertThat(solicitorsCosts.getSolicitorRate())
+        softly.assertThat(solicitorsCosts.getRate())
                 .isEqualTo(hardship.getSolicitorCosts().getRate());
-        softly.assertThat(solicitorsCosts.getSolicitorVat())
+        softly.assertThat(solicitorsCosts.getVat())
                 .isEqualTo(hardship.getSolicitorCosts().getVat());
-        softly.assertThat(solicitorsCosts.getSolicitorHours())
+        softly.assertThat(solicitorsCosts.getHours())
                 .isEqualTo(hardship.getSolicitorCosts().getHours());
-        softly.assertThat(solicitorsCosts.getSolicitorEstTotalCost())
+        softly.assertThat(solicitorsCosts.getEstimatedTotal())
                 .isEqualTo(hardship.getSolicitorCosts().getEstimatedTotal());
     }
 

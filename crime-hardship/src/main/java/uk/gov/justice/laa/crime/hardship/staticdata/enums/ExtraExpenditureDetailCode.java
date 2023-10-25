@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @Getter
@@ -26,7 +25,7 @@ public enum ExtraExpenditureDetailCode {
     UNI_HOUSING("UNI HOUSING", "University Housing Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PRESCRIPTION("PRESCRIPTION", "Prescription Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PENSION_PAY("PENSION PAY", "Pension Payments", HardshipReviewDetailType.EXPENDITURE.getType()),
-    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    MEDICAL_COSTS("MEDIAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     OTHER("OTHER", "Other", HardshipReviewDetailType.EXPENDITURE.getType());
 
     @JsonPropertyDescription("Extra expenditure detail codes that are valid")
@@ -35,11 +34,14 @@ public enum ExtraExpenditureDetailCode {
     private final String type;
 
     public static ExtraExpenditureDetailCode getFrom(String code) {
-        if (StringUtils.isBlank(code)) return null;
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
 
         return Stream.of(ExtraExpenditureDetailCode.values())
                 .filter(eedCode -> eedCode.code.equals(code))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Extra expenditure detail code: %s does not exist.", code)));
-   }
+                .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("Extra expenditure detail code: %s does not exist.", code)));
+    }
 }

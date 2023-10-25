@@ -1,6 +1,7 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -9,8 +10,7 @@ import java.util.stream.Stream;
 
 @Getter
 @AllArgsConstructor
-public enum HardshipReviewDetailReasons {
-
+public enum HardshipReviewDetailReason {
 
     EVIDENCE_SUPPLIED("Evidence Supplied", HardshipReviewDetailType.EXPENDITURE.getType()),
     ESSENTIAL_NEED_FOR_WORK("Essential - need for work", HardshipReviewDetailType.EXPENDITURE.getType()),
@@ -24,13 +24,14 @@ public enum HardshipReviewDetailReasons {
     NOT_IN_COMPUTATION_PERIOD("Not in computation period", HardshipReviewDetailType.EXPENDITURE.getType());
 
     @JsonPropertyDescription("Hardship review detail reasons")
+    @JsonValue
     private final String reason;
     private final String type;
 
-    public static HardshipReviewDetailReasons getFrom(String reason) {
+    public static HardshipReviewDetailReason getFrom(String reason) {
         if (StringUtils.isBlank(reason)) return null;
 
-        return Stream.of(HardshipReviewDetailReasons.values())
+        return Stream.of(HardshipReviewDetailReason.values())
                 .filter(hardshipReviewDetailReason -> hardshipReviewDetailReason.reason.equals(reason))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("Hardship review detail reason: %s does not exist.", reason)));

@@ -1,7 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -275,7 +274,7 @@ class HardshipValidationServiceTest {
                                         .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(null)
                                         .withAmount(BigDecimal.ONE)
-                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
+                                        .withReasonCode(HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
@@ -291,7 +290,7 @@ class HardshipValidationServiceTest {
                                         .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(Frequency.ANNUALLY)
                                         .withAmount(null)
-                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
+                                        .withReasonCode(HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata()))
         );
     }

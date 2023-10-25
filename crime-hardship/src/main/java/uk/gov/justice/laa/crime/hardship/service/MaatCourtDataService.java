@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
 import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
+import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
@@ -62,6 +63,19 @@ public class MaatCourtDataService {
                     Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId)
             );
         }
+
+        log.info(String.format(RESPONSE_STRING, response));
+        return response;
+    }
+
+    public ApiFindHardshipResponse getHardship(Integer hardshipReviewId, String laaTransactionId) {
+        ApiFindHardshipResponse response = maatAPIClient.get(
+                new ParameterizedTypeReference<>() {},
+                configuration.getMaatApi().getHardshipEndpoints().getHardshipUrl(),
+                Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId),
+                hardshipReviewId
+        );
+
         log.info(String.format(RESPONSE_STRING, response));
         return response;
     }

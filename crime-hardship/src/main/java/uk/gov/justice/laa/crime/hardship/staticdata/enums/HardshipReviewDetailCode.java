@@ -1,6 +1,8 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -26,13 +28,15 @@ public enum HardshipReviewDetailCode {
     UNI_HOUSING("UNI HOUSING", "University Housing Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PRESCRIPTION("PRESCRIPTION", "Prescription Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PENSION_PAY("PENSION PAY", "Pension Payments", HardshipReviewDetailType.EXPENDITURE.getType()),
-    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    // Typo in the data that is already in the table
+    MEDICAL_COSTS("MEDIAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     OTHER("OTHER", "Other", HardshipReviewDetailType.EXPENDITURE.getType()),
     MEDICAL_GROUNDS("MEDICAL GROUNDS", "Medical Grounds", HardshipReviewDetailType.INCOME.getType()),
     SUSPENDED_WORK("SUSPENDED WORK", "Suspended from work", HardshipReviewDetailType.INCOME.getType()),
     OTHER_INC("OTHER INC", "Other", HardshipReviewDetailType.INCOME.getType());
 
     @JsonPropertyDescription("Hardship review detail codes that are valid")
+    @JsonValue
     private final String code;
     private final String description;
     private final String type;
@@ -40,20 +44,10 @@ public enum HardshipReviewDetailCode {
     public static HardshipReviewDetailCode getFrom(String code) {
         if (StringUtils.isBlank(code)) { return null; }
 
-        List<HardshipReviewDetailCode> hardshipReviewDetailCodes =  Stream.of(HardshipReviewDetailCode.values())
+        return Stream.of(HardshipReviewDetailCode.values())
                 .filter(hrdCode -> hrdCode.code.equals(code))
-                .toList();
-
-        if (hardshipReviewDetailCodes.isEmpty()) {
-            throw new IllegalArgumentException(String.format(
-                    "Hardship review detail with code: %s does not exist.", code));
-        } else if (hardshipReviewDetailCodes.size() > 1) {
-            throw new IllegalArgumentException(String.format(
-                    "Hardship review detail code: %s returned non unique value", code));
-        } else {
-            return hardshipReviewDetailCodes.get(0);
-        }
-
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Hardship review detail code: %s does not exist.", code)));
     }
 
 }
