@@ -59,10 +59,9 @@ public class HardshipCalculationService {
     }
 
     public ApiCalculateHardshipByDetailResponse calculateHardshipForDetail(Integer repId,
-                                                                           HardshipReviewDetailType detailType,
-                                                                           String laaTransactionId) {
+                                                                           HardshipReviewDetailType detailType) {
         List<ApiHardshipDetail> response =
-                maatCourtDataService.getHardshipByDetailType(repId, detailType.getType(), laaTransactionId);
+                maatCourtDataService.getHardshipByDetailType(repId, detailType.getType());
 
         BigDecimal total = BigDecimal.ZERO;
         if (response != null) {

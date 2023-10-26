@@ -13,8 +13,8 @@ import org.slf4j.MDC;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import uk.gov.justice.laa.crime.commons.common.Constants;
 import uk.gov.justice.laa.crime.hardship.annotation.DefaultHTTPErrorResponse;
-import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
@@ -59,8 +59,7 @@ public class HardshipController {
         return ResponseEntity.ok(
                 hardshipCalculationService.calculateHardshipForDetail(
                         request.getRepId(),
-                        HardshipReviewDetailType.valueOf(request.getDetailType()),
-                        request.getLaaTransactionId()
+                        HardshipReviewDetailType.valueOf(request.getDetailType())
                 )
         );
     }
@@ -77,12 +76,12 @@ public class HardshipController {
     public ResponseEntity<ApiFindHardshipResponse> find(
             @PathVariable int hardshipReviewId,
             @Parameter(description = "Used to trace calls between services")
-            @RequestHeader(value = "Laa-Transaction-Id", required = false) String laaTransactionId) {
+            @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         MDC.put("laaTransactionId", laaTransactionId);
         log.info("Request received to retrieve hardship review: {}", hardshipReviewId);
 
-        return ResponseEntity.ok(hardshipService.find(hardshipReviewId, laaTransactionId));
+        return ResponseEntity.ok(hardshipService.find(hardshipReviewId));
     }
 
 
@@ -132,7 +131,7 @@ public class HardshipController {
             @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
-        reviewDTO = hardshipService.create(reviewDTO, laaTransactionId);
+        reviewDTO = hardshipService.create(reviewDTO);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
@@ -155,7 +154,7 @@ public class HardshipController {
             @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
-        reviewDTO = hardshipService.update(reviewDTO, laaTransactionId);
+        reviewDTO = hardshipService.update(reviewDTO);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
@@ -178,7 +177,7 @@ public class HardshipController {
             @RequestHeader(value = Constants.LAA_TRANSACTION_ID, required = false) String laaTransactionId) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
-        reviewDTO = hardshipService.rollback(reviewDTO, laaTransactionId);
+        reviewDTO = hardshipService.rollback(reviewDTO);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 

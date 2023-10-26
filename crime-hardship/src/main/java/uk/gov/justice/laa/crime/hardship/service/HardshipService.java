@@ -25,31 +25,31 @@ public class HardshipService {
     private final HardshipCalculationService hardshipCalculationService;
     private final CrimeMeansAssessmentService crimeMeansAssessmentService;
 
-    public HardshipReviewDTO create(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
-        return persist(hardshipReviewDTO, laaTransactionId, RequestType.CREATE);
+    public HardshipReviewDTO create(HardshipReviewDTO hardshipReviewDTO) {
+        return persist(hardshipReviewDTO, RequestType.CREATE);
     }
 
-    public HardshipReviewDTO update(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
-        return persist(hardshipReviewDTO, laaTransactionId, RequestType.UPDATE);
+    public HardshipReviewDTO update(HardshipReviewDTO hardshipReviewDTO) {
+        return persist(hardshipReviewDTO, RequestType.UPDATE);
     }
 
-    public ApiFindHardshipResponse find(Integer hardshipId, String laaTransactionId) {
-        return maatCourtDataService.getHardship(hardshipId, laaTransactionId);
+    public ApiFindHardshipResponse find(Integer hardshipId) {
+        return maatCourtDataService.getHardship(hardshipId);
     }
 
-    public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
+    public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO) {
         hardshipReviewDTO.getHardshipMetadata().setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
         if (hardshipReviewDTO.getHardshipResult() != null) {
             hardshipReviewDTO.getHardshipResult().setResult(null);
         }
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, laaTransactionId, RequestType.UPDATE);
+                maatCourtDataService.persistHardship(request, RequestType.UPDATE);
         mapper.toDto(response, hardshipReviewDTO);
         return hardshipReviewDTO;
     }
 
-    private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId, RequestType requestType) {
+    private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, RequestType requestType) {
         HardshipReview hardship = hardshipReviewDTO.getHardship();
         BigDecimal fullThreshold = crimeMeansAssessmentService
                 .getFullAssessmentThreshold(hardship.getReviewDate());
@@ -57,7 +57,7 @@ public class HardshipService {
         hardshipReviewDTO.setHardshipResult(result);
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, laaTransactionId, requestType);
+                maatCourtDataService.persistHardship(request, requestType);
         mapper.toDto(response, hardshipReviewDTO);
         return hardshipReviewDTO;
     }

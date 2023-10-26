@@ -5,7 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import uk.gov.justice.laa.crime.hardship.common.Constants;
+import uk.gov.justice.laa.crime.commons.common.Constants;
 
 public class RequestBuilderUtils {
 
