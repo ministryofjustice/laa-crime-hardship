@@ -7,7 +7,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
-import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.MockServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
@@ -26,8 +25,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class MaatCourtDataServiceTest {
 
-    private static final String LAA_TRANSACTION_ID = "laaTransactionId";
-
     @Mock
     private RestAPIClient maatCourtDataClient;
 
@@ -40,12 +37,12 @@ class MaatCourtDataServiceTest {
     @Test
     void givenAValidRepId_whenGetRepOrderCapitalByRepIdIsInvoked_thenResponseIsReturned() {
         List<ApiHardshipDetail> expected = List.of(new ApiHardshipDetail());
-        when(maatCourtDataClient.get(any(), anyString(), anyMap(), anyInt(), anyString()))
+        when(maatCourtDataClient.get(any(), anyString(), anyInt(), anyString()))
                 .thenReturn(expected);
         maatCourtDataService.getHardshipByDetailType(
-                TestModelDataBuilder.TEST_REP_ID, TestModelDataBuilder.DETAIL_TYPE, LAA_TRANSACTION_ID
+                TestModelDataBuilder.TEST_REP_ID, TestModelDataBuilder.DETAIL_TYPE
         );
-        verify(maatCourtDataClient).get(any(), anyString(), anyMap(), anyInt(), anyString());
+        verify(maatCourtDataClient).get(any(), anyString(), anyInt(), anyString());
     }
 
     @Test
@@ -54,7 +51,7 @@ class MaatCourtDataServiceTest {
         when(maatCourtDataClient.post(any(), any(), anyString(), anyMap()))
                 .thenReturn(expected);
         maatCourtDataService.persistHardship(
-                new ApiPersistHardshipRequest(), Constants.LAA_TRANSACTION_ID, RequestType.CREATE
+                new ApiPersistHardshipRequest(), RequestType.CREATE
         );
         verify(maatCourtDataClient).post(any(), any(), anyString(), anyMap());
     }
@@ -65,7 +62,7 @@ class MaatCourtDataServiceTest {
         when(maatCourtDataClient.put(any(), any(), anyString(), anyMap()))
                 .thenReturn(expected);
         maatCourtDataService.persistHardship(
-                new ApiPersistHardshipRequest(), Constants.LAA_TRANSACTION_ID, RequestType.UPDATE
+                new ApiPersistHardshipRequest(), RequestType.UPDATE
         );
         verify(maatCourtDataClient).put(any(), any(), anyString(), anyMap());
     }
@@ -73,10 +70,10 @@ class MaatCourtDataServiceTest {
     @Test
     void givenValidHardshipReviewId_whenGetHardshipIsInvoked_thenResponseIsReturned() {
         ApiFindHardshipResponse expected = new ApiFindHardshipResponse();
-        when(maatCourtDataClient.get(any(), anyString(), anyMap(), anyInt())).thenReturn(expected);
+        when(maatCourtDataClient.get(any(), anyString(), anyInt())).thenReturn(expected);
 
-        maatCourtDataService.getHardship(TestModelDataBuilder.HARDSHIP_ID, LAA_TRANSACTION_ID);
+        maatCourtDataService.getHardship(TestModelDataBuilder.HARDSHIP_ID);
 
-        verify(maatCourtDataClient).get(any(), anyString(), anyMap(), anyInt());
+        verify(maatCourtDataClient).get(any(), anyString(), anyInt());
     }
 }

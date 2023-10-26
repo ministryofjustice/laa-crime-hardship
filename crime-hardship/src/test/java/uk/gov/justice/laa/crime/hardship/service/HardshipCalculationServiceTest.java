@@ -55,13 +55,12 @@ class HardshipCalculationServiceTest {
 
         List<ApiHardshipDetail> hardshipDetails = TestModelDataBuilder.getApiHardshipReviewDetails(EXPENDITURE);
 
-        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
+        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString()))
                 .thenReturn(hardshipDetails);
 
         ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
                 request.getRepId(),
-                HardshipReviewDetailType.valueOf(request.getDetailType()),
-                request.getLaaTransactionId()
+                HardshipReviewDetailType.valueOf(request.getDetailType())
         );
 
         assertThat(response.getHardshipSummary())
@@ -76,13 +75,12 @@ class HardshipCalculationServiceTest {
         List<ApiHardshipDetail> hardshipDetails =
                 TestModelDataBuilder.getApiHardshipReviewDetails(BigDecimal.ZERO, EXPENDITURE);
 
-        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
+        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString()))
                 .thenReturn(hardshipDetails);
 
         ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
                 request.getRepId(),
-                HardshipReviewDetailType.valueOf(request.getDetailType()),
-                request.getLaaTransactionId()
+                HardshipReviewDetailType.valueOf(request.getDetailType())
         );
 
         assertThat(response.getHardshipSummary())
@@ -94,13 +92,12 @@ class HardshipCalculationServiceTest {
         ApiCalculateHardshipByDetailRequest request =
                 TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true, EXPENDITURE);
 
-        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString(), anyString()))
+        when(maatCourtDataService.getHardshipByDetailType(anyInt(), anyString()))
                 .thenReturn(null);
 
         ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
                 request.getRepId(),
-                HardshipReviewDetailType.valueOf(request.getDetailType()),
-                request.getLaaTransactionId()
+                HardshipReviewDetailType.valueOf(request.getDetailType())
         );
 
         assertThat(response.getHardshipSummary())

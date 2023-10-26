@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
-import uk.gov.justice.laa.crime.hardship.common.Constants;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
@@ -27,13 +26,12 @@ public class MaatCourtDataService {
     private final ServicesConfiguration configuration;
     private static final String RESPONSE_STRING = "Response from Court Data API: %s";
 
-    public List<ApiHardshipDetail> getHardshipByDetailType(Integer repId, String detailType, String laaTransactionId) {
+    public List<ApiHardshipDetail> getHardshipByDetailType(Integer repId, String detailType) {
 
         List<ApiHardshipDetail> response = maatAPIClient.get(
                 new ParameterizedTypeReference<>() {
                 },
                 configuration.getMaatApi().getHardshipEndpoints().getHardshipDetailUrl(),
-                Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId),
                 repId,
                 detailType
         );
@@ -42,7 +40,6 @@ public class MaatCourtDataService {
     }
 
     public ApiPersistHardshipResponse persistHardship(ApiPersistHardshipRequest request,
-                                                      String laaTransactionId,
                                                       RequestType requestType) {
 
         ApiPersistHardshipResponse response;
@@ -52,7 +49,7 @@ public class MaatCourtDataService {
                     new ParameterizedTypeReference<>() {
                     },
                     configuration.getMaatApi().getHardshipEndpoints().getPersistHardshipUrl(),
-                    Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId)
+                    Map.of()
             );
         } else {
             response = maatAPIClient.put(
@@ -60,7 +57,7 @@ public class MaatCourtDataService {
                     new ParameterizedTypeReference<>() {
                     },
                     configuration.getMaatApi().getHardshipEndpoints().getPersistHardshipUrl(),
-                    Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId)
+                    Map.of()
             );
         }
 
@@ -68,11 +65,10 @@ public class MaatCourtDataService {
         return response;
     }
 
-    public ApiFindHardshipResponse getHardship(Integer hardshipReviewId, String laaTransactionId) {
+    public ApiFindHardshipResponse getHardship(Integer hardshipReviewId) {
         ApiFindHardshipResponse response = maatAPIClient.get(
                 new ParameterizedTypeReference<>() {},
                 configuration.getMaatApi().getHardshipEndpoints().getHardshipUrl(),
-                Map.of(Constants.LAA_TRANSACTION_ID, laaTransactionId),
                 hardshipReviewId
         );
 

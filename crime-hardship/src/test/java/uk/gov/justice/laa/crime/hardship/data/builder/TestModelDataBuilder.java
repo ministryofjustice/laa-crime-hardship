@@ -59,7 +59,6 @@ public class TestModelDataBuilder {
 
         return new ApiCalculateHardshipByDetailRequest()
                 .withRepId(isValid ? TEST_REP_ID : null)
-                .withLaaTransactionId(MEANS_ASSESSMENT_TRANSACTION_ID)
                 .withDetailType(detailType.getType());
     }
 
