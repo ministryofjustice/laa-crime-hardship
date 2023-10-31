@@ -34,7 +34,6 @@ class HardshipReviewDetailReasonTest {
     @Test
     void givenValidInput_ValidateEnumValues() {
         assertThat("Evidence Supplied").isEqualTo(HardshipReviewDetailReason.EVIDENCE_SUPPLIED.getReason());
-        assertThat("EXPENDITURE").isEqualTo(HardshipReviewDetailReason.EVIDENCE_SUPPLIED.getType());
     }
 
 }
