@@ -25,7 +25,7 @@ public enum ExtraExpenditureDetailCode {
     UNI_HOUSING("UNI HOUSING", "University Housing Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PRESCRIPTION("PRESCRIPTION", "Prescription Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     PENSION_PAY("PENSION PAY", "Pension Payments", HardshipReviewDetailType.EXPENDITURE.getType()),
-    MEDICAL_COSTS("MEDIAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
+    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs", HardshipReviewDetailType.EXPENDITURE.getType()),
     OTHER("OTHER", "Other", HardshipReviewDetailType.EXPENDITURE.getType());
 
     @JsonPropertyDescription("Extra expenditure detail codes that are valid")
