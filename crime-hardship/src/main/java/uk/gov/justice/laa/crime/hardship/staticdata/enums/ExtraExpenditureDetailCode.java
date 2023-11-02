@@ -25,7 +25,7 @@ public enum ExtraExpenditureDetailCode {
     UNI_HOUSING("UNI HOUSING", "University Housing Costs"),
     PRESCRIPTION("PRESCRIPTION", "Prescription Costs"),
     PENSION_PAY("PENSION PAY", "Pension Payments"),
-    MEDICAL_COSTS("MEDIAL COSTS", "Medical Costs"),
+    MEDICAL_COSTS("MEDICAL COSTS", "Medical Costs"),
     OTHER("OTHER", "Other");
 
     @JsonPropertyDescription("Extra expenditure detail codes that are valid")
