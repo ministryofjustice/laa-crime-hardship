@@ -120,8 +120,7 @@ public class TestModelDataBuilder {
                 .withTotalAnnualDisposableIncome(TOTAL_DISPOSABLE_INCOME)
                 .withSolicitorCosts(getSolicitorsCosts())
                 .withDeniedIncome(List.of(getDeniedIncome()))
-                .withExtraExpenditure(List.of(getExtraExpenditure().withDescription("Extra Expenditure")))
-                .withOtherFundingSources(List.of(getOtherFundingSources()));
+                .withExtraExpenditure(List.of(getExtraExpenditure().withDescription("Extra Expenditure")));
     }
 
     public static HardshipMetadata getHardshipMetadata() {
@@ -172,13 +171,6 @@ public class TestModelDataBuilder {
                 .withItemCode(ExtraExpenditureDetailCode.CARDS);
     }
 
-    public static OtherFundingSource getOtherFundingSources() {
-        return new OtherFundingSource()
-                .withAmount(BigDecimal.ONE)
-                .withDueDate(LocalDateTime.MAX)
-                .withDescription("Loan from parents");
-    }
-
     public static HardshipProgress getHardshipProgress() {
         return new HardshipProgress()
                 .withDateTaken(LocalDateTime.of(
@@ -217,12 +209,6 @@ public class TestModelDataBuilder {
 
         Arrays.stream(detailTypes).forEach(type -> {
             switch (type) {
-                case FUNDING -> details.add(
-                        new ApiHardshipDetail()
-                                .withDetailType(HardshipReviewDetailType.FUNDING)
-                                .withAmount(amount)
-                                .withDateDue(LocalDateTime.now())
-                );
                 case INCOME -> details.add(
                         new ApiHardshipDetail()
                                 .withDetailType(HardshipReviewDetailType.INCOME)
@@ -285,14 +271,6 @@ public class TestModelDataBuilder {
                                                 .withAccepted(true)
                                                 .withAmount(BigDecimal.valueOf(2000.00))
                                                 .withFrequency(Frequency.ANNUALLY)
-                                )
-                        );
-                        case FUNDING -> hardship.setOtherFundingSources(
-                                List.of(
-                                        new OtherFundingSource()
-                                                .withAmount(BigDecimal.valueOf(1000.00))
-                                                .withDescription("Support from parents")
-                                                .withDueDate(LocalDateTime.now())
                                 )
                         );
                     }

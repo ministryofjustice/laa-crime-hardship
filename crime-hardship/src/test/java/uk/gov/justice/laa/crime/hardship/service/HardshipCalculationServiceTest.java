@@ -282,21 +282,4 @@ class HardshipCalculationServiceTest {
         softly.assertThat(response.getResultDate())
                 .isEqualTo(LocalDate.now());
     }
-
-    @Test
-    void givenHardshipReviewWithOtherFundingSource_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
-        HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(FUNDING);
-
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
-
-        softly.assertThat(response.getPostHardshipDisposableIncome())
-                .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
-
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.FAIL);
-
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
-    }
 }
