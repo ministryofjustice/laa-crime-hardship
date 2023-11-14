@@ -97,7 +97,7 @@ class PersistHardshipMapperTest {
 
         assertThat(reviewDetails)
                 .asList()
-                .hasSize(4);
+                .hasSize(3);
 
         List<ApiHardshipDetail> expected = List.of(
 

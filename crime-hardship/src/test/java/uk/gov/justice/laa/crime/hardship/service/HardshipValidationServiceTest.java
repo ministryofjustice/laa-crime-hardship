@@ -160,7 +160,7 @@ class HardshipValidationServiceTest {
                         withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),
                         new HardshipMetadata().withReviewReason(NewWorkReason.NEW))));
     }
-    
+
     private static Stream<Arguments> deniedIncomeDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
