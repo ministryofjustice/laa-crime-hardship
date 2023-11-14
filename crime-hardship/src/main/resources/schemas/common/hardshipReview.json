@@ -20,13 +20,6 @@
       "format": "date-time",
       "description": "The hardship review date"
     },
-    "otherFundingSources": {
-      "type": "array",
-      "description": "Other funding sources",
-      "items": {
-        "$ref": "otherFundingSource.json"
-      }
-    },
     "extraExpenditure": {
       "type": "array",
       "description": "Extra expenditure",
