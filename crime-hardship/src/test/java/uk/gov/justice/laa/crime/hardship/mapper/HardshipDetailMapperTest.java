@@ -91,26 +91,6 @@ class HardshipDetailMapperTest {
     }
 
     @Test
-    void givenApiHardshipDetailListWithOtherFunding_whenToDtoIsInvoked_thenDtoIsMapped() {
-
-        List<ApiHardshipDetail> hardshipDetails =
-                TestModelDataBuilder.getApiHardshipReviewDetails(HardshipReviewDetailType.FUNDING);
-
-        ApiHardshipDetail detail = hardshipDetails.get(0);
-
-        HardshipReview hardship = new HardshipReview();
-        mapper.toDto(hardshipDetails, hardship);
-
-        OtherFundingSource otherFunding = hardship.getOtherFundingSources().get(0);
-        softly.assertThat(otherFunding.getAmount())
-                .isEqualTo(detail.getAmount());
-        softly.assertThat(otherFunding.getDueDate())
-                .isEqualTo(detail.getDateDue());
-        softly.assertThat(otherFunding.getDescription())
-                .isEqualTo(detail.getOtherDescription());
-    }
-
-    @Test
     void givenApiHardshipDetailListInvalidDetailType_whenToDtoIsInvoked_thenExceptionIsThrown() {
         ApiHardshipDetail detail = new ApiHardshipDetail()
                 .withDetailType(HardshipReviewDetailType.ACTION);

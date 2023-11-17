@@ -69,20 +69,6 @@ class HardshipValidationServiceTest {
     }
 
     @ParameterizedTest
-    @MethodSource("fundingSourcesDataForValidationException")
-    void validateFundingSources_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
-                checkHardship(apiPerformHardshipRequest));
-        assertEquals("Amount and Date Expected must be entered for each detail in section Funding Source", validationException.getMessage());
-    }
-
-    @ParameterizedTest
-    @MethodSource("fundingSourcesDataForNoValidationException")
-    void validateFundingSources_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        assertDoesNotThrow(()->hardshipValidationService.checkHardship(apiPerformHardshipRequest));
-    }
-
-    @ParameterizedTest
     @MethodSource("deniedIncomeDataForValidationException")
     void validateDeniedIncome_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
@@ -175,51 +161,6 @@ class HardshipValidationServiceTest {
                         new HardshipMetadata().withReviewReason(NewWorkReason.NEW))));
     }
 
-    private static Stream<Arguments> fundingSourcesDataForValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(BigDecimal.ZERO).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(null).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
-                        TestModelDataBuilder.getHardshipMetadata()))
-        );
-    }
-
-    private static Stream<Arguments> fundingSourcesDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription(null)
-                                        .withAmount(null).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("")
-                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(BigDecimal.ONE).withDueDate(LocalDateTime.now()))),
-                        TestModelDataBuilder.getHardshipMetadata()))
-        );
-    }
     private static Stream<Arguments> deniedIncomeDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(

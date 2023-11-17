@@ -14,7 +14,7 @@ class HardshipReviewDetailTypeTest {
 
     @Test
     void givenValidResultString_whenGetFromIsInvoked_thenCorrectEnumIsReturned() {
-        assertThat(HardshipReviewDetailType.getFrom("FUNDING")).isEqualTo(HardshipReviewDetailType.FUNDING);
+        assertThat(HardshipReviewDetailType.getFrom("INCOME")).isEqualTo(HardshipReviewDetailType.INCOME);
     }
 
     @Test

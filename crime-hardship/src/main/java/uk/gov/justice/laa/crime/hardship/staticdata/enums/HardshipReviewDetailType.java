@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public enum HardshipReviewDetailType {
 
-    FUNDING("FUNDING", "Other Sources of Funding"),
     INCOME("INCOME", "Income Denied Access To"),
     EXPENDITURE("EXPENDITURE", "Extra Expenditure"),
     SOL_COSTS("SOL COSTS", "Solicitor Costs"),
