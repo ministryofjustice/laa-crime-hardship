@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.justice.laa.crime.commons.exception.APIClientException;
+import uk.gov.justice.laa.crime.commons.tracing.TraceIdHandler;
 import uk.gov.justice.laa.crime.hardship.config.CrimeHardshipTestConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
@@ -33,7 +34,6 @@ import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRe
 import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @WebMvcTest(HardshipController.class)
-@Import(CrimeHardshipTestConfiguration.class)
 @AutoConfigureMockMvc(addFilters = false)
 class HardshipControllerTest {
 
@@ -61,6 +61,9 @@ class HardshipControllerTest {
 
     @MockBean
     private CrimeMeansAssessmentService crimeMeansAssessmentService;
+
+    @MockBean
+    TraceIdHandler traceIdHandler;
 
 
     @Test
