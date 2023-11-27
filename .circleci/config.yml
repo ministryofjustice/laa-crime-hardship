@@ -161,13 +161,6 @@ jobs:
           environment: uat
           token: ${CIRCLE_CI_TOKEN_UAT}
 
-  deploy-staging:
-    executor: cloud-platform-executor
-    steps:
-      - deploy-to:
-          environment: staging
-          token: ${CIRCLE_CI_TOKEN_STAGING}
-
   deploy-prod:
     executor: cloud-platform-executor
     steps:
@@ -221,17 +214,6 @@ workflows:
           context: build-deploy-master-workflow
           requires:
             - hold_install_on_uat
-
-      - hold_install_on_staging:
-          context: build-deploy-master-workflow
-          type: approval
-          requires:
-            - build_scan_and_push_image
-
-      - deploy-staging:
-          context: build-deploy-master-workflow
-          requires:
-            - hold_install_on_staging
 
       - hold_install_on_prod:
           context: build-deploy-master-workflow
@@ -290,14 +272,3 @@ workflows:
           context: build-deploy-branch-workflow
           requires:
             - hold_install_on_uat
-
-      - hold_install_on_staging:
-          context: build-deploy-branch-workflow
-          type: approval
-          requires:
-            - build_scan_and_push_image
-
-      - deploy-staging:
-          context: build-deploy-branch-workflow
-          requires:
-            - hold_install_on_staging
