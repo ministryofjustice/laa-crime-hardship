@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
+import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
@@ -22,37 +23,42 @@ public class HardshipService {
     private final PersistHardshipMapper mapper;
     private final MaatCourtDataService maatCourtDataService;
     private final HardshipCalculationService hardshipCalculationService;
+    private final CrimeMeansAssessmentService crimeMeansAssessmentService;
 
-    public HardshipReviewDTO create(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
-        return persist(hardshipReviewDTO, laaTransactionId, RequestType.CREATE);
+    public HardshipReviewDTO create(HardshipReviewDTO hardshipReviewDTO) {
+        return persist(hardshipReviewDTO, RequestType.CREATE);
     }
 
-    public HardshipReviewDTO update(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
-        return persist(hardshipReviewDTO, laaTransactionId, RequestType.UPDATE);
+    public HardshipReviewDTO update(HardshipReviewDTO hardshipReviewDTO) {
+        return persist(hardshipReviewDTO, RequestType.UPDATE);
     }
 
-    public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId) {
+    public ApiFindHardshipResponse find(Integer hardshipId) {
+        return maatCourtDataService.getHardship(hardshipId);
+    }
+
+    public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO) {
         hardshipReviewDTO.getHardshipMetadata().setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
         if (hardshipReviewDTO.getHardshipResult() != null) {
             hardshipReviewDTO.getHardshipResult().setResult(null);
         }
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, laaTransactionId, RequestType.UPDATE);
+                maatCourtDataService.persistHardship(request, RequestType.UPDATE);
         mapper.toDto(response, hardshipReviewDTO);
         return hardshipReviewDTO;
     }
 
-    private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, String laaTransactionId, RequestType requestType) {
+    private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, RequestType requestType) {
         HardshipReview hardship = hardshipReviewDTO.getHardship();
-        // TODO: Full threshold should be retrieved from CMA (LCAM-960)
-        HardshipResult result = hardshipCalculationService.calculateHardship(hardship, BigDecimal.valueOf(3398.00));
+        BigDecimal fullThreshold = crimeMeansAssessmentService
+                .getFullAssessmentThreshold(hardship.getReviewDate());
+        HardshipResult result = hardshipCalculationService.calculateHardship(hardship, fullThreshold);
         hardshipReviewDTO.setHardshipResult(result);
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
         ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, laaTransactionId, requestType);
+                maatCourtDataService.persistHardship(request, requestType);
         mapper.toDto(response, hardshipReviewDTO);
-        // Call Contribution service and CCP from Orchestration layer
         return hardshipReviewDTO;
     }
 }

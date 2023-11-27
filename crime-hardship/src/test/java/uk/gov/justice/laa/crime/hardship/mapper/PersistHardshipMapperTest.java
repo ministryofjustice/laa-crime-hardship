@@ -68,15 +68,15 @@ class PersistHardshipMapperTest {
                 .isEqualTo(result.getPostHardshipDisposableIncome());
 
         var solicitorsCosts = request.getSolicitorCosts();
-        softly.assertThat(solicitorsCosts.getSolicitorDisb())
+        softly.assertThat(solicitorsCosts.getDisbursements())
                 .isEqualTo(hardship.getSolicitorCosts().getDisbursements());
-        softly.assertThat(solicitorsCosts.getSolicitorRate())
+        softly.assertThat(solicitorsCosts.getRate())
                 .isEqualTo(hardship.getSolicitorCosts().getRate());
-        softly.assertThat(solicitorsCosts.getSolicitorVat())
+        softly.assertThat(solicitorsCosts.getVat())
                 .isEqualTo(hardship.getSolicitorCosts().getVat());
-        softly.assertThat(solicitorsCosts.getSolicitorHours())
+        softly.assertThat(solicitorsCosts.getHours())
                 .isEqualTo(hardship.getSolicitorCosts().getHours());
-        softly.assertThat(solicitorsCosts.getSolicitorEstTotalCost())
+        softly.assertThat(solicitorsCosts.getEstimatedTotal())
                 .isEqualTo(hardship.getSolicitorCosts().getEstimatedTotal());
     }
 
@@ -87,19 +87,17 @@ class PersistHardshipMapperTest {
 
         DeniedIncome deniedIncome = TestModelDataBuilder.getDeniedIncome();
         ExtraExpenditure extraExpenditure = TestModelDataBuilder.getExtraExpenditure();
-        OtherFundingSource otherFundingSource = TestModelDataBuilder.getOtherFundingSources();
 
         hardship.setDeniedIncome(List.of(deniedIncome));
         hardship.setExtraExpenditure(List.of(extraExpenditure));
         hardship.getExtraExpenditure().get(0).setAccepted(false);
-        hardship.setOtherFundingSources(List.of(otherFundingSource));
 
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
         List<ApiHardshipDetail> reviewDetails = request.getReviewDetails();
 
         assertThat(reviewDetails)
                 .asList()
-                .hasSize(4);
+                .hasSize(3);
 
         List<ApiHardshipDetail> expected = List.of(
 
@@ -119,13 +117,6 @@ class PersistHardshipMapperTest {
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.CARDS)
                         .withDetailReason(extraExpenditure.getReasonCode()),
-
-                new ApiHardshipDetail()
-                        .withDetailType(HardshipReviewDetailType.FUNDING)
-                        .withAmount(otherFundingSource.getAmount())
-                        .withDateDue(otherFundingSource.getDueDate())
-                        .withUserCreated(metadata.getUserSession().getUserName())
-                        .withOtherDescription(otherFundingSource.getDescription()),
 
                 new ApiHardshipDetail()
                         .withDetailType(HardshipReviewDetailType.SOL_COSTS)

@@ -38,12 +38,6 @@ public class HardshipDetailMapper implements ResponseMapper<List<ApiHardshipDeta
                                                 )
                                         )
                         );
-                        case FUNDING -> hardship.getOtherFundingSources().add(
-                                new OtherFundingSource()
-                                        .withAmount(item.getAmount())
-                                        .withDueDate(item.getDateDue())
-                                        .withDescription(item.getOtherDescription())
-                        );
                         case SOL_COSTS -> hardship.setSolicitorCosts(
                                 new SolicitorCosts()
                                         .withEstimatedTotal(item.getAmount())

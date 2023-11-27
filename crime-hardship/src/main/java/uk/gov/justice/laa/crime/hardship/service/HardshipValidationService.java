@@ -24,7 +24,6 @@ public class HardshipValidationService {
     public static final String HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE = "Review Date must be entered for completed hardship";
     public static final String NEW_WORK_REASON_VALIDATION_MESSAGE = "Review Reason must be entered for hardship";
     public static final String SOLICITOR_DETAILS_VALIDATION_MESSAGE = "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";
-    public static final String FUNDING_SOURCES_VALIDATION_MESSAGE = "Amount and Date Expected must be entered for each detail in section ";
     public static final String EXPENDITURE_OR_DENIED_INCOME_VALIDATION_MESSAGE = "Amount, Frequency, and Reason must be entered for each detail in section ";
     public static final String PROGRESSION_ITEMS_VALIDATION_MESSAGE = "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress";
 
@@ -49,11 +48,6 @@ public class HardshipValidationService {
         return (solicitorRate.compareTo(BigDecimal.ZERO) > 0) && (solicitorHours.intValue() == 0);
     }
 
-    private static boolean fundingDescriptionWithoutFundingAmountOrDueDate(OtherFundingSource funding) {
-        return StringUtils.isNotEmpty(funding.getDescription()) &&
-                (isNull(funding.getAmount()) || isNull(funding.getDueDate()));
-    }
-
     private static boolean deniedIncomeWithoutAmountOrFrequencyOrReasonNote(DeniedIncome deniedIncome) {
         return (nonNull(deniedIncome.getItemCode()) &&
                 (isNull(deniedIncome.getAmount()) || isNull(deniedIncome.getFrequency()) ||
@@ -64,7 +58,6 @@ public class HardshipValidationService {
         validateHardshipReviewStatus(apiPerformHardshipRequest);
         validateHardshipReviewNewWorkReason(apiPerformHardshipRequest);
         validateSolicitorDetails(apiPerformHardshipRequest);
-        validateFundingSources(apiPerformHardshipRequest);
         validateDeniedIncome(apiPerformHardshipRequest);
         validateExpenditure(apiPerformHardshipRequest);
         validateProgressionItems(apiPerformHardshipRequest);
@@ -99,14 +92,6 @@ public class HardshipValidationService {
         if (solicitorRateSpecifiedWithoutSolicitorHours(solicitorRate, solicitorHours)) {
             throw new ValidationException(SOLICITOR_DETAILS_VALIDATION_MESSAGE);
         }
-    }
-
-    private void validateFundingSources(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        List<OtherFundingSource> fundingSources = apiPerformHardshipRequest.getHardship().getOtherFundingSources();
-        Optional.ofNullable(fundingSources).orElse(List.of()).forEach(funding -> {
-            if (fundingDescriptionWithoutFundingAmountOrDueDate(funding))
-                throw new ValidationException(FUNDING_SOURCES_VALIDATION_MESSAGE + funding.getDescription());
-        });
     }
 
     private void validateDeniedIncome(ApiPerformHardshipRequest apiPerformHardshipRequest) {

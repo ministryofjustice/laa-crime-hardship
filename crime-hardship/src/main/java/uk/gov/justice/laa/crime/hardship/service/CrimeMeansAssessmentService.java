@@ -30,7 +30,7 @@ public class CrimeMeansAssessmentService {
                 configuration.getCmaApi().getCmaEndpoints().getFullAssessmentThresholdUrl(),
                 assessmentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         );
-        log.info(String.format(RESPONSE_STRING, response));
+        log.info(RESPONSE_STRING, response);
         return response;
     }
 }

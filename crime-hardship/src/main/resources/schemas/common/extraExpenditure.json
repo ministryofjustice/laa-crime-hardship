@@ -8,7 +8,7 @@
     "reasonCode": {
       "type": "object",
       "description": "The hardship review details reasons code",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReasons"
+      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReason"
     },
     "itemCode": {
       "type": "object",

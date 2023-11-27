@@ -1,7 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -67,20 +66,6 @@ class HardshipValidationServiceTest {
         ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
                 checkHardship(apiPerformHardshipRequest));
         assertEquals("Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified", validationException.getMessage());
-    }
-
-    @ParameterizedTest
-    @MethodSource("fundingSourcesDataForValidationException")
-    void validateFundingSources_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        ValidationException validationException =  assertThrows(ValidationException.class, () -> hardshipValidationService.
-                checkHardship(apiPerformHardshipRequest));
-        assertEquals("Amount and Date Expected must be entered for each detail in section Funding Source", validationException.getMessage());
-    }
-
-    @ParameterizedTest
-    @MethodSource("fundingSourcesDataForNoValidationException")
-    void validateFundingSources_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        assertDoesNotThrow(()->hardshipValidationService.checkHardship(apiPerformHardshipRequest));
     }
 
     @ParameterizedTest
@@ -176,51 +161,6 @@ class HardshipValidationServiceTest {
                         new HardshipMetadata().withReviewReason(NewWorkReason.NEW))));
     }
 
-    private static Stream<Arguments> fundingSourcesDataForValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(BigDecimal.ZERO).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(null).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
-                        TestModelDataBuilder.getHardshipMetadata()))
-        );
-    }
-
-    private static Stream<Arguments> fundingSourcesDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription(null)
-                                        .withAmount(null).withDueDate(null))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("")
-                                        .withAmount(null).withDueDate(LocalDateTime.now()))),
-                        TestModelDataBuilder.getHardshipMetadata())),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withOtherFundingSources(List.of(TestModelDataBuilder.getOtherFundingSources()
-                                        .withDescription("Funding Source")
-                                        .withAmount(BigDecimal.ONE).withDueDate(LocalDateTime.now()))),
-                        TestModelDataBuilder.getHardshipMetadata()))
-        );
-    }
     private static Stream<Arguments> deniedIncomeDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -275,7 +215,7 @@ class HardshipValidationServiceTest {
                                         .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(null)
                                         .withAmount(BigDecimal.ONE)
-                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
+                                        .withReasonCode(HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
@@ -291,7 +231,7 @@ class HardshipValidationServiceTest {
                                         .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(Frequency.ANNUALLY)
                                         .withAmount(null)
-                                        .withReasonCode(HardshipReviewDetailReasons.ARRANGEMENT_IN_PLACE))),
+                                        .withReasonCode(HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata()))
         );
     }

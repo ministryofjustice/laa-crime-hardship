@@ -55,11 +55,11 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 .withDecisionNotes(metadata.getDecisionNotes())
                 .withSolicitorCosts(
                         SolicitorCosts.builder()
-                                .solicitorRate(hardship.getSolicitorCosts().getRate())
-                                .solicitorDisb(hardship.getSolicitorCosts().getDisbursements())
-                                .solicitorVat(hardship.getSolicitorCosts().getVat())
-                                .solicitorEstTotalCost(hardship.getSolicitorCosts().getEstimatedTotal())
-                                .solicitorHours(hardship.getSolicitorCosts().getHours())
+                                .rate(hardship.getSolicitorCosts().getRate())
+                                .disbursements(hardship.getSolicitorCosts().getDisbursements())
+                                .vat(hardship.getSolicitorCosts().getVat())
+                                .estimatedTotal(hardship.getSolicitorCosts().getEstimatedTotal())
+                                .hours(hardship.getSolicitorCosts().getHours())
                                 .build()
                 )
                 .withStatus(metadata.getReviewStatus())
@@ -74,41 +74,32 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
     private List<ApiHardshipDetail> convertHardshipDetails(HardshipReview hardship, String username) {
 
         return Stream.concat(
-                Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure(),
-                                hardship.getOtherFundingSources()
-                        )
+                Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
                         .flatMap(Collection::stream)
                         .map(item -> {
                             var detail = new ApiHardshipDetail()
                                     .withAmount(item.getAmount())
                                     .withOtherDescription(item.getDescription())
-                                    .withUserCreated(username);
-                            if (item instanceof OtherFundingSource otherFunding) {
-                                return detail
-                                        .withDetailType(HardshipReviewDetailType.FUNDING)
-                                        .withDateDue(otherFunding.getDueDate());
-                            } else if (item instanceof HardshipCost hardshipCost) {
-                                detail
-                                        .withFrequency(hardshipCost.getFrequency())
-                                        .withAccepted(Boolean.TRUE.equals(hardshipCost.getAccepted()) ? "Y" : "N");
+                                    .withUserCreated(username)
+                                    .withFrequency(item.getFrequency())
+                                    .withAccepted(Boolean.TRUE.equals(item.getAccepted()) ? "Y" : "N");
 
-                                if (item instanceof DeniedIncome deniedIncome) {
-                                    return detail
-                                            .withDetailType(HardshipReviewDetailType.INCOME)
-                                            .withDetailCode(
-                                                    HardshipReviewDetailCode.getFrom(
-                                                            deniedIncome.getItemCode().getCode()
-                                                    )
-                                            );
-                                } else if (item instanceof ExtraExpenditure expenditure) {
-                                    return detail
-                                            .withDetailType(HardshipReviewDetailType.EXPENDITURE)
-                                            .withDetailCode(HardshipReviewDetailCode.getFrom(
-                                                            expenditure.getItemCode().getCode()
-                                                    )
-                                            )
-                                            .withDetailReason(expenditure.getReasonCode());
-                                }
+                            if (item instanceof DeniedIncome deniedIncome) {
+                                return detail
+                                        .withDetailType(HardshipReviewDetailType.INCOME)
+                                        .withDetailCode(
+                                                HardshipReviewDetailCode.getFrom(
+                                                        deniedIncome.getItemCode().getCode()
+                                                )
+                                        );
+                            } else if (item instanceof ExtraExpenditure expenditure) {
+                                return detail
+                                        .withDetailType(HardshipReviewDetailType.EXPENDITURE)
+                                        .withDetailCode(HardshipReviewDetailCode.getFrom(
+                                                        expenditure.getItemCode().getCode()
+                                                )
+                                        )
+                                        .withDetailReason(expenditure.getReasonCode());
                             }
                             return detail;
                         }),

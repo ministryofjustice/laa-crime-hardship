@@ -5,36 +5,35 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-class HardshipReviewDetailReasonsTest {
+class HardshipReviewDetailReasonTest {
 
     @Test
     void givenABlankString_whenGetFromIsInvoked_thenNullIsReturned() {
-        assertThat(HardshipReviewDetailReasons.getFrom(null)).isNull();
+        assertThat(HardshipReviewDetailReason.getFrom(null)).isNull();
     }
 
     @Test
     void givenValidResultString_whenGetFromIsInvoked_thenCorrectEnumIsReturned() {
-        assertThat(HardshipReviewDetailReasons.getFrom("Evidence Supplied")).isEqualTo(HardshipReviewDetailReasons.EVIDENCE_SUPPLIED);
+        assertThat(HardshipReviewDetailReason.getFrom("Evidence Supplied")).isEqualTo(HardshipReviewDetailReason.EVIDENCE_SUPPLIED);
     }
 
     @Test
     void valueOfCurrentStatusFromString_nullParameter_ReturnsNull() {
         assertThatThrownBy(
-                () -> HardshipReviewDetailReasons.getFrom("MOCK_RESULT_STRING")
+                () -> HardshipReviewDetailReason.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void givenInvalidResultString_whenGetFromIsInvoked_thenExceptionIsThrown() {
         assertThatThrownBy(
-                () -> HardshipReviewDetailReasons.getFrom("MOCK_RESULT_STRING")
+                () -> HardshipReviewDetailReason.getFrom("MOCK_RESULT_STRING")
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void givenValidInput_ValidateEnumValues() {
-        assertThat("Evidence Supplied").isEqualTo(HardshipReviewDetailReasons.EVIDENCE_SUPPLIED.getReason());
-        assertThat("EXPENDITURE").isEqualTo(HardshipReviewDetailReasons.EVIDENCE_SUPPLIED.getType());
+        assertThat("Evidence Supplied").isEqualTo(HardshipReviewDetailReason.EVIDENCE_SUPPLIED.getReason());
     }
 
 }

@@ -14,6 +14,9 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
+  tracing:
+    propagation:
+      type: w3c,b3
 
 spring:
   datasource:
@@ -69,6 +72,7 @@ services:
     hardship-endpoints:
       hardship-detail-url: ${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
       persist-hardship-url: ${services.maat-api.assessments-domain}/hardship
+      hardship-url: ${services.maat-api.assessments-domain}/hardship/{hardshipId}
   cma-api:
     base-url: ${CMA_API_BASE_URL}
     means-assessments-domain: ${services.cma-api.base-url}/api/internal/v1/assessment/means

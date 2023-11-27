@@ -42,6 +42,9 @@ public class ServicesConfiguration {
 
             @NotNull
             private String persistHardshipUrl;
+
+            @NotNull
+            private String hardshipUrl;
         }
     }
 

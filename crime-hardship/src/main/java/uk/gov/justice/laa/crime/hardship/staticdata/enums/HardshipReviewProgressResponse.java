@@ -1,7 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.staticdata.enums;
 
-import com.fasterxml.jackson.annotation.JsonPropertyDescription;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
@@ -17,13 +16,9 @@ public enum HardshipReviewProgressResponse {
     ADDITIONAL_PROVIDED("ADDITIONAL PROVIDED", "Additional evidence provided");
 
     @JsonPropertyDescription("This will have the hardship review progress response")
+    @JsonValue
     private String response;
     private String description;
-
-    @JsonValue
-    public String getValue() {
-        return this.response;
-    }
 
     public static HardshipReviewProgressResponse getFrom(String response) {
         if (StringUtils.isBlank(response)) return null;
