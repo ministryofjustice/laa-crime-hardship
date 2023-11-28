@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class SolicitorCosts {
     private BigDecimal rate;
-    private Integer hours;
+    private BigDecimal hours;
     private BigDecimal vat;
     private BigDecimal disbursements;
     private BigDecimal estimatedTotal;

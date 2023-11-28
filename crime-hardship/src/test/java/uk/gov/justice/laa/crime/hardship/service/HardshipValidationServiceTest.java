@@ -140,10 +140,10 @@ class HardshipValidationServiceTest {
     private static Stream<Arguments> solicitorDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ZERO).withHours(0)),
+                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ZERO).withHours(BigDecimal.ZERO)),
                         new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(null).withHours(0)),
+                        withSolicitorCosts(new SolicitorCosts().withRate(null).withHours(BigDecimal.ZERO)),
                         new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                         withSolicitorCosts(null),
@@ -154,7 +154,7 @@ class HardshipValidationServiceTest {
     private static Stream<Arguments> solicitorDataForValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(0)),
+                        withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(BigDecimal.ZERO)),
                         new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                         withSolicitorCosts(new SolicitorCosts().withRate(BigDecimal.ONE).withHours(null)),

@@ -37,7 +37,7 @@ public class TestModelDataBuilder {
     public static final LocalDate RESULT_DATE = LocalDate.of(2022, 12, 14);
 
     // Solicitors Costs
-    public static final Integer TEST_SOLICITOR_HOURS = 50;
+    public static final BigDecimal TEST_SOLICITOR_HOURS = BigDecimal.valueOf(50);
     public static final BigDecimal TEST_SOLICITOR_RATE = BigDecimal.valueOf(200);
     public static final BigDecimal TEST_SOLICITOR_DISBURSEMENTS = BigDecimal.valueOf(375);
     public static final BigDecimal TEST_SOLICITOR_VAT = BigDecimal.valueOf(250);
