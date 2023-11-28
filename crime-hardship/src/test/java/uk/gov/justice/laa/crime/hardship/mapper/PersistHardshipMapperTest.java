@@ -106,6 +106,7 @@ class PersistHardshipMapperTest {
                         .withDetailType(HardshipReviewDetailType.INCOME)
                         .withAmount(deniedIncome.getAmount())
                         .withFrequency(deniedIncome.getFrequency())
+                        .withReasonNote("Hospitalisation")
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS),
 
