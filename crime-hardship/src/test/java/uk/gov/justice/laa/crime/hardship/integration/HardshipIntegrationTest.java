@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
@@ -44,6 +45,7 @@ import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRe
 @DirtiesContext
 @Import(CrimeHardshipTestConfiguration.class)
 @SpringBootTest(classes = CrimeHardshipApplication.class, webEnvironment = DEFINED_PORT)
+@AutoConfigureObservability
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 

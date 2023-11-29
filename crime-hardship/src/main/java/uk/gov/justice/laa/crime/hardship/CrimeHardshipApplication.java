@@ -5,7 +5,7 @@ import org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoC
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
-@SpringBootApplication(exclude = ZipkinAutoConfiguration.class)
+@SpringBootApplication
 @ConfigurationPropertiesScan
 public class CrimeHardshipApplication {
 
