@@ -33,6 +33,7 @@ public class HardshipDetailMapper implements ResponseMapper<List<ApiHardshipDeta
                                         .withFrequency(item.getFrequency())
                                         .withAccepted(item.getAccepted().equals("Y"))
                                         .withDescription(item.getOtherDescription())
+                                        .withReasonNote(item.getReasonNote())
                                         .withItemCode(DeniedIncomeDetailCode.getFrom(
                                                         item.getDetailCode().getCode()
                                                 )

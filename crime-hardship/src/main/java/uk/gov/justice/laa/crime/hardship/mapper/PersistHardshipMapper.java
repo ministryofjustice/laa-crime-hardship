@@ -87,6 +87,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                             if (item instanceof DeniedIncome deniedIncome) {
                                 return detail
                                         .withDetailType(HardshipReviewDetailType.INCOME)
+                                        .withReasonNote(deniedIncome.getReasonNote())
                                         .withDetailCode(
                                                 HardshipReviewDetailCode.getFrom(
                                                         deniedIncome.getItemCode().getCode()
