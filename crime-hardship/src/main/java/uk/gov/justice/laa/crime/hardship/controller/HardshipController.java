@@ -91,7 +91,7 @@ public class HardshipController {
                             schema = @Schema(implementation = ApiCalculateHardshipRequest.class)
                     )
             ) @Valid @RequestBody ApiCalculateHardshipRequest request) {
-        hardshipValidationService.checkHardshipDate(request);
+
         BigDecimal fullThreshold = crimeMeansAssessmentService
                 .getFullAssessmentThreshold(request.getHardship().getReviewDate());
 
