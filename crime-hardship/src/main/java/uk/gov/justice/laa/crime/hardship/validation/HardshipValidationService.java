@@ -29,9 +29,9 @@ public class HardshipValidationService {
 
     public static final String INCOMPLETE_ASSESSMENT_VALIDATION_MESSAGE =
             "Hardship review can only be entered after a completed assessment";
-    public static final String HARDSHIP_REVIEW_DATE_VALIDATION_MESSAGE =
+    public static final String REVIEW_DATE_VALIDATION_MESSAGE =
             "Hardship review date precedes the initial or full assessment date(s)";
-    public static final String HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE =
+    public static final String REVIEW_STATUS_VALIDATION_MESSAGE =
             "Review Date must be entered for completed hardship";
     public static final String NEW_WORK_REASON_VALIDATION_MESSAGE = "Review Reason must be entered for hardship";
     public static final String SOLICITOR_DETAILS_VALIDATION_MESSAGE =
@@ -96,13 +96,13 @@ public class HardshipValidationService {
         var assessmentDate = fullAssessmentDate != null ? fullAssessmentDate : initialAssessmentDate;
 
         if (reviewDate.isBefore(assessmentDate)) {
-            throw new ValidationException(HARDSHIP_REVIEW_DATE_VALIDATION_MESSAGE);
+            throw new ValidationException(REVIEW_DATE_VALIDATION_MESSAGE);
         }
     }
 
     private void validateHardshipReviewStatus(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         if (hardshipStatusIsCompleteWithoutReviewDate(apiPerformHardshipRequest)) {
-            throw new ValidationException(HARDSHIP_REVIEW_STATUS_VALIDATION_MESSAGE);
+            throw new ValidationException(REVIEW_STATUS_VALIDATION_MESSAGE);
         }
     }
 
