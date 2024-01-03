@@ -1,4 +1,4 @@
-package uk.gov.justice.laa.crime.hardship.service;
+package uk.gov.justice.laa.crime.hardship.validation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +10,7 @@ import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.DeniedIncome;
 import uk.gov.justice.laa.crime.hardship.model.ExtraExpenditure;
 import uk.gov.justice.laa.crime.hardship.model.HardshipProgress;
+import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
 
 import java.math.BigDecimal;
