@@ -11,10 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
 import uk.gov.justice.laa.crime.hardship.exception.ValidationException;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
-import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
+import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
 
@@ -37,28 +34,56 @@ class HardshipValidationServiceTest {
     @InjectMocks
     private HardshipValidationService hardshipValidationService;
 
-    public static final LocalDateTime TODAYS_DATE = LocalDateTime.now();
-    public static final LocalDateTime YESTERDAYS_DATE = LocalDateTime.now().minusDays(1);
+    public static final LocalDateTime TODAY = LocalDateTime.now();
+    public static final LocalDateTime YESTERDAY = LocalDateTime.now().minusDays(1);
 
     private void configureStubs() {
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
                                     .replaced("N")
-                                    .dateCompleted(YESTERDAYS_DATE)
-                                    .initialAssessmentDate(YESTERDAYS_DATE)
+                                    .dateCompleted(YESTERDAY)
+                                    .initialAssessmentDate(YESTERDAY)
                                     .build()
                 );
     }
 
+    private ApiPerformHardshipRequest getHardshipRequestWithReviewDate(final LocalDateTime reviewDate) {
+        return new ApiPerformHardshipRequest(
+                new HardshipReview()
+                        .withReviewDate(reviewDate),
+                TestModelDataBuilder.getHardshipMetadata()
+        );
+    }
+
+    @Test
+    void givenUpdatingCompleteHardship_whenCheckHardshipIsInvoked_thenExceptionIsThrown() {
+        configureStubs();
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
+
+        when(maatCourtDataService.getHardship(anyInt()))
+                .thenReturn(new ApiFindHardshipResponse().withStatus(HardshipReviewStatus.COMPLETE));
+
+        assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.UPDATE))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("Cannot modify a complete hardship review");
+    }
+
+    @Test
+    void giveUpdatingIncompleteHardship_whenCheckHardshipIsInvoked_thenNoExceptionIsThrown() {
+        configureStubs();
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
+
+        when(maatCourtDataService.getHardship(anyInt()))
+                .thenReturn(new ApiFindHardshipResponse().withStatus(HardshipReviewStatus.IN_PROGRESS));
+
+        assertThatNoException().isThrownBy(
+                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.UPDATE)
+        );
+    }
 
     @Test
     void givenNoPrecedingFinancialAssessment_whenCheckHardshipIsInvoked_thenExceptionIsThrown() {
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(TODAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(null);
@@ -70,17 +95,12 @@ class HardshipValidationServiceTest {
 
     @Test
     void givenFinancialAssessmentIsReplaced_whenCheckHardshipIsInvoked_thenExceptionIsThrown() {
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(TODAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
                                     .replaced("Y")
-                                    .dateCompleted(TODAYS_DATE)
+                                    .dateCompleted(TODAY)
                                     .build()
                 );
 
@@ -91,12 +111,7 @@ class HardshipValidationServiceTest {
 
     @Test
     void givenFinancialAssessmentIsIncomplete_whenCheckHardshipIsInvoked_thenExceptionIsThrown() {
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(TODAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
@@ -112,15 +127,8 @@ class HardshipValidationServiceTest {
 
     @Test
     void givenReviewDateIsAfterInitialAssessmentDate_whenCheckHardshipIsInvoked_thenNoExceptionIsThrown() {
-
         configureStubs();
-
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(TODAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
         assertThatNoException().isThrownBy(
                 () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
@@ -129,18 +137,13 @@ class HardshipValidationServiceTest {
 
     @Test
     void givenReviewDateIsBeforeInitialAssessmentDate_whenCheckHardshipIsInvoked_thenExceptionIsRaised() {
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(YESTERDAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(YESTERDAY);
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
                                     .replaced("N")
-                                    .dateCompleted(TODAYS_DATE)
-                                    .initialAssessmentDate(TODAYS_DATE)
+                                    .dateCompleted(TODAY)
+                                    .initialAssessmentDate(TODAY)
                                     .build()
                 );
 
@@ -151,18 +154,13 @@ class HardshipValidationServiceTest {
 
     @Test
     void givenReviewDateIsAfterFullAssessmentDate_whenCheckHardshipIsInvoked_thenNoExceptionIsThrown() {
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(TODAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
                                     .replaced("N")
-                                    .dateCompleted(YESTERDAYS_DATE)
-                                    .fullAssessmentDate(YESTERDAYS_DATE)
+                                    .dateCompleted(YESTERDAY)
+                                    .fullAssessmentDate(YESTERDAY)
                                     .build()
                 );
 
@@ -173,20 +171,14 @@ class HardshipValidationServiceTest {
 
     @Test
     void givenReviewDateIsBeforeFullAssessmentDate_whenCheckHardshipIsInvoked_thenExceptionIsRaised() {
-
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withReviewDate(YESTERDAYS_DATE),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(YESTERDAY);
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
                                     .replaced("N")
-                                    .dateCompleted(TODAYS_DATE)
-                                    .initialAssessmentDate(YESTERDAYS_DATE)
-                                    .fullAssessmentDate(TODAYS_DATE)
+                                    .dateCompleted(TODAY)
+                                    .initialAssessmentDate(YESTERDAY)
+                                    .fullAssessmentDate(TODAY)
                                     .build()
                 );
 
