@@ -3,6 +3,7 @@ package uk.gov.justice.laa.crime.hardship.data.builder;
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
+import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
@@ -33,7 +34,6 @@ public class TestModelDataBuilder {
     public static final BigDecimal HARDSHIP_AMOUNT = BigDecimal.valueOf(5000);
     public static final BigDecimal TOTAL_DISPOSABLE_INCOME = BigDecimal.valueOf(500);
     public static final BigDecimal POST_HARDSHIP_DISPOSABLE_INCOME = BigDecimal.valueOf(250);
-    public static final String MEANS_ASSESSMENT_TRANSACTION_ID = "7c49ebfe-fe3a-4f2f-8dad-f7b8f03b8327";
     public static final LocalDate RESULT_DATE = LocalDate.of(2022, 12, 14);
 
     // Solicitors Costs
@@ -283,6 +283,16 @@ public class TestModelDataBuilder {
         return HardshipReviewDTO.builder()
                 .hardship(TestModelDataBuilder.getHardshipReview())
                 .hardshipMetadata(TestModelDataBuilder.getHardshipMetadata())
+                .build();
+    }
+
+    public static FinancialAssessmentDTO getFinancialAssessmentDTO() {
+        return FinancialAssessmentDTO.builder()
+                .id(FINANCIAL_ASSESSMENT_ID)
+                .initialAssessmentDate(ASSESSMENT_DATE)
+                .fullAssessmentDate(ASSESSMENT_DATE)
+                .replaced("N")
+                .dateCompleted(ASSESSMENT_DATE)
                 .build();
     }
 

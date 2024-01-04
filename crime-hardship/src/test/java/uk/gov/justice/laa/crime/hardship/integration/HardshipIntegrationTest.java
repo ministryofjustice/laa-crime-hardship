@@ -25,6 +25,7 @@ import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
+import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason;
 
 import java.math.BigDecimal;
@@ -49,8 +50,9 @@ import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRe
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
-    public static final String ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD = "/api/internal/v1/assessment/means/fullAssessmentThreshold/";
     private MockMvc mvc;
+
+    public static final String ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD = "/api/internal/v1/assessment/means/fullAssessmentThreshold/";
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
     private static final String ENDPOINT_URL_CALCULATE_HARDSHIP =
             "/api/internal/v1/hardship/calculate-hardship-for-detail";
@@ -165,6 +167,20 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
 
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/financial-assessments/" +
+                                                request.getHardshipMetadata().getFinancialAssessmentId())).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(TestModelDataBuilder.getFinancialAssessmentDTO()))));
+
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/" +
+                                                request.getHardshipMetadata().getHardshipReviewId())).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(new ApiFindHardshipResponse().withStatus(
+                                HardshipReviewStatus.IN_PROGRESS)))
+        ));
+
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL)).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
@@ -202,6 +218,12 @@ class HardshipIntegrationTest {
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(BigDecimal.TEN))));
+
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/financial-assessments/" +
+                                                request.getHardshipMetadata().getFinancialAssessmentId())).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(TestModelDataBuilder.getFinancialAssessmentDTO()))));
 
         mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
                 .andExpect(status().isOk())
@@ -277,6 +299,20 @@ class HardshipIntegrationTest {
                 WireMock.ok()
                         .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
+
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/financial-assessments/" +
+                                                request.getHardshipMetadata().getFinancialAssessmentId())).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(TestModelDataBuilder.getFinancialAssessmentDTO()))));
+
+        wiremock.stubFor(get(urlEqualTo("/api/internal/v1/assessment/hardship/" +
+                                                request.getHardshipMetadata().getHardshipReviewId())).willReturn(
+                WireMock.ok()
+                        .withHeader("Content-Type", String.valueOf(MediaType.APPLICATION_JSON))
+                        .withBody(objectMapper.writeValueAsString(new ApiFindHardshipResponse().withStatus(
+                                HardshipReviewStatus.IN_PROGRESS)))
+        ));
 
         mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL + "/rollback")).andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
