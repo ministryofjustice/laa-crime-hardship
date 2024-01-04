@@ -71,13 +71,13 @@ public class HardshipValidationService {
     }
 
     public void checkHardship(final ApiPerformHardshipRequest apiPerformHardshipRequest, RequestType requestType) {
-        validateReviewDate(apiPerformHardshipRequest);
         validateHardshipReviewStatus(apiPerformHardshipRequest);
         validateHardshipReviewNewWorkReason(apiPerformHardshipRequest);
         validateSolicitorDetails(apiPerformHardshipRequest);
         validateDeniedIncome(apiPerformHardshipRequest);
         validateExpenditure(apiPerformHardshipRequest);
         validateProgressionItems(apiPerformHardshipRequest);
+        validateReviewDate(apiPerformHardshipRequest);
         if (requestType == RequestType.UPDATE) {
             validateUpdate(apiPerformHardshipRequest);
         }
@@ -91,7 +91,7 @@ public class HardshipValidationService {
         }
     }
 
-    public void validateReviewDate(ApiPerformHardshipRequest apiPerformHardshipRequest) {
+    private void validateReviewDate(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         FinancialAssessmentDTO financialAssessment =
                 maatCourtDataService.getFinancialAssessment(
                         apiPerformHardshipRequest.getHardshipMetadata().getFinancialAssessmentId()

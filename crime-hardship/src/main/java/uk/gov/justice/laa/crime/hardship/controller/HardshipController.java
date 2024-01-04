@@ -164,7 +164,7 @@ public class HardshipController {
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .requestType(requestType).build();
-        hardshipValidationService.checkHardship(hardship);
+        hardshipValidationService.checkHardship(hardship, requestType);
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;
     }
