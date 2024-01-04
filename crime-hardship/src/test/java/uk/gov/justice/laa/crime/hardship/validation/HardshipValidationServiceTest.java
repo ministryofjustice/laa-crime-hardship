@@ -1,4 +1,4 @@
-package uk.gov.justice.laa.crime.hardship.service;
+package uk.gov.justice.laa.crime.hardship.validation;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +17,6 @@ import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
-import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
