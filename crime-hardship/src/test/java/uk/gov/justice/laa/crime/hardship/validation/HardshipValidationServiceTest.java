@@ -195,18 +195,27 @@ class HardshipValidationServiceTest {
                 .hasMessageContaining("Hardship review date precedes the initial or full assessment date(s)");
     }
 
-    @ParameterizedTest
-    @MethodSource("apiPerformHardshipRequestDataForNoValidationException")
-    void hardshipValidationServiceWithNoValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
+    @Test
+    void hardshipValidationServiceWithNoValidationException() {
         configureStubs();
+        ApiPerformHardshipRequest apiPerformHardshipRequest =
+                new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
+                                              TestModelDataBuilder.getHardshipMetadata()
+                );
+
         assertThatNoException().isThrownBy(
                 () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("hardshipReviewStatusDataForValidationException")
-    void validateHardshipReviewStatus_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
+    @Test
+    void validateHardshipReviewStatus_validationException() {
+        ApiPerformHardshipRequest apiPerformHardshipRequest =
+                new ApiPerformHardshipRequest(new HardshipReview().withReviewDate(null),
+                                              new HardshipMetadata().withReviewStatus(
+                                                      HardshipReviewStatus.COMPLETE)
+                );
+
         assertThatThrownBy(
                 () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
         ).isInstanceOf(ValidationException.class)
@@ -223,9 +232,10 @@ class HardshipValidationServiceTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("newWorkReasonDataForValidationException")
-    void validateHardshipReviewNewWorkReason(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
+    @Test
+    void validateHardshipReviewNewWorkReason() {
+        ApiPerformHardshipRequest apiPerformHardshipRequest =
+                new ApiPerformHardshipRequest(new HardshipReview(), new HardshipMetadata().withReviewReason(null));
         assertThatThrownBy(
                 () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
         ).isInstanceOf(ValidationException.class)
@@ -307,22 +317,6 @@ class HardshipValidationServiceTest {
         );
     }
 
-    private static Stream<Arguments> apiPerformHardshipRequestDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
-                                                           TestModelDataBuilder.getHardshipMetadata()
-                )));
-    }
-
-    private static Stream<Arguments> hardshipReviewStatusDataForValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().withReviewDate(null),
-                                                           new HardshipMetadata().withReviewStatus(
-                                                                   HardshipReviewStatus.COMPLETE)
-                             )
-                ));
-    }
-
     private static Stream<Arguments> hardshipReviewStatusDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -334,13 +328,6 @@ class HardshipValidationServiceTest {
                         TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.IN_PROGRESS)
                 ))
         );
-    }
-
-    private static Stream<Arguments> newWorkReasonDataForValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview(),
-                                                           new HardshipMetadata().withReviewReason(null)
-                )));
     }
 
     private static Stream<Arguments> solicitorDataForNoValidationException() {
