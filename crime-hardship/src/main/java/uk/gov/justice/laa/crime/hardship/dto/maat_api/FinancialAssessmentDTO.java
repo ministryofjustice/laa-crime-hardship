@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class FinancialAssessmentDTO {
     private Integer id;
     private Integer repId;
+    private String replaced;
     private LocalDateTime dateCompleted;
     private LocalDateTime initialAssessmentDate;
     private LocalDateTime fullAssessmentDate;

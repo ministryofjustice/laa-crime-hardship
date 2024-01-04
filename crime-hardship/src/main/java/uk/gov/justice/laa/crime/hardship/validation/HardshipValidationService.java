@@ -86,7 +86,9 @@ public class HardshipValidationService {
                         apiPerformHardshipRequest.getHardshipMetadata().getFinancialAssessmentId()
                 );
 
-        if (financialAssessment.getDateCompleted() != null) {
+        if (isNull(financialAssessment)
+                || financialAssessment.getReplaced().equals("Y")
+                || isNull(financialAssessment.getDateCompleted())) {
             throw new ValidationException(INCOMPLETE_ASSESSMENT_VALIDATION_MESSAGE);
         }
 
@@ -98,6 +100,7 @@ public class HardshipValidationService {
         if (reviewDate.isBefore(assessmentDate)) {
             throw new ValidationException(REVIEW_DATE_VALIDATION_MESSAGE);
         }
+
     }
 
     private void validateHardshipReviewStatus(ApiPerformHardshipRequest apiPerformHardshipRequest) {
