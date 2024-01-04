@@ -11,5 +11,6 @@
       "description": "The details of the Hardship Review"
     }
   },
+  "required": ["hardship"],
   "additionalProperties": false
 }
