@@ -1,7 +1,7 @@
 package uk.gov.justice.laa.crime.hardship.validation;
 
 import org.springframework.stereotype.Component;
-import uk.gov.justice.laa.crime.hardship.exception.ValidationException;
+import uk.gov.justice.laa.crime.exception.ValidationException;
 
 import java.time.LocalDate;
 import java.util.Optional;

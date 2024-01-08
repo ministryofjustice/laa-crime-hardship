@@ -42,7 +42,7 @@
     "newWorkReason": {
       "type": "object",
       "description": "The new work reason code",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.NewWorkReason"
     },
     "solicitorCosts": {
       "type": "object",

@@ -21,7 +21,7 @@ def versions = [
 		sentryVersion			: "7.0.0",
 		springdocVersion        : "2.1.0",
 		okhttpVersion           : "4.9.3",
-		crimeCommonsVersion     : "2.8.0",
+		crimeCommonsVersion     : "2.13.1",
 		springCloudStubRunnerVersion       : "4.0.4"
 ]
 
@@ -59,6 +59,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-validation"
 
 	implementation "uk.gov.justice.service.laa-crime:crime-commons-spring-boot-starter-rest-client:$versions.crimeCommonsVersion"
+	implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsVersion"
 
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
