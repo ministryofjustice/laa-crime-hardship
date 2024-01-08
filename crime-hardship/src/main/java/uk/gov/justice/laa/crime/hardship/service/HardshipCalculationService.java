@@ -3,6 +3,7 @@ package uk.gov.justice.laa.crime.hardship.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
@@ -10,7 +11,6 @@ import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
@@ -36,7 +36,7 @@ public class HardshipCalculationService {
                 .flatMap(Collection::stream)
                 .filter(item -> Boolean.TRUE.equals(item.getAccepted()))
                 .map(item -> item.getAmount()
-                        .multiply(BigDecimal.valueOf(item.getFrequency().getAnnualWeighting())))
+                        .multiply(BigDecimal.valueOf(item.getFrequency().getWeighting())))
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
 

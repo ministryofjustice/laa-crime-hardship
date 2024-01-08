@@ -1,14 +1,14 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
+import uk.gov.justice.laa.crime.enums.Frequency;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.Frequency;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.time.LocalDateTime;
