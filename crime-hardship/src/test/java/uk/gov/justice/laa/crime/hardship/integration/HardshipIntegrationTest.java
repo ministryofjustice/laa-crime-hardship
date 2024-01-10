@@ -19,6 +19,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import uk.gov.justice.laa.crime.enums.NewWorkReason;
 import uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication;
 import uk.gov.justice.laa.crime.hardship.config.CrimeHardshipTestConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
@@ -26,7 +27,6 @@ import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.NewWorkReason;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
@@ -39,9 +39,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.*;
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
-import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequest;
-import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
+import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequest;
+import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @DirtiesContext
 @Import(CrimeHardshipTestConfiguration.class)

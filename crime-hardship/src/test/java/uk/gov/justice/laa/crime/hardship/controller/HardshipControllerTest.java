@@ -27,9 +27,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType.EXPENDITURE;
-import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequest;
-import static uk.gov.justice.laa.crime.hardship.util.RequestBuilderUtils.buildRequestGivenContent;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
+import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequest;
+import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @WebMvcTest(HardshipController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -38,31 +38,22 @@ class HardshipControllerTest {
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
     private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
     private static final String ENDPOINT_URL_CALC_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship";
-
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private HardshipMapper hardshipMapper;
-
-    @MockBean
-    private HardshipService hardshipService;
-
-    @MockBean
-    private HardshipCalculationService hardshipCalculationService;
-
-    @MockBean
-    private HardshipValidationService validationService;
-
-    @MockBean
-    private CrimeMeansAssessmentService crimeMeansAssessmentService;
-
     @MockBean
     TraceIdHandler traceIdHandler;
-
+    @Autowired
+    private MockMvc mvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockBean
+    private HardshipMapper hardshipMapper;
+    @MockBean
+    private HardshipService hardshipService;
+    @MockBean
+    private HardshipCalculationService hardshipCalculationService;
+    @MockBean
+    private HardshipValidationService validationService;
+    @MockBean
+    private CrimeMeansAssessmentService crimeMeansAssessmentService;
 
     @Test
     void givenValidHardshipReviewId_whenFindIsInvoked_thenOkResponseIsReturned() throws Exception {
