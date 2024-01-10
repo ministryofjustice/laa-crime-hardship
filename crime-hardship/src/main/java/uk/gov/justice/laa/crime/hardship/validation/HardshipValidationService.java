@@ -98,7 +98,7 @@ public class HardshipValidationService {
                 );
 
         if (isNull(financialAssessment)
-                || financialAssessment.getReplaced().equals("Y")
+                || "Y".equals(financialAssessment.getReplaced())
                 || isNull(financialAssessment.getDateCompleted())) {
             throw new ValidationException(INCOMPLETE_ASSESSMENT_ERROR);
         }
