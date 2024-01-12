@@ -12,7 +12,7 @@ import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class HardshipMapperTest {

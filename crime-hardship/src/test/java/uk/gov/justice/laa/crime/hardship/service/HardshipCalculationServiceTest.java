@@ -17,7 +17,7 @@ import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailReque
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

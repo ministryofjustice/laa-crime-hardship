@@ -14,9 +14,9 @@ import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
 import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
+import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

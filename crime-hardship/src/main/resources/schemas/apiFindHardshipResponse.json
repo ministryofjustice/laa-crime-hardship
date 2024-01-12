@@ -29,7 +29,7 @@
     "reviewResult": {
       "type": "object",
       "description": "The review result",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewResult"
     },
     "disposableIncome": {
       "type": "number",
@@ -52,7 +52,7 @@
     "status": {
       "type": "object",
       "description": "The review status",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewStatus"
     },
     "reviewDetails": {
       "type": "array",

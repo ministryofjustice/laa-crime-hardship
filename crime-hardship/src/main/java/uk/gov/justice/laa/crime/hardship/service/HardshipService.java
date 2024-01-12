@@ -10,8 +10,8 @@ import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
+import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.math.BigDecimal;
 

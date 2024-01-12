@@ -8,8 +8,8 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
+import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.time.LocalDateTime;
 import java.util.Collection;

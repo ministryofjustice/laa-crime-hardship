@@ -26,7 +26,7 @@ import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
+import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
