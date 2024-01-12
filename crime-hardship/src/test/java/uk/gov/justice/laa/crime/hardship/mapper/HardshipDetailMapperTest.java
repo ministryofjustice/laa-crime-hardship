@@ -9,8 +9,8 @@ import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.DeniedIncomeDetailCode;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.ExtraExpenditureDetailCode;
+import uk.gov.justice.laa.crime.enums.DeniedIncomeDetailCode;
+import uk.gov.justice.laa.crime.enums.ExtraExpenditureDetailCode;
 
 import java.util.List;
 

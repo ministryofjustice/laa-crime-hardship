@@ -8,8 +8,8 @@ import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
 import uk.gov.justice.laa.crime.exception.ValidationException;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
+import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.math.BigDecimal;
 import java.util.List;
