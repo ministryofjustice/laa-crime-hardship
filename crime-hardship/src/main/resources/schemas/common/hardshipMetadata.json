@@ -16,7 +16,7 @@
     "reviewStatus": {
       "description": "The review status",
       "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewStatus"
     },
     "userSession": {
       "type": "object",

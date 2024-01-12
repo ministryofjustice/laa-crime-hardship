@@ -44,12 +44,12 @@
     "detailCode": {
       "type": "object",
       "description": "The Hardship Review Detail code",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailCode"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode"
     },
     "detailReason": {
       "type": "object",
       "description": "The Hardship Review Detail reasons code",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailReason"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewDetailReason"
     },
     "userCreated": {
       "type": "string",

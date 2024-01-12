@@ -10,8 +10,8 @@ import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailRespo
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.CourtType;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.enums.CourtType;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -20,8 +20,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.FAIL;
-import static uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult.PASS;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewResult.FAIL;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewResult.PASS;
 
 @Slf4j
 @Service

@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
+import uk.gov.justice.laa.crime.enums.RequestType;
 
 @Data
 @Builder

@@ -16,7 +16,7 @@
     "reviewResult": {
       "description": "The review result",
       "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewResult"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewResult"
     },
     "resultDate": {
       "type": "string",
@@ -52,7 +52,7 @@
     "status": {
       "description": "The Hardship Review status",
       "type": "object",
-      "existingJavaType": "uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewStatus"
+      "existingJavaType": "uk.gov.justice.laa.crime.enums.HardshipReviewStatus"
     },
     "reviewDetails": {
       "type": "array",

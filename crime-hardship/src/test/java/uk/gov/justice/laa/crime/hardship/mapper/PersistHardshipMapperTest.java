@@ -13,7 +13,7 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.*;
+import uk.gov.justice.laa.crime.enums.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
