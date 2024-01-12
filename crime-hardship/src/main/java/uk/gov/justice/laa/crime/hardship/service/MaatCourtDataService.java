@@ -7,6 +7,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
+import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
@@ -72,6 +73,16 @@ public class MaatCourtDataService {
                 hardshipReviewId
         );
 
+        log.info(String.format(RESPONSE_STRING, response));
+        return response;
+    }
+
+    public FinancialAssessmentDTO getFinancialAssessment(Integer financialAssessmentId) {
+        FinancialAssessmentDTO response = maatAPIClient.get(
+                new ParameterizedTypeReference<>() {},
+                configuration.getMaatApi().getFinancialAssessmentEndpoints().getSearchUrl(),
+                financialAssessmentId
+        );
         log.info(String.format(RESPONSE_STRING, response));
         return response;
     }

@@ -21,7 +21,7 @@ import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.CrimeMeansAssessmentService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
-import uk.gov.justice.laa.crime.hardship.service.HardshipValidationService;
+import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.RequestType;
 
 import java.math.BigDecimal;
@@ -91,7 +91,7 @@ public class HardshipController {
                             schema = @Schema(implementation = ApiCalculateHardshipRequest.class)
                     )
             ) @Valid @RequestBody ApiCalculateHardshipRequest request) {
-        hardshipValidationService.checkHardshipDate(request);
+
         BigDecimal fullThreshold = crimeMeansAssessmentService
                 .getFullAssessmentThreshold(request.getHardship().getReviewDate());
 
@@ -164,7 +164,7 @@ public class HardshipController {
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
         HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
                 .requestType(requestType).build();
-        hardshipValidationService.checkHardship(hardship);
+        hardshipValidationService.checkHardship(hardship, requestType);
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;
     }
