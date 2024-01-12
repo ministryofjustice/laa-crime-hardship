@@ -16,9 +16,6 @@ public class ServicesConfiguration {
     private MaatApi maatApi;
 
     @NotNull
-    private boolean oAuthEnabled;
-
-    @NotNull
     private CmaApi cmaApi;
 
     @Data
@@ -31,6 +28,9 @@ public class ServicesConfiguration {
 
         @NotNull
         private HardshipEndpoints hardshipEndpoints;
+
+        @NotNull
+        private FinancialAssessmentEndpoints financialAssessmentEndpoints;
 
         @Data
         @NoArgsConstructor
@@ -45,6 +45,15 @@ public class ServicesConfiguration {
 
             @NotNull
             private String hardshipUrl;
+        }
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class FinancialAssessmentEndpoints {
+
+            @NotNull
+            private String searchUrl;
         }
     }
 

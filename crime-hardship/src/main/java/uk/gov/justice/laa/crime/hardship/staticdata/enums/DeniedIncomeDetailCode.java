@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @Getter

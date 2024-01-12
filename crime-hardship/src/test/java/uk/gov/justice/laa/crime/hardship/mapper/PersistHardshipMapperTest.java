@@ -6,6 +6,8 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.laa.crime.enums.Frequency;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
@@ -106,6 +108,7 @@ class PersistHardshipMapperTest {
                         .withDetailType(HardshipReviewDetailType.INCOME)
                         .withAmount(deniedIncome.getAmount())
                         .withFrequency(deniedIncome.getFrequency())
+                        .withReasonNote("Hospitalisation")
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS),
 

@@ -27,7 +27,6 @@ public class MockServicesConfiguration {
         cmaApiConfiguration.setBaseUrl(host);
         cmaApiConfiguration.setCmaEndpoints(cmaEndpoints);
 
-        servicesConfiguration.setOAuthEnabled(false);
         servicesConfiguration.setMaatApi(maatApiConfiguration);
         servicesConfiguration.setCmaApi(cmaApiConfiguration);
 

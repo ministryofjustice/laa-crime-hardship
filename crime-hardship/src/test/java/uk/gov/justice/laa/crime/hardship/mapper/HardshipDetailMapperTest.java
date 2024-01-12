@@ -5,12 +5,12 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.DeniedIncomeDetailCode;
 import uk.gov.justice.laa.crime.hardship.staticdata.enums.ExtraExpenditureDetailCode;
-import uk.gov.justice.laa.crime.hardship.staticdata.enums.HardshipReviewDetailType;
 
 import java.util.List;
 
