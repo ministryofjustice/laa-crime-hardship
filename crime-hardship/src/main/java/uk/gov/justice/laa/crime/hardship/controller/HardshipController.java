@@ -142,23 +142,14 @@ public class HardshipController {
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
     }
 
-    @PutMapping(value = "/rollback", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/{hardshipReviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Rollback Hardship review")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
-            )
-    )
+    @ApiResponse(responseCode = "200", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE))
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiPerformHardshipResponse> rollback(
-            @Parameter(description = "JSON object containing Hardship information",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiPerformHardshipRequest.class)
-                    )
-            ) @Valid @RequestBody ApiPerformHardshipRequest hardship) {
-        HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
-        reviewDTO = hardshipService.rollback(reviewDTO);
-        return ResponseEntity.ok(mapper.fromDto(reviewDTO));
+    public ResponseEntity<Void> rollback(@PathVariable int hardshipReviewId) {
+        log.info("Received request to rollback Hardship Review with Id: [{}]", hardshipReviewId);
+        hardshipService.rollback(hardshipReviewId);
+        return ResponseEntity.ok().build();
     }
 
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
