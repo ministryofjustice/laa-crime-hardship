@@ -20,11 +20,15 @@ import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SoftAssertionsExtension.class)
@@ -85,19 +89,12 @@ class HardshipServiceTest {
 
     @Test
     void givenValidParameters_whenRollbackIsInvoked_thenHardshipStatusIsInProgressAndResultIsNull() {
-        setUpPersistence();
-        reviewDTO.setHardshipResult(HardshipResult.builder().result(HardshipReviewResult.PASS).build());
-        HardshipReviewDTO result = hardshipService.rollback(reviewDTO);
-        assertThat(result.getHardshipResult().getResult()).isNull();
-        assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
-    }
-
-    @Test
-    void givenValidParametersWithNullHardshipResult_whenRollbackIsInvoked_thenHardshipStatusIsInProgressAndResultIsNull() {
-        setUpPersistence();
-        HardshipReviewDTO result = hardshipService.rollback(reviewDTO);
-        assertThat(result.getHardshipResult()).isNull();
-        assertThat(result.getHardshipMetadata().getReviewStatus()).isEqualTo(HardshipReviewStatus.IN_PROGRESS);
+        Map<String, Object> updateFields = new HashMap<>();
+        updateFields.put("status", HardshipReviewStatus.IN_PROGRESS);
+        updateFields.put("reviewResult", null);
+        doNothing().when(maatCourtDataService).patchHardship(TestModelDataBuilder.HARDSHIP_ID, updateFields);
+        hardshipService.rollback(TestModelDataBuilder.HARDSHIP_ID);
+        verify(maatCourtDataService).patchHardship(TestModelDataBuilder.HARDSHIP_ID, updateFields);
     }
 
     private static void assertResult(HardshipReviewDTO result) {

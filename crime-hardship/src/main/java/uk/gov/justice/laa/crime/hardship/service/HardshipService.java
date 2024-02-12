@@ -3,6 +3,8 @@ package uk.gov.justice.laa.crime.hardship.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
+import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
@@ -10,10 +12,10 @@ import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
-import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
-import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -37,16 +39,11 @@ public class HardshipService {
         return maatCourtDataService.getHardship(hardshipId);
     }
 
-    public HardshipReviewDTO rollback(HardshipReviewDTO hardshipReviewDTO) {
-        hardshipReviewDTO.getHardshipMetadata().setReviewStatus(HardshipReviewStatus.IN_PROGRESS);
-        if (hardshipReviewDTO.getHardshipResult() != null) {
-            hardshipReviewDTO.getHardshipResult().setResult(null);
-        }
-        ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
-        ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, RequestType.UPDATE);
-        mapper.toDto(response, hardshipReviewDTO);
-        return hardshipReviewDTO;
+    public void rollback(Integer hardshipReviewId) {
+        Map<String, Object> updateFields = new HashMap<>();
+        updateFields.put("status", HardshipReviewStatus.IN_PROGRESS);
+        updateFields.put("reviewResult", null);
+        maatCourtDataService.patchHardship(hardshipReviewId, updateFields);
     }
 
     private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, RequestType requestType) {

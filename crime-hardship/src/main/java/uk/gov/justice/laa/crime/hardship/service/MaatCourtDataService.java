@@ -86,4 +86,14 @@ public class MaatCourtDataService {
         log.info(String.format(RESPONSE_STRING, response));
         return response;
     }
+
+    public void patchHardship(Integer hardshipReviewId, Map<String, Object> updateFields) {
+        maatAPIClient.patch(
+                updateFields,
+                new ParameterizedTypeReference<>() {},
+                configuration.getMaatApi().getHardshipEndpoints().getHardshipUrl(),
+                Map.of(),
+                hardshipReviewId
+        );
+    }
 }

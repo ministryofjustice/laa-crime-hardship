@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.gov.justice.laa.crime.commons.exception.APIClientException;
 import uk.gov.justice.laa.crime.commons.tracing.TraceIdHandler;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
@@ -19,13 +20,14 @@ import uk.gov.justice.laa.crime.hardship.service.CrimeMeansAssessmentService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
-import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
 import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequest;
@@ -36,8 +38,9 @@ import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequestGive
 class HardshipControllerTest {
 
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
-    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship-for-detail";
-    private static final String ENDPOINT_URL_CALC_HARDSHIP = "/api/internal/v1/hardship/calculate-hardship";
+    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship-for-detail");
+    private static final String ENDPOINT_URL_CALC_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship");
+    private static final String ENDPOINT_URL_GET_HARDSHIP = ENDPOINT_URL + "/" + TestModelDataBuilder.HARDSHIP_ID;
     @MockBean
     TraceIdHandler traceIdHandler;
     @Autowired
@@ -60,7 +63,7 @@ class HardshipControllerTest {
         ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
         when(hardshipService.find(anyInt())).thenReturn(response);
 
-        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + TestModelDataBuilder.HARDSHIP_ID))
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(response.getId()));
@@ -77,7 +80,7 @@ class HardshipControllerTest {
         when(hardshipService.find(anyInt()))
                 .thenThrow(new APIClientException("Call to Court Data APi failed."));
 
-        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/" + TestModelDataBuilder.HARDSHIP_ID))
+        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -213,47 +216,23 @@ class HardshipControllerTest {
 
     @Test
     void givenValidRequest_whenRollbackIsInvoked_thenOkResponseIsReturned() throws Exception {
-        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
-
-        String requestBody = objectMapper.writeValueAsString(request);
-
-        ApiPerformHardshipResponse response = TestModelDataBuilder.getApiPerformHardshipResponse();
-        response.setReviewResult(null);
-
-        when(hardshipMapper.fromDto(any(HardshipReviewDTO.class)))
-                .thenReturn(response);
-
-        when(hardshipService.rollback(any(HardshipReviewDTO.class)))
-                .thenReturn(new HardshipReviewDTO());
-
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL + "/rollback"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.reviewResult").doesNotExist())
-                .andExpect(jsonPath("$.hardshipReviewId").value(1000));
+        doNothing().when(hardshipService).rollback(anyInt());
+        mvc.perform(buildRequestGivenContent(HttpMethod.PATCH, "", ENDPOINT_URL_GET_HARDSHIP))
+                .andExpect(status().isOk());
     }
 
     @Test
     void givenInvalidRequest_whenRollbackIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
-        ApiPerformHardshipRequest request = new ApiPerformHardshipRequest()
-                .withHardship(TestModelDataBuilder.getHardshipReview());
-
-        String requestBody = objectMapper.writeValueAsString(request);
-
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL + "/rollback"))
+        mvc.perform(buildRequestGivenContent(HttpMethod.PATCH, "", ENDPOINT_URL + "/null"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenFailedApiCall_whenRollbackIsInvoked_thenInternalServerErrorResponseIsReturned() throws Exception {
-        ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
+        doThrow(new APIClientException("Call to Court Data API failed."))
+                .when(hardshipService).rollback(anyInt());
 
-        when(hardshipService.rollback(any(HardshipReviewDTO.class)))
-                .thenThrow(new APIClientException("Call to Court Data API failed."));
-
-        String requestBody = objectMapper.writeValueAsString(request);
-
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL + "/rollback"))
+        mvc.perform(buildRequestGivenContent(HttpMethod.PATCH, "", ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isInternalServerError());
     }
 
