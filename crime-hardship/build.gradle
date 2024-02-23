@@ -16,11 +16,11 @@ java {
 }
 
 def versions = [
-		pitest                  			: "1.4.10",
-		springdocVersion        			: "2.1.0",
-		crimeCommonsVersion     			: "2.19.0",
-		springCloudStubRunnerVersion       	: "4.0.4",
-        postgresqlVersion                   : "42.7.2"
+        pitest                      : "1.4.10",
+        springdocVersion            : "2.1.0",
+        crimeCommonsVersion         : "2.19.0",
+        springCloudStubRunnerVersion: "4.0.4",
+        postgresqlVersion           : "42.7.2"
 ]
 
 configurations {
