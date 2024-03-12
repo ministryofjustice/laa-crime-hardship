@@ -56,5 +56,5 @@
       "description": "ID of the user creating the progress item"
     }
   },
-  "required": ["frequency", "amount", "dateDue", "detailType", "detailCode", "detailReason", "timestamp"]
+  "required": ["frequency", "amount", "detailType", "timestamp"]
 }

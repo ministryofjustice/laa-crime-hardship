@@ -5,7 +5,6 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
@@ -15,6 +14,7 @@ import uk.gov.justice.laa.crime.enums.ExtraExpenditureDetailCode;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.*;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class HardshipDetailMapperTest {
@@ -28,7 +28,7 @@ class HardshipDetailMapperTest {
     void givenApiHardshipDetailListWithExpenditure_whenToDtoIsInvoked_thenDtoIsMapped() {
 
         List<ApiHardshipDetail> hardshipDetails =
-                TestModelDataBuilder.getApiHardshipReviewDetails(HardshipReviewDetailType.EXPENDITURE);
+                TestModelDataBuilder.getApiHardshipReviewDetails(EXPENDITURE);
 
         ApiHardshipDetail detail = hardshipDetails.get(0);
 
@@ -54,7 +54,7 @@ class HardshipDetailMapperTest {
     void givenApiHardshipDetailListWithDeniedIncome_whenToDtoIsInvoked_thenDtoIsMapped() {
 
         List<ApiHardshipDetail> hardshipDetails =
-                TestModelDataBuilder.getApiHardshipReviewDetails(HardshipReviewDetailType.INCOME);
+                TestModelDataBuilder.getApiHardshipReviewDetails(INCOME);
 
         ApiHardshipDetail detail = hardshipDetails.get(0);
 
@@ -78,7 +78,7 @@ class HardshipDetailMapperTest {
     void givenApiHardshipDetailListWithSolicitorCosts_whenToDtoIsInvoked_thenDtoIsMapped() {
 
         List<ApiHardshipDetail> hardshipDetails =
-                TestModelDataBuilder.getApiHardshipReviewDetails(HardshipReviewDetailType.SOL_COSTS);
+                TestModelDataBuilder.getApiHardshipReviewDetails(SOL_COSTS);
 
         ApiHardshipDetail detail = hardshipDetails.get(0);
 
@@ -93,7 +93,7 @@ class HardshipDetailMapperTest {
     @Test
     void givenApiHardshipDetailListInvalidDetailType_whenToDtoIsInvoked_thenExceptionIsThrown() {
         ApiHardshipDetail detail = new ApiHardshipDetail()
-                .withDetailType(HardshipReviewDetailType.ACTION);
+                .withDetailType(ACTION);
 
         assertThatThrownBy(
                 () -> mapper.toDto(List.of(detail), new HardshipReview())
