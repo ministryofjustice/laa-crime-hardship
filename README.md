@@ -64,7 +64,7 @@ git clone git@github.com:ministryofjustice/laa-crime-hardship.git
 cd crime-hardship
 ```
 
-Makesure tests all testes are passed by running following ‘gradle’ Command
+Make sure all testes are passed by running following ‘gradle’ Command
 
 ```sh
 ./gradlew clean test
@@ -76,26 +76,26 @@ You will need to build the artifacts for the source code, using `gradle`.
 ./gradlew clean build
 ```
 
-The apps should then startup cleanly if you run
+The apps should then start up cleanly if you run
 
 ```sh
 docker-compose build
 docker-compose up
 ```
 
-laa-crime-hardship application will be running on http://localhost:8088
+laa-crime-hardship application will be running on http://localhost:8289
 
 ### Cloud Platform Set Up
 
 It is advisable to have the cloud platform set up locally.
 
-Follow this link to on board yourself with the LAA cloud platform environment. - https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster
+Follow this link to on board yourself with the LAA cloud platform environment. - https://user-guide.cloud-platform.service.justice.gov.uk/documentation/getting-started/kubectl-config.html#how-to-use-kubectl-to-connect-to-the-cluster
 
 Configure AWS details using aws cli (command - `aws configure`) Set up AWS Access Key ID & AWS Secret Access Key. All other values can be default.
 
-More detail can be found on https://dsdmoj.atlassian.net/wiki/spaces/LAACP/pages/edit-v2/1756201359.
+More detail can be found on https://dsdmoj.atlassian.net/wiki/spaces/LAACP/pages/edit-v2/1756201359.
 
-The terraform scripts for the SQS can be found on https://github.com/ministryofjustice/cloud-platform-environments/tree/master/namespaces/live-1.cloud-platform.service.justice.gov.uk/laa-court-data-adaptor-dev
+The terraform scripts for the SQS can be found on https://github.com/ministryofjustice/cloud-platform-environments/tree/master/namespaces/live-1.cloud-platform.service.justice.gov.uk/laa-court-data-adaptor-dev
 
 ### Deployment
 
@@ -119,7 +119,7 @@ Make sure Remote Debug Option is set up on your preferred Editor.
 
 ### Application Monitoring and Logs
 
-The LAA Crime Means Assessment API has been configured to send the application logs to both AWS Cloud Watch and Sentry.
+The LAA Crime Hardship API has been configured to send the application logs to both AWS Cloud Watch and Sentry.
 
 ####Cloud Watch Logs:
 To see the Cloud watch logs, you need to have the right user groups and permission. More details about this available here. (link) The application logs are configured with the followings log groups (names).
@@ -165,7 +165,7 @@ The generated POJO files can be found in crime-hardship/build/generated/sources/
 
 ### Configuration
 
-In the jsonSchema2Pojo section of crime-means-assessment/build.gradle file, there are a number of settings to that have
+In the jsonSchema2Pojo section of crime-hardship/build.gradle file, there are a number of settings to that have
 been set and are documented inside that section.:
 
 - source.setFrom: The location of the json schema files.
