@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -77,11 +78,10 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
 
     private List<ApiHardshipDetail> convertHardshipDetails(HardshipReview hardship, String username) {
 
-        return Stream.concat(
-                Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
-                        .flatMap(Collection::stream)
-                        .map(item -> {
-                            var detail = new ApiHardshipDetail()
+        List<ApiHardshipDetail> apiHardshipDetails = Stream.of(hardship.getDeniedIncome(), hardship.getExtraExpenditure())
+                .flatMap(Collection::stream)
+                .map(item -> {
+                            ApiHardshipDetail detail = new ApiHardshipDetail()
                                     .withAmount(item.getAmount())
                                     .withOtherDescription(item.getDescription())
                                     .withUserCreated(username)
@@ -107,16 +107,16 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                                         .withDetailReason(expenditure.getReasonCode());
                             }
                             return detail;
-                        }),
-
-                Stream.of(
-                        new ApiHardshipDetail()
-                                .withDetailType(HardshipReviewDetailType.SOL_COSTS)
-                                .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
-                                .withFrequency(Frequency.ANNUALLY)
-                                .withAccepted("Y")
-                )
-        ).toList();
+                        }
+                ).collect(Collectors.toList());
+        if (Objects.nonNull(hardship.getSolicitorCosts())) {
+            apiHardshipDetails.add(new ApiHardshipDetail()
+                    .withDetailType(HardshipReviewDetailType.SOL_COSTS)
+                    .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
+                    .withFrequency(Frequency.ANNUALLY)
+                    .withAccepted("Y"));
+        }
+        return apiHardshipDetails;
     }
 
     private List<ApiHardshipProgress> convertHardshipProgress(HardshipMetadata metadata) {
