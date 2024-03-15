@@ -2,18 +2,22 @@ package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.enums.Frequency;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
+import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
-import uk.gov.justice.laa.crime.hardship.model.*;
+import uk.gov.justice.laa.crime.hardship.model.DeniedIncome;
+import uk.gov.justice.laa.crime.hardship.model.ExtraExpenditure;
+import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
+import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
-import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Component
@@ -53,7 +57,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 )
                 .withNotes(metadata.getNotes())
                 .withDecisionNotes(metadata.getDecisionNotes())
-                .withSolicitorCosts(
+                .withSolicitorCosts(Objects.isNull(hardship.getSolicitorCosts()) ? null :
                         SolicitorCosts.builder()
                                 .rate(hardship.getSolicitorCosts().getRate())
                                 .disbursements(hardship.getSolicitorCosts().getDisbursements())
