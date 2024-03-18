@@ -1,5 +1,7 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,6 +45,9 @@ public class MaatCourtDataService {
     public ApiPersistHardshipResponse persistHardship(ApiPersistHardshipRequest request,
                                                       RequestType requestType) {
 
+        try {
+            log.info("Persist Hardship request : {}", new ObjectMapper().registerModules(new JavaTimeModule()).writeValueAsString(request));
+        } catch (Exception ex) {}
         ApiPersistHardshipResponse response;
         if (requestType == RequestType.CREATE) {
             response = maatAPIClient.post(
