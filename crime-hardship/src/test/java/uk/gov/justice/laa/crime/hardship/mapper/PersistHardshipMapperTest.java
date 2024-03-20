@@ -6,15 +6,12 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import uk.gov.justice.laa.crime.enums.Frequency;
-import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
-import uk.gov.justice.laa.crime.enums.RequestType;
+import uk.gov.justice.laa.crime.enums.*;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -159,6 +156,14 @@ class PersistHardshipMapperTest {
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(expected);
 
+    }
+    @Test
+    void givenHardshipReviewDTOWithoutSolicitorCosts_whenFromDtoIsInvoked_thenRequestIsMapped() {
+        HardshipReview hardship = reviewDTO.getHardship();
+        hardship.setSolicitorCosts(null);
+        ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
+        assertThat(request.getSolicitorCosts()).isNull();
+        assertThat(request.getReviewDetails().stream().filter(detail -> detail.getDetailType() == SOL_COSTS).findFirst()).isEmpty();
     }
 
     @Test
