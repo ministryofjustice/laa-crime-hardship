@@ -6,13 +6,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
+import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
 import uk.gov.justice.laa.crime.hardship.model.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
-import uk.gov.justice.laa.crime.enums.RequestType;
 
 import java.util.List;
 import java.util.Map;
@@ -68,7 +68,8 @@ public class MaatCourtDataService {
 
     public ApiFindHardshipResponse getHardship(Integer hardshipReviewId) {
         ApiFindHardshipResponse response = maatAPIClient.get(
-                new ParameterizedTypeReference<>() {},
+                new ParameterizedTypeReference<>() {
+                },
                 configuration.getMaatApi().getHardshipEndpoints().getHardshipUrl(),
                 hardshipReviewId
         );
@@ -79,7 +80,8 @@ public class MaatCourtDataService {
 
     public FinancialAssessmentDTO getFinancialAssessment(Integer financialAssessmentId) {
         FinancialAssessmentDTO response = maatAPIClient.get(
-                new ParameterizedTypeReference<>() {},
+                new ParameterizedTypeReference<>() {
+                },
                 configuration.getMaatApi().getFinancialAssessmentEndpoints().getSearchUrl(),
                 financialAssessmentId
         );
@@ -90,7 +92,8 @@ public class MaatCourtDataService {
     public void patchHardship(Integer hardshipReviewId, Map<String, Object> updateFields) {
         maatAPIClient.patch(
                 updateFields,
-                new ParameterizedTypeReference<>() {},
+                new ParameterizedTypeReference<>() {
+                },
                 configuration.getMaatApi().getHardshipEndpoints().getHardshipUrl(),
                 Map.of(),
                 hardshipReviewId

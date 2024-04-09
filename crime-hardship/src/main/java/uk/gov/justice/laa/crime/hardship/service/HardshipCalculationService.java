@@ -3,15 +3,15 @@ package uk.gov.justice.laa.crime.hardship.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.gov.justice.laa.crime.enums.CourtType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.mapper.HardshipDetailMapper;
 import uk.gov.justice.laa.crime.hardship.model.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.model.SolicitorCosts;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.enums.CourtType;
-import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

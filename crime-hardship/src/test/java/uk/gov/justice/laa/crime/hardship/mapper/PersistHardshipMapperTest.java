@@ -6,19 +6,18 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import uk.gov.justice.laa.crime.enums.Frequency;
-import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
+import uk.gov.justice.laa.crime.enums.*;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
-import uk.gov.justice.laa.crime.enums.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.*;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class PersistHardshipMapperTest {
@@ -105,7 +104,7 @@ class PersistHardshipMapperTest {
 
                 new ApiHardshipDetail()
                         .withAccepted("Y")
-                        .withDetailType(HardshipReviewDetailType.INCOME)
+                        .withDetailType(INCOME)
                         .withAmount(deniedIncome.getAmount())
                         .withFrequency(deniedIncome.getFrequency())
                         .withReasonNote("Hospitalisation")
@@ -114,7 +113,7 @@ class PersistHardshipMapperTest {
 
                 new ApiHardshipDetail()
                         .withAccepted("N")
-                        .withDetailType(HardshipReviewDetailType.EXPENDITURE)
+                        .withDetailType(EXPENDITURE)
                         .withAmount(extraExpenditure.getAmount())
                         .withFrequency(extraExpenditure.getFrequency())
                         .withUserCreated(metadata.getUserSession().getUserName())
@@ -122,7 +121,7 @@ class PersistHardshipMapperTest {
                         .withDetailReason(extraExpenditure.getReasonCode()),
 
                 new ApiHardshipDetail()
-                        .withDetailType(HardshipReviewDetailType.SOL_COSTS)
+                        .withDetailType(SOL_COSTS)
                         .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                         .withFrequency(Frequency.ANNUALLY)
                         .withAccepted("Y")
@@ -157,6 +156,14 @@ class PersistHardshipMapperTest {
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(expected);
 
+    }
+    @Test
+    void givenHardshipReviewDTOWithoutSolicitorCosts_whenFromDtoIsInvoked_thenRequestIsMapped() {
+        HardshipReview hardship = reviewDTO.getHardship();
+        hardship.setSolicitorCosts(null);
+        ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
+        assertThat(request.getSolicitorCosts()).isNull();
+        assertThat(request.getReviewDetails().stream().filter(detail -> detail.getDetailType() == SOL_COSTS).findFirst()).isEmpty();
     }
 
     @Test

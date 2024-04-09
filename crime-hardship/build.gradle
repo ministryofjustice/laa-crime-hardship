@@ -16,10 +16,12 @@ java {
 }
 
 def versions = [
-		pitest                  			: "1.4.10",
-		springdocVersion        			: "2.1.0",
-		crimeCommonsVersion     			: "2.19.0",
-		springCloudStubRunnerVersion       	: "4.0.4"
+        pitest                      : "1.4.10",
+        springdocVersion            : "2.1.0",
+        crimeCommonsClasses         : "2.26.0",
+        commonsRestClient           : "2.24.0",
+        springCloudStubRunnerVersion: "4.0.4",
+        postgresqlVersion           : "42.7.2"
 ]
 
 configurations {
@@ -34,10 +36,10 @@ repositories {
 
 dependencies {
 
-    implementation "uk.gov.justice.service.laa-crime:crime-commons-spring-boot-starter-rest-client:$versions.crimeCommonsVersion:all"
-    implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsVersion"
+    implementation "uk.gov.justice.service.laa-crime:crime-commons-spring-boot-starter-rest-client:$versions.commonsRestClient:all"
+    implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
 
-    implementation "org.postgresql:postgresql"
+    implementation "org.postgresql:postgresql:$versions.postgresqlVersion"
     implementation "org.liquibase:liquibase-core"
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdocVersion"
