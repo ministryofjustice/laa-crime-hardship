@@ -20,7 +20,7 @@ def versions = [
         springdocVersion            : "2.1.0",
         crimeCommonsClasses         : "3.4.0",
         commonsRestClient           : "3.4.0",
-        springCloudStubRunnerVersion: "4.0.4",
+        springCloudStubRunnerVersion: "4.1.2",
         postgresqlVersion           : "42.7.2"
 ]
 
