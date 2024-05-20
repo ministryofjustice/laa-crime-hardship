@@ -349,13 +349,13 @@ class HardshipValidationServiceTest {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                                                                    withSolicitorCosts(
-                                                                           new  uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts().withRate(BigDecimal.ONE)
+                                                                           new  SolicitorCosts().withRate(BigDecimal.ONE)
                                                                                    .withHours(BigDecimal.ZERO)),
                                                            new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                                                                    withSolicitorCosts(
-                                                                           new  uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts().withRate(BigDecimal.ONE)
+                                                                           new  SolicitorCosts().withRate(BigDecimal.ONE)
                                                                                    .withHours(null)),
                                                            new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
                 ))

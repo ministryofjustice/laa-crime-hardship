@@ -28,7 +28,6 @@ import uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication;
 import uk.gov.justice.laa.crime.hardship.config.CrimeHardshipTestConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 
-
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

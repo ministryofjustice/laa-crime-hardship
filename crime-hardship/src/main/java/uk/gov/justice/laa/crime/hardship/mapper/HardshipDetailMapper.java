@@ -1,7 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
-
 import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
 import uk.gov.justice.laa.crime.common.model.hardship.ExtraExpenditure;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;

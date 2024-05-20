@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import uk.gov.justice.laa.crime.common.model.hardship.*;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.*;
-import uk.gov.justice.laa.crime.enums.*;
+import uk.gov.justice.laa.crime.enums.Frequency;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
+import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
-
 
 import java.time.LocalDateTime;
 import java.util.List;

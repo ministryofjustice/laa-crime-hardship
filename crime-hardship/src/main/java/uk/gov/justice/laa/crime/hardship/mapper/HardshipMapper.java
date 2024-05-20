@@ -7,7 +7,6 @@ import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 
-
 import static java.util.Optional.ofNullable;
 
 @Component
