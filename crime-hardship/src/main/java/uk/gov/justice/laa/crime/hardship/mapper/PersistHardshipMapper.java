@@ -1,6 +1,11 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
+import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
+import uk.gov.justice.laa.crime.common.model.hardship.ExtraExpenditure;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.*;
 import uk.gov.justice.laa.crime.enums.Frequency;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
@@ -8,11 +13,6 @@ import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.SolicitorCosts;
-import uk.gov.justice.laa.crime.hardship.model.DeniedIncome;
-import uk.gov.justice.laa.crime.hardship.model.ExtraExpenditure;
-import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
-import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -59,7 +59,7 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 .withNotes(metadata.getNotes())
                 .withDecisionNotes(metadata.getDecisionNotes())
                 .withSolicitorCosts(Objects.isNull(hardship.getSolicitorCosts()) ? null :
-                        SolicitorCosts.builder()
+                        uk.gov.justice.laa.crime.dto.maatapi.SolicitorCosts.builder()
                                 .rate(hardship.getSolicitorCosts().getRate())
                                 .disbursements(hardship.getSolicitorCosts().getDisbursements())
                                 .vat(hardship.getSolicitorCosts().getVat())

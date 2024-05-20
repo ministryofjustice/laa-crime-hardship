@@ -4,12 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
-import uk.gov.justice.laa.crime.exception.ValidationException;
-import uk.gov.justice.laa.crime.hardship.model.*;
-import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
+import uk.gov.justice.laa.crime.common.model.hardship.*;
 import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.enums.RequestType;
+import uk.gov.justice.laa.crime.exception.ValidationException;
+import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
+import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
 
 import java.math.BigDecimal;
 import java.util.List;

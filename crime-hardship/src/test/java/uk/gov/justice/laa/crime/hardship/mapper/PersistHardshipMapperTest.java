@@ -6,12 +6,13 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.laa.crime.common.model.hardship.*;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.*;
 import uk.gov.justice.laa.crime.enums.*;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
-import uk.gov.justice.laa.crime.hardship.model.*;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.*;
+
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,11 +1,12 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
-import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
+
 
 import static java.util.Optional.ofNullable;
 

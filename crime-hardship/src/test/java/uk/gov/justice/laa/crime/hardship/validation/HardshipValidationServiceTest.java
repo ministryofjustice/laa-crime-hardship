@@ -8,14 +8,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.justice.laa.crime.enums.Frequency;
-import uk.gov.justice.laa.crime.enums.NewWorkReason;
+import uk.gov.justice.laa.crime.common.model.hardship.*;
+import uk.gov.justice.laa.crime.enums.*;
 import uk.gov.justice.laa.crime.exception.ValidationException;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
-import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
-import uk.gov.justice.laa.crime.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -334,7 +332,7 @@ class HardshipValidationServiceTest {
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                                                                    withSolicitorCosts(
-                                                                           new SolicitorCosts().withRate(null)
+                                                                           new  SolicitorCosts().withRate(null)
                                                                                    .withHours(BigDecimal.ZERO))
                                                                    .withReviewDate(LocalDateTime.now()),
                                                            TestModelDataBuilder.getHardshipMetadata()
@@ -351,13 +349,13 @@ class HardshipValidationServiceTest {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                                                                    withSolicitorCosts(
-                                                                           new SolicitorCosts().withRate(BigDecimal.ONE)
+                                                                           new  uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts().withRate(BigDecimal.ONE)
                                                                                    .withHours(BigDecimal.ZERO)),
                                                            new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
                                                                    withSolicitorCosts(
-                                                                           new SolicitorCosts().withRate(BigDecimal.ONE)
+                                                                           new  uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts().withRate(BigDecimal.ONE)
                                                                                    .withHours(null)),
                                                            new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
                 ))
