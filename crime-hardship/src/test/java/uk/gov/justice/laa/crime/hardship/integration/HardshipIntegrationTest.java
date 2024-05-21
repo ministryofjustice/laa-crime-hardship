@@ -19,14 +19,14 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import uk.gov.justice.laa.crime.common.model.hardship.*;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.enums.NewWorkReason;
 import uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication;
 import uk.gov.justice.laa.crime.hardship.config.CrimeHardshipTestConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
-import uk.gov.justice.laa.crime.hardship.model.*;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiPersistHardshipResponse;
 
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;

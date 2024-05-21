@@ -5,14 +5,14 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
+import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.hardship.model.ApiPerformHardshipResponse;
-import uk.gov.justice.laa.crime.hardship.model.HardshipMetadata;
-import uk.gov.justice.laa.crime.hardship.model.HardshipReview;
-import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class HardshipMapperTest {

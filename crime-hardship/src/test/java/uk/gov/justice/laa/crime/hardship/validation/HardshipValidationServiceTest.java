@@ -8,14 +8,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.justice.laa.crime.enums.Frequency;
-import uk.gov.justice.laa.crime.enums.NewWorkReason;
+import uk.gov.justice.laa.crime.common.model.hardship.*;
+import uk.gov.justice.laa.crime.enums.*;
 import uk.gov.justice.laa.crime.exception.ValidationException;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
-import uk.gov.justice.laa.crime.hardship.model.*;
 import uk.gov.justice.laa.crime.hardship.service.MaatCourtDataService;
-import uk.gov.justice.laa.crime.enums.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -42,10 +40,10 @@ class HardshipValidationServiceTest {
     private void configureStubs() {
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
-                                    .replaced("N")
-                                    .dateCompleted(YESTERDAY)
-                                    .initialAssessmentDate(YESTERDAY)
-                                    .build()
+                        .replaced("N")
+                        .dateCompleted(YESTERDAY)
+                        .initialAssessmentDate(YESTERDAY)
+                        .build()
                 );
     }
 
@@ -101,9 +99,9 @@ class HardshipValidationServiceTest {
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
-                                    .replaced("Y")
-                                    .dateCompleted(TODAY)
-                                    .build()
+                        .replaced("Y")
+                        .dateCompleted(TODAY)
+                        .build()
                 );
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
@@ -117,9 +115,9 @@ class HardshipValidationServiceTest {
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
-                                    .replaced("N")
-                                    .dateCompleted(null)
-                                    .build()
+                        .replaced("N")
+                        .dateCompleted(null)
+                        .build()
                 );
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
@@ -143,10 +141,10 @@ class HardshipValidationServiceTest {
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
-                                    .replaced("N")
-                                    .dateCompleted(TODAY)
-                                    .initialAssessmentDate(TODAY)
-                                    .build()
+                        .replaced("N")
+                        .dateCompleted(TODAY)
+                        .initialAssessmentDate(TODAY)
+                        .build()
                 );
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
@@ -160,10 +158,10 @@ class HardshipValidationServiceTest {
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
-                                    .replaced("N")
-                                    .dateCompleted(YESTERDAY)
-                                    .fullAssessmentDate(YESTERDAY)
-                                    .build()
+                        .replaced("N")
+                        .dateCompleted(YESTERDAY)
+                        .fullAssessmentDate(YESTERDAY)
+                        .build()
                 );
 
         assertThatNoException().isThrownBy(
@@ -177,11 +175,11 @@ class HardshipValidationServiceTest {
 
         when(maatCourtDataService.getFinancialAssessment(anyInt()))
                 .thenReturn(FinancialAssessmentDTO.builder()
-                                    .replaced("N")
-                                    .dateCompleted(TODAY)
-                                    .initialAssessmentDate(YESTERDAY)
-                                    .fullAssessmentDate(TODAY)
-                                    .build()
+                        .replaced("N")
+                        .dateCompleted(TODAY)
+                        .initialAssessmentDate(YESTERDAY)
+                        .fullAssessmentDate(TODAY)
+                        .build()
                 );
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
@@ -194,7 +192,7 @@ class HardshipValidationServiceTest {
         configureStubs();
         ApiPerformHardshipRequest apiPerformHardshipRequest =
                 new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
-                                              TestModelDataBuilder.getHardshipMetadata()
+                        TestModelDataBuilder.getHardshipMetadata()
                 );
 
         assertThatNoException().isThrownBy(
@@ -206,8 +204,8 @@ class HardshipValidationServiceTest {
     void validateHardshipReviewStatus_validationException() {
         ApiPerformHardshipRequest apiPerformHardshipRequest =
                 new ApiPerformHardshipRequest(new HardshipReview().withReviewDate(null),
-                                              new HardshipMetadata().withReviewStatus(
-                                                      HardshipReviewStatus.COMPLETE)
+                        new HardshipMetadata().withReviewStatus(
+                                HardshipReviewStatus.COMPLETE)
                 );
 
         assertThatThrownBy(
@@ -327,22 +325,22 @@ class HardshipValidationServiceTest {
     private static Stream<Arguments> solicitorDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview()
-                                                                   .withSolicitorCosts(new SolicitorCosts().withRate(
-                                                                           BigDecimal.ZERO).withHours(BigDecimal.ZERO))
-                                                                   .withReviewDate(LocalDateTime.now()),
-                                                           TestModelDataBuilder.getHardshipMetadata()
+                        .withSolicitorCosts(new SolicitorCosts().withRate(
+                                BigDecimal.ZERO).withHours(BigDecimal.ZERO))
+                        .withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                                                                   withSolicitorCosts(
-                                                                           new SolicitorCosts().withRate(null)
-                                                                                   .withHours(BigDecimal.ZERO))
-                                                                   .withReviewDate(LocalDateTime.now()),
-                                                           TestModelDataBuilder.getHardshipMetadata()
+                        withSolicitorCosts(
+                                new SolicitorCosts().withRate(null)
+                                        .withHours(BigDecimal.ZERO))
+                        .withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview()
-                                                                   .withSolicitorCosts(null)
-                                                                   .withReviewDate(LocalDateTime.now()),
-                                                           TestModelDataBuilder.getHardshipMetadata()
+                        .withSolicitorCosts(null)
+                        .withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata()
                 ))
         );
     }
@@ -350,16 +348,16 @@ class HardshipValidationServiceTest {
     private static Stream<Arguments> solicitorDataForValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                                                                   withSolicitorCosts(
-                                                                           new SolicitorCosts().withRate(BigDecimal.ONE)
-                                                                                   .withHours(BigDecimal.ZERO)),
-                                                           new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
+                        withSolicitorCosts(
+                                new SolicitorCosts().withRate(BigDecimal.ONE)
+                                        .withHours(BigDecimal.ZERO)),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                                                                   withSolicitorCosts(
-                                                                           new SolicitorCosts().withRate(BigDecimal.ONE)
-                                                                                   .withHours(null)),
-                                                           new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
+                        withSolicitorCosts(
+                                new SolicitorCosts().withRate(BigDecimal.ONE)
+                                        .withHours(null)),
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
                 ))
         );
     }
@@ -369,10 +367,10 @@ class HardshipValidationServiceTest {
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withDeniedIncome(List.of(TestModelDataBuilder.getDeniedIncome()
-                                                                  .withItemCode(null)
-                                                                  .withFrequency(null)
-                                                                  .withAmount(null)
-                                                                  .withReasonNote(null))),
+                                        .withItemCode(null)
+                                        .withFrequency(null)
+                                        .withAmount(null)
+                                        .withReasonNote(null))),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -388,28 +386,28 @@ class HardshipValidationServiceTest {
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withDeniedIncome(List.of(TestModelDataBuilder.getDeniedIncome()
-                                                                  .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS)
-                                                                  .withFrequency(null)
-                                                                  .withAmount(BigDecimal.ONE)
-                                                                  .withReasonNote("test"))),
+                                        .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS)
+                                        .withFrequency(null)
+                                        .withAmount(BigDecimal.ONE)
+                                        .withReasonNote("test"))),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withDeniedIncome(List.of(TestModelDataBuilder.getDeniedIncome()
-                                                                  .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS)
-                                                                  .withFrequency(Frequency.ANNUALLY)
-                                                                  .withAmount(BigDecimal.ONE)
-                                                                  .withReasonNote(null))),
+                                        .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS)
+                                        .withFrequency(Frequency.ANNUALLY)
+                                        .withAmount(BigDecimal.ONE)
+                                        .withReasonNote(null))),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withDeniedIncome(List.of(TestModelDataBuilder.getDeniedIncome()
-                                                                  .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS)
-                                                                  .withFrequency(Frequency.ANNUALLY)
-                                                                  .withAmount(null)
-                                                                  .withReasonNote("test"))),
+                                        .withItemCode(DeniedIncomeDetailCode.MEDICAL_GROUNDS)
+                                        .withFrequency(Frequency.ANNUALLY)
+                                        .withAmount(null)
+                                        .withReasonNote("test"))),
                         TestModelDataBuilder.getHardshipMetadata()
                 ))
         );
@@ -420,33 +418,33 @@ class HardshipValidationServiceTest {
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                                                      .withItemCode(
-                                                                              ExtraExpenditureDetailCode.ADD_MORTGAGE)
-                                                                      .withFrequency(null)
-                                                                      .withAmount(BigDecimal.ONE)
-                                                                      .withReasonCode(
-                                                                              HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
+                                        .withItemCode(
+                                                ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withFrequency(null)
+                                        .withAmount(BigDecimal.ONE)
+                                        .withReasonCode(
+                                                HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                                                      .withItemCode(
-                                                                              ExtraExpenditureDetailCode.ADD_MORTGAGE)
-                                                                      .withFrequency(Frequency.ANNUALLY)
-                                                                      .withAmount(BigDecimal.ONE)
-                                                                      .withReasonCode(null))),
+                                        .withItemCode(
+                                                ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withFrequency(Frequency.ANNUALLY)
+                                        .withAmount(BigDecimal.ONE)
+                                        .withReasonCode(null))),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                                                      .withItemCode(
-                                                                              ExtraExpenditureDetailCode.ADD_MORTGAGE)
-                                                                      .withFrequency(Frequency.ANNUALLY)
-                                                                      .withAmount(null)
-                                                                      .withReasonCode(
-                                                                              HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
+                                        .withItemCode(
+                                                ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withFrequency(Frequency.ANNUALLY)
+                                        .withAmount(null)
+                                        .withReasonCode(
+                                                HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
                         TestModelDataBuilder.getHardshipMetadata()
                 ))
         );
@@ -457,10 +455,10 @@ class HardshipValidationServiceTest {
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                                                      .withItemCode(null)
-                                                                      .withFrequency(null)
-                                                                      .withAmount(null)
-                                                                      .withReasonCode(null))),
+                                        .withItemCode(null)
+                                        .withFrequency(null)
+                                        .withAmount(null)
+                                        .withReasonCode(null))),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -478,33 +476,33 @@ class HardshipValidationServiceTest {
                         TestModelDataBuilder.getHardshipMetadata()
                                 .withProgressItems(
                                         List.of(TestModelDataBuilder.getHardshipProgress()
-                                                        .withAction(
-                                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                        .withDateRequired(null)
-                                                        .withResponse(
-                                                                HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                                        .withDateTaken(LocalDateTime.now())))
+                                                .withAction(
+                                                        HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                                .withDateRequired(null)
+                                                .withResponse(
+                                                        HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
+                                                .withDateTaken(LocalDateTime.now())))
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview(),
                         TestModelDataBuilder.getHardshipMetadata()
                                 .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                                   .withAction(
-                                                                           HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                                   .withDateRequired(LocalDateTime.now())
-                                                                   .withResponse(null)
-                                                                   .withDateTaken(LocalDateTime.now())))
+                                        .withAction(
+                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(LocalDateTime.now())
+                                        .withResponse(null)
+                                        .withDateTaken(LocalDateTime.now())))
                 )),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview(),
                         TestModelDataBuilder.getHardshipMetadata()
                                 .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                                   .withAction(
-                                                                           HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                                   .withDateRequired(LocalDateTime.now())
-                                                                   .withResponse(
-                                                                           HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                                                   .withDateTaken(null)))
+                                        .withAction(
+                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(LocalDateTime.now())
+                                        .withResponse(
+                                                HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
+                                        .withDateTaken(null)))
                 ))
         );
     }
@@ -512,30 +510,30 @@ class HardshipValidationServiceTest {
     private static Stream<Arguments> progressionItemDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
-                                     TestModelDataBuilder.getMinimalHardshipReview(),
-                                     TestModelDataBuilder.getHardshipMetadata()
-                                             .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                                                .withAction(null)
-                                                                                .withDateRequired(null)
-                                                                                .withResponse(null)
-                                                                                .withDateTaken(null))
-                                             )
-                             ),
-                             Arguments.of(new ApiPerformHardshipRequest(
-                                     TestModelDataBuilder.getMinimalHardshipReview(),
-                                     TestModelDataBuilder.getHardshipMetadata().withProgressItems(null)
-                             ))
+                                TestModelDataBuilder.getMinimalHardshipReview(),
+                                TestModelDataBuilder.getHardshipMetadata()
+                                        .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
+                                                .withAction(null)
+                                                .withDateRequired(null)
+                                                .withResponse(null)
+                                                .withDateTaken(null))
+                                        )
+                        ),
+                        Arguments.of(new ApiPerformHardshipRequest(
+                                TestModelDataBuilder.getMinimalHardshipReview(),
+                                TestModelDataBuilder.getHardshipMetadata().withProgressItems(null)
+                        ))
                 ),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview(),
                         TestModelDataBuilder.getHardshipMetadata()
                                 .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                                   .withAction(
-                                                                           HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                                   .withDateRequired(LocalDateTime.now())
-                                                                   .withResponse(
-                                                                           HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                                                   .withDateTaken(LocalDateTime.now())))
+                                        .withAction(
+                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
+                                        .withDateRequired(LocalDateTime.now())
+                                        .withResponse(
+                                                HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
+                                        .withDateTaken(LocalDateTime.now())))
                 ))
         );
     }

@@ -1,8 +1,11 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
-import uk.gov.justice.laa.crime.hardship.model.*;
-import uk.gov.justice.laa.crime.hardship.model.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
+import uk.gov.justice.laa.crime.common.model.hardship.ExtraExpenditure;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
+import uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.enums.DeniedIncomeDetailCode;
 import uk.gov.justice.laa.crime.enums.ExtraExpenditureDetailCode;
 
