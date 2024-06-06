@@ -21,7 +21,7 @@ def versions = [
         crimeCommonsClasses         : "3.19.0",
         commonsModSchemas           : "1.1.0",
         commonsRestClient           : "3.4.0",
-        springCloudStubRunnerVersion: "4.0.4",
+        springCloudStubRunnerVersion: "4.1.3",
         postgresqlVersion           : "42.7.2"
 ]
 
