@@ -22,7 +22,7 @@ def versions = [
         commonsModSchemas           : "1.1.0",
         commonsRestClient           : "3.4.0",
         springCloudStubRunnerVersion: "4.1.3",
-        postgresqlVersion           : "42.7.2"
+        postgresqlVersion           : "42.7.3"
 ]
 
 configurations {
