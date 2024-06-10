@@ -16,10 +16,6 @@ env:
     value: {{ .Values.maatApi.baseUrl }}
   - name: MAAT_API_OAUTH_URL
     value: {{ .Values.maatApi.oauthUrl }}
-  - name: CCC_API_BASE_URL
-    value: {{ .Values.cccApi.baseUrl }}
-  - name: CCC_API_OAUTH_URL
-    value: {{ .Values.cccApi.oauthUrl }}
   - name: CMA_API_BASE_URL
     value: {{ .Values.cmaApi.baseUrl }}
   - name: CMA_API_OAUTH_URL
@@ -44,16 +40,6 @@ env:
       secretKeyRef:
         name: maat-api-oauth-client-secret
         key: MAAT_API_OAUTH_CLIENT_SECRET
-  - name: CCC_API_OAUTH_CLIENT_ID
-    valueFrom:
-      secretKeyRef:
-        name: ccc-api-oauth-client-id
-        key: CCC_API_OAUTH_CLIENT_ID
-  - name: CCC_API_OAUTH_CLIENT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: ccc-api-oauth-client-secret
-        key: CCC_API_OAUTH_CLIENT_SECRET
   - name: JWT_ISSUER_URI
     value: {{ .Values.jwt.issuerUri }}
   - name: DATASOURCE_HOST_PORT
