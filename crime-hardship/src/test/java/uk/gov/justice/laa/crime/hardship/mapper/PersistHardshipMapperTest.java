@@ -112,7 +112,8 @@ class PersistHardshipMapperTest {
                         .withFrequency(deniedIncome.getFrequency())
                         .withReasonNote("Hospitalisation")
                         .withUserCreated(metadata.getUserSession().getUserName())
-                        .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS),
+                        .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS)
+                        .withActive("Y"),
 
                 new ApiHardshipDetail()
                         .withAccepted("N")
@@ -121,13 +122,15 @@ class PersistHardshipMapperTest {
                         .withFrequency(extraExpenditure.getFrequency())
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.CARDS)
-                        .withDetailReason(extraExpenditure.getReasonCode()),
+                        .withDetailReason(extraExpenditure.getReasonCode())
+                        .withActive("Y"),
 
                 new ApiHardshipDetail()
                         .withDetailType(SOL_COSTS)
                         .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                         .withFrequency(Frequency.ANNUALLY)
                         .withAccepted("Y")
+                        .withActive("Y")
         );
 
         assertThat(reviewDetails)

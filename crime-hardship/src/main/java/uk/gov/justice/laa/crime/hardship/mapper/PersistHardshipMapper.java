@@ -86,7 +86,8 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                                     .withOtherDescription(item.getDescription())
                                     .withUserCreated(username)
                                     .withFrequency(item.getFrequency())
-                                    .withAccepted(Boolean.TRUE.equals(item.getAccepted()) ? "Y" : "N");
+                                    .withAccepted(Boolean.TRUE.equals(item.getAccepted()) ? "Y" : "N")
+                                    .withActive("Y");
 
                             if (item instanceof DeniedIncome deniedIncome) {
                                 return detail
@@ -114,7 +115,8 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                     .withDetailType(HardshipReviewDetailType.SOL_COSTS)
                     .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                     .withFrequency(Frequency.ANNUALLY)
-                    .withAccepted("Y"));
+                    .withAccepted("Y")
+                    .withActive("Y"));
         }
         return apiHardshipDetails;
     }
