@@ -67,6 +67,11 @@ commands:
                           --namespace=laa-crime-hardship-<< parameters.environment >> \
                           --values ./helm_deploy/laa-crime-hardship/values-<< parameters.environment >>.yaml \
                           --set image.tag="${CIRCLE_SHA1}"
+      - slack/notify:
+          channel: laa-crimeapps-ci
+          event: fail
+          template: basic_fail_1
+          branch_pattern: main
   slack_successful_deployment_notify:
     steps:
       - slack/notify:
@@ -163,12 +168,6 @@ jobs:
           path: build/libs
       - snyk/scan:
           <<: *snyk_options
-      - slack/notify:
-          channel: laa-crimeapps-ci
-          event: fail
-          template: basic_fail_1
-          branch_pattern: main
-
       - slack/notify:
           channel: laa-crimeapps-ci
           event: fail
