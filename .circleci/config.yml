@@ -67,59 +67,6 @@ commands:
                           --namespace=laa-crime-hardship-<< parameters.environment >> \
                           --values ./helm_deploy/laa-crime-hardship/values-<< parameters.environment >>.yaml \
                           --set image.tag="${CIRCLE_SHA1}"
-
-# ------------------
-# JOBS
-# ------------------
-jobs:
-  build_and_scan:
-    executor: build-executor
-    steps:
-      - checkout:
-          path: ~/laa-crime-hardship
-      - restore_cache:
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - restore_cache:
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - run:
-          name: Build
-          command: ./gradlew clean build
-      - run:
-          name: Run SonarQube
-          command: ./gradlew sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.organization=${SONAR_ORG}
-      - save_cache:
-          paths:
-            - ~/.gradle/wrapper
-          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
-      - save_cache:
-          paths:
-            - ~/.gradle/caches
-          key: v1-gradle-cache-{{ checksum "build.gradle" }}
-      - persist_to_workspace:
-          root: .
-          paths:
-            - build
-      - store_test_results:
-          path: build/test-results/test
-      - store_artifacts:
-          path: build/test-results/test
-      - store_artifacts:
-          path: build/reports/jacoco/test/html
-      - store_artifacts:
-          path: build/libs
-      - snyk/scan:
-          <<: *snyk_options
-      - slack/notify:
-          channel: laa-crimeapps-ci
-          event: fail
-          template: basic_fail_1
-          branch_pattern: main
-
-      - slack/notify:
-          channel: laa-crimeapps-ci
-          event: fail
-          template: basic_fail_1
-          branch_pattern: main
   slack_successful_deployment_notify:
     steps:
       - slack/notify:
@@ -174,6 +121,59 @@ jobs:
                 }
               ]
             }
+
+# ------------------
+# JOBS
+# ------------------
+jobs:
+  build_and_scan:
+    executor: build-executor
+    steps:
+      - checkout:
+          path: ~/laa-crime-hardship
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Build
+          command: ./gradlew clean build
+      - run:
+          name: Run SonarQube
+          command: ./gradlew sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.organization=${SONAR_ORG}
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+      - store_test_results:
+          path: build/test-results/test
+      - store_artifacts:
+          path: build/test-results/test
+      - store_artifacts:
+          path: build/reports/jacoco/test/html
+      - store_artifacts:
+          path: build/libs
+      - snyk/scan:
+          <<: *snyk_options
+      - slack/notify:
+          channel: laa-crimeapps-ci
+          event: fail
+          template: basic_fail_1
+          branch_pattern: main
+
+      - slack/notify:
+          channel: laa-crimeapps-ci
+          event: fail
+          template: basic_fail_1
+          branch_pattern: main
 
   build_scan_and_push_image:
     executor: build-executor
