@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.gov.justice.laa.crime.common.model.hardship.*;
-import uk.gov.justice.laa.crime.commons.exception.APIClientException;
-import uk.gov.justice.laa.crime.commons.tracing.TraceIdHandler;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
@@ -19,17 +23,21 @@ import uk.gov.justice.laa.crime.hardship.mapper.HardshipMapper;
 import uk.gov.justice.laa.crime.hardship.service.CrimeMeansAssessmentService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
+import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
 
 import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
-import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequest;
-import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequestGivenContent;
 
 @WebMvcTest(HardshipController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -61,24 +69,24 @@ class HardshipControllerTest {
         ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
         when(hardshipService.find(anyInt())).thenReturn(response);
 
-        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL_GET_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(response.getId()));
     }
 
     @Test
     void givenInvalidHardshipReviewId_whenFindIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
-        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL + "/invalidId"))
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/invalidId"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenFailedApiCall_whenFindIsInvoked_thenInternalServerErrorIsReturned() throws Exception {
         when(hardshipService.find(anyInt()))
-                .thenThrow(new APIClientException("Call to Court Data APi failed."));
+                .thenThrow(WebClientRequestException.class);
 
-        mvc.perform(buildRequest(HttpMethod.GET, ENDPOINT_URL_GET_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -96,9 +104,9 @@ class HardshipControllerTest {
         when(hardshipService.create(any(HardshipReviewDTO.class)))
                 .thenReturn(new HardshipReviewDTO());
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
     }
 
@@ -109,7 +117,7 @@ class HardshipControllerTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -118,11 +126,11 @@ class HardshipControllerTest {
         ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         when(hardshipService.create(any(HardshipReviewDTO.class)))
-                .thenThrow(new APIClientException("Call to Court Data API failed."));
+                .thenThrow(WebClientRequestException.class);
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -140,9 +148,9 @@ class HardshipControllerTest {
         when(hardshipService.update(any(HardshipReviewDTO.class)))
                 .thenReturn(new HardshipReviewDTO());
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
     }
 
@@ -153,7 +161,7 @@ class HardshipControllerTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -162,11 +170,11 @@ class HardshipControllerTest {
         ApiPerformHardshipRequest request = TestModelDataBuilder.getApiPerformHardshipRequest();
 
         when(hardshipService.update(any(HardshipReviewDTO.class)))
-                .thenThrow(new APIClientException("Call to Court Data API failed."));
+                .thenThrow(WebClientRequestException.class);
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PUT, requestBody, ENDPOINT_URL))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -182,9 +190,9 @@ class HardshipControllerTest {
         when(hardshipCalculationService.calculateHardshipForDetail(anyInt(), any()))
                 .thenReturn(response);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipSummary").value(3500));
     }
 
@@ -194,7 +202,7 @@ class HardshipControllerTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -206,31 +214,31 @@ class HardshipControllerTest {
         String requestBody = objectMapper.writeValueAsString(request);
 
         when(hardshipCalculationService.calculateHardshipForDetail(any(), any()))
-                .thenThrow(new APIClientException("Call to Court Data API failed."));
+                .thenThrow(WebClientRequestException.class);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALCULATE_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void givenValidRequest_whenRollbackIsInvoked_thenOkResponseIsReturned() throws Exception {
         doNothing().when(hardshipService).rollback(anyInt());
-        mvc.perform(buildRequestGivenContent(HttpMethod.PATCH, "", ENDPOINT_URL_GET_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isOk());
     }
 
     @Test
     void givenInvalidRequest_whenRollbackIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
-        mvc.perform(buildRequestGivenContent(HttpMethod.PATCH, "", ENDPOINT_URL + "/null"))
+        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL + "/null"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenFailedApiCall_whenRollbackIsInvoked_thenInternalServerErrorResponseIsReturned() throws Exception {
-        doThrow(new APIClientException("Call to Court Data API failed."))
+        doThrow(WebClientRequestException.class)
                 .when(hardshipService).rollback(anyInt());
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.PATCH, "", ENDPOINT_URL_GET_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL_GET_HARDSHIP))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -245,9 +253,9 @@ class HardshipControllerTest {
         when(hardshipCalculationService.calculateHardship(any(HardshipReview.class), any()))
                 .thenReturn(TestModelDataBuilder.getHardshipResult(HardshipReviewResult.PASS));
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALC_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.postHardshipDisposableIncome").value(TestModelDataBuilder.POST_HARDSHIP_DISPOSABLE_INCOME));
     }
 
@@ -258,7 +266,7 @@ class HardshipControllerTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALC_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -270,9 +278,9 @@ class HardshipControllerTest {
         String requestBody = objectMapper.writeValueAsString(request);
 
         when(crimeMeansAssessmentService.getFullAssessmentThreshold(any(LocalDateTime.class)))
-                .thenThrow(new APIClientException("Call to CMA API failed."));
+                .thenThrow(WebClientRequestException.class);
 
-        mvc.perform(buildRequestGivenContent(HttpMethod.POST, requestBody, ENDPOINT_URL_CALC_HARDSHIP))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
                 .andExpect(status().isInternalServerError());
     }
 

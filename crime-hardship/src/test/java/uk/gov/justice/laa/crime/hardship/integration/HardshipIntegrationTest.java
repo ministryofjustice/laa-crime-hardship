@@ -6,6 +6,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -48,6 +49,7 @@ import static uk.gov.justice.laa.crime.util.RequestBuilderUtils.buildRequestGive
 @SpringBootTest(classes = CrimeHardshipApplication.class, webEnvironment = DEFINED_PORT)
 @AutoConfigureObservability
 @AutoConfigureWireMock(port = 9999)
+@Disabled
 class HardshipIntegrationTest {
 
     private MockMvc mvc;

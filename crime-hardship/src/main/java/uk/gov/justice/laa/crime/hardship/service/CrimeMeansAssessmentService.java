@@ -1,12 +1,10 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import uk.gov.justice.laa.crime.commons.client.RestAPIClient;
-import uk.gov.justice.laa.crime.hardship.config.ServicesConfiguration;
+import uk.gov.justice.laa.crime.hardship.client.MeansAssessmentApiClient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,19 +15,13 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class CrimeMeansAssessmentService {
 
+    private static final String SERVICE_NAME = "crimeMeansAssessmentService";
     private static final String RESPONSE_STRING = "Response from CMA API: {}";
-    @Qualifier("cmaApiClient")
-    private final RestAPIClient cmaApiClient;
-    private final ServicesConfiguration configuration;
+    private final MeansAssessmentApiClient cmaApiClient;
 
+    @Retry(name = SERVICE_NAME)
     public BigDecimal getFullAssessmentThreshold(LocalDateTime assessmentDate) {
-
-        BigDecimal response = cmaApiClient.get(
-                new ParameterizedTypeReference<>() {
-                },
-                configuration.getCmaApi().getCmaEndpoints().getFullAssessmentThresholdUrl(),
-                assessmentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        );
+        BigDecimal response = cmaApiClient.find(assessmentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         log.info(RESPONSE_STRING, response);
         return response;
     }
