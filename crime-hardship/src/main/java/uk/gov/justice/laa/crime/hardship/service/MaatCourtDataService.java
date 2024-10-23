@@ -28,7 +28,7 @@ public class MaatCourtDataService {
     private static final String RESPONSE_STRING = "Response from Court Data API: %s";
 
     public List<ApiHardshipDetail> getHardshipByDetailType(Integer repId, String detailType) {
-
+        log.debug("Request to get hardship details for repId: {} and detailType: {}", repId, detailType);
         List<ApiHardshipDetail> response = maatAPIClient.get(
                 new ParameterizedTypeReference<>() {
                 },
@@ -36,13 +36,13 @@ public class MaatCourtDataService {
                 repId,
                 detailType
         );
-        log.info(String.format(RESPONSE_STRING, response));
+        log.debug(String.format(RESPONSE_STRING, response));
         return response;
     }
 
     public ApiPersistHardshipResponse persistHardship(ApiPersistHardshipRequest request,
                                                       RequestType requestType) {
-
+        log.debug("Request to persist hardship: {} and request type: {}", request, requestType);
         ApiPersistHardshipResponse response;
         if (requestType == RequestType.CREATE) {
             response = maatAPIClient.post(
@@ -62,11 +62,12 @@ public class MaatCourtDataService {
             );
         }
 
-        log.info(String.format(RESPONSE_STRING, response));
+        log.debug(String.format(RESPONSE_STRING, response));
         return response;
     }
 
     public ApiFindHardshipResponse getHardship(Integer hardshipReviewId) {
+        log.debug("Request to get hardship for hardshipReviewId: {}", hardshipReviewId);
         ApiFindHardshipResponse response = maatAPIClient.get(
                 new ParameterizedTypeReference<>() {
                 },
@@ -74,22 +75,24 @@ public class MaatCourtDataService {
                 hardshipReviewId
         );
 
-        log.info(String.format(RESPONSE_STRING, response));
+        log.debug(String.format(RESPONSE_STRING, response));
         return response;
     }
 
     public FinancialAssessmentDTO getFinancialAssessment(Integer financialAssessmentId) {
+        log.debug("Request to get financial assessment for financialAssessmentId: {}", financialAssessmentId);
         FinancialAssessmentDTO response = maatAPIClient.get(
                 new ParameterizedTypeReference<>() {
                 },
                 configuration.getMaatApi().getFinancialAssessmentEndpoints().getSearchUrl(),
                 financialAssessmentId
         );
-        log.info(String.format(RESPONSE_STRING, response));
+        log.debug(String.format(RESPONSE_STRING, response));
         return response;
     }
 
     public void patchHardship(Integer hardshipReviewId, Map<String, Object> updateFields) {
+        log.debug("Request to patch hardship for hardshipReviewId: {} with fields: {}", hardshipReviewId, updateFields);
         maatAPIClient.patch(
                 updateFields,
                 new ParameterizedTypeReference<>() {
