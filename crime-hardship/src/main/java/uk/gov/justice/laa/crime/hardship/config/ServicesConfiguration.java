@@ -27,34 +27,7 @@ public class ServicesConfiguration {
         private String baseUrl;
 
         @NotNull
-        private HardshipEndpoints hardshipEndpoints;
-
-        @NotNull
-        private FinancialAssessmentEndpoints financialAssessmentEndpoints;
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class HardshipEndpoints {
-
-            @NotNull
-            private String hardshipDetailUrl;
-
-            @NotNull
-            private String persistHardshipUrl;
-
-            @NotNull
-            private String hardshipUrl;
-        }
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class FinancialAssessmentEndpoints {
-
-            @NotNull
-            private String searchUrl;
-        }
+        private String registrationId;
     }
 
     @Data
@@ -66,15 +39,6 @@ public class ServicesConfiguration {
         private String baseUrl;
 
         @NotNull
-        private CmaEndpoints cmaEndpoints;
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class CmaEndpoints {
-
-            @NotNull
-            private String fullAssessmentThresholdUrl;
-        }
+        private String registrationId;
     }
 }
