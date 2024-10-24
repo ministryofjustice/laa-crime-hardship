@@ -16,10 +16,14 @@ env:
     value: {{ .Values.logging.level }}
   - name: MAAT_API_BASE_URL
     value: {{ .Values.maatApi.baseUrl }}
+  - name: MAAT_API_REGISTRATION_ID
+    value: {{ .Values.maatApi.registrationId }}
   - name: MAAT_API_OAUTH_URL
     value: {{ .Values.maatApi.oauthUrl }}
   - name: CMA_API_BASE_URL
     value: {{ .Values.cmaApi.baseUrl }}
+  - name: CMA_API_REGISTRATION_ID
+    value: {{ .Values.cmaApi.registrationId }}
   - name: CMA_API_OAUTH_URL
     value: {{ .Values.cmaApi.oauthUrl }}
   - name: CMA_API_OAUTH_CLIENT_ID

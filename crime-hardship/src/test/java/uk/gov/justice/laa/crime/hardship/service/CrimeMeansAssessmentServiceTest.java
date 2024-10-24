@@ -1,30 +1,35 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.justice.laa.crime.hardship.client.MeansAssessmentApiClient;
+import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
+
+import java.math.BigDecimal;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@Disabled
 class CrimeMeansAssessmentServiceTest {
-/*
     @Mock
-    private RestAPIClient cmaApiClient;
+    private MeansAssessmentApiClient cmaApiClient;
 
     @InjectMocks
     private CrimeMeansAssessmentService crimeMeansAssessmentService;
 
-    @Spy
-    private ServicesConfiguration configuration = MockServicesConfiguration.getConfiguration(1000);
-
     @Test
     void givenAValidAssessmentDate_whenGetFullAssessmentThresholdIsInvoked_thenResponseIsReturned() {
-        when(cmaApiClient.get(any(), anyString(), anyString()))
+        when(cmaApiClient.find(anyString()))
                 .thenReturn(BigDecimal.TEN);
         crimeMeansAssessmentService.getFullAssessmentThreshold(
                 TestModelDataBuilder.ASSESSMENT_DATE);
-        verify(cmaApiClient, atLeastOnce()).get(any(), anyString(), anyString());
+        verify(cmaApiClient, times(1)).find(anyString());
     }
 
- */
 }

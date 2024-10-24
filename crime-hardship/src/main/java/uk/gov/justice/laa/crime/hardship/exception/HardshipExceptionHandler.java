@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import uk.gov.justice.laa.crime.dto.ErrorDTO;
+import uk.gov.justice.laa.crime.hardship.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.exception.ValidationException;
 import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 
@@ -37,9 +37,16 @@ public class HardshipExceptionHandler {
      */
 
     @ExceptionHandler(WebClientResponseException.class)
-    public ResponseEntity<ErrorDTO> onRuntimeException(WebClientResponseException exception) throws IOException {
-        ErrorDTO errorDTO = mapper.readValue(exception.getResponseBodyAsString(), ErrorDTO.class);
-        return buildErrorResponse(exception.getStatusCode(), errorDTO.getMessage(), traceIdHandler.getTraceId());
+    public ResponseEntity<ErrorDTO> onRuntimeException(WebClientResponseException exception) {
+        String errorMessage;
+        try {
+            ErrorDTO errorDTO = mapper.readValue(exception.getResponseBodyAsString(), ErrorDTO.class);
+            errorMessage = errorDTO.getMessage();
+        } catch (Exception ex) {
+            log.warn("Unable to read the ErrorDTO from WebClientResponseException", ex);
+            errorMessage = exception.getMessage();
+        }
+        return buildErrorResponse(exception.getStatusCode(), errorMessage, traceIdHandler.getTraceId());
     }
 
     @ExceptionHandler(WebClientRequestException.class)

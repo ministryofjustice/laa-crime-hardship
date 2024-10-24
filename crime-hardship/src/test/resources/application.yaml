@@ -24,12 +24,12 @@ spring:
     oauth2:
       client:
         provider:
-          maat-api:
+          maatapi:
             token-uri: http://localhost:9999/oauth2/token
           cma:
             token-uri: http://localhost:9999/oauth2/token
         registration:
-          maat-api:
+          maatapi:
             client-id: dummy-client
             client-secret: dummy-secret
             authorization-grant-type: client_credentials
@@ -39,7 +39,7 @@ spring:
             authorization-grant-type: client_credentials
       resource-server:
         jwt:
-          issuer-uri: ${crime-hardship.security.issuer-uri}
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9999}
 
 springdoc:
   api-docs:
@@ -48,10 +48,13 @@ springdoc:
 swagger-ui:
   path: /open-api/docs.html
 
-retry-config:
-  max-retries: 2
-  min-back-off-period: 3
-  jitter-value: 0.5
+services:
+  maat-api:
+    baseUrl: ${MAAT_API_BASE_URL:http://localhost:9999}
+    registrationId: ${MAAT_API_REGISTRATION_ID:maatapi}
+  cma-api:
+    baseUrl: ${CMA_API_BASE_URL:http://localhost:9999}
+    registrationId: ${CMA_API_REGISTRATION_ID:cma}
 
 crime-hardship:
   security:

@@ -79,6 +79,14 @@ resilience4j:
       maatCourtDataService:
         base-config: default
 
+services:
+  maat-api:
+    baseUrl: ${MAAT_API_BASE_URL}
+    registrationId: ${MAAT_API_REGISTRATION_ID}
+  cma-api:
+    baseUrl: ${CMA_API_BASE_URL}
+    registrationId: ${CMA_API_REGISTRATION_ID}
+
 springdoc:
   packagesToScan: uk.gov.justice.laa.crime.hardship
   api-docs:

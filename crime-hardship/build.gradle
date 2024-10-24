@@ -22,7 +22,7 @@ def versions = [
         commonsModSchemas           : "1.8.3",
         commonsRestClient           : "3.4.0",
         springCloudStubRunnerVersion: "4.1.4",
-        sentryVersion			    : "7.12.1",
+        sentryVersion               : "7.12.1",
         resilience4jVersion         : "2.2.0",
         postgresqlVersion           : "42.7.2",
         commonsLang3Version         : "3.15.0"
@@ -61,7 +61,6 @@ dependencies {
 
     implementation "io.micrometer:micrometer-registry-prometheus"
 
-//    implementation "uk.gov.justice.service.laa-crime:crime-commons-spring-boot-starter-rest-client:$versions.commonsRestClient:all"
     implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
     implementation "uk.gov.justice.service.laa-crime:crime-commons-mod-schemas:$versions.commonsModSchemas"
 
