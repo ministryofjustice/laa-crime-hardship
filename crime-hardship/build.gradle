@@ -1,10 +1,10 @@
 plugins {
     id "java"
     id "jacoco"
-    id "org.sonarqube" version "5.0.0.4638"
+    id "org.sonarqube" version "5.1.0.4882"
     id "info.solidsoft.pitest" version "1.15.0"
-    id "org.springframework.boot" version "3.3.4"
-    id 'io.spring.dependency-management' version '1.1.5'
+    id "org.springframework.boot" version "3.3.5"
+    id 'io.spring.dependency-management' version "1.1.6"
     id "org.jsonschema2dataclass" version "6.0.0"
 }
 
@@ -17,10 +17,9 @@ java {
 
 def versions = [
         pitest                      : "1.16.1",
-        springdocVersion            : "2.5.0",
-        crimeCommonsClasses         : "3.22.0",
+        springdocVersion            : "2.6.0",
+        crimeCommonsClasses         : "3.33.0",
         commonsModSchemas           : "1.8.3",
-        commonsRestClient           : "3.4.0",
         springCloudStubRunnerVersion: "4.1.4",
         sentryVersion               : "7.12.1",
         resilience4jVersion         : "2.2.0",
@@ -44,7 +43,6 @@ dependencies {
 
     implementation "io.sentry:sentry-spring-boot-starter-jakarta"
     implementation "io.sentry:sentry-logback"
-    // spring-boot-starter-actuator library contains the Auto-configuration for the Micrometer Tracing API.
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-validation"
     implementation "org.springframework.boot:spring-boot-starter-web"
@@ -60,12 +58,11 @@ dependencies {
     implementation "org.liquibase:liquibase-core"
 
     implementation "io.micrometer:micrometer-registry-prometheus"
+    implementation "io.micrometer:micrometer-tracing"
+    implementation "io.micrometer:micrometer-tracing-bridge-brave"
 
     implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
     implementation "uk.gov.justice.service.laa-crime:crime-commons-mod-schemas:$versions.commonsModSchemas"
-
-    implementation "io.micrometer:micrometer-tracing"
-    implementation "io.micrometer:micrometer-tracing-bridge-brave"
 
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"

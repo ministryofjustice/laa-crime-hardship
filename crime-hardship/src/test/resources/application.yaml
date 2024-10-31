@@ -24,12 +24,12 @@ spring:
     oauth2:
       client:
         provider:
-          maatapi:
+          maat-api:
             token-uri: http://localhost:9999/oauth2/token
           cma:
             token-uri: http://localhost:9999/oauth2/token
         registration:
-          maatapi:
+          maat-api:
             client-id: dummy-client
             client-secret: dummy-secret
             authorization-grant-type: client_credentials
@@ -51,10 +51,10 @@ swagger-ui:
 services:
   maat-api:
     baseUrl: ${MAAT_API_BASE_URL:http://localhost:9999}
-    registrationId: ${MAAT_API_REGISTRATION_ID:maatapi}
+    registrationId: maat-api
   cma-api:
     baseUrl: ${CMA_API_BASE_URL:http://localhost:9999}
-    registrationId: ${CMA_API_REGISTRATION_ID:cma}
+    registrationId: cma
 
 crime-hardship:
   security:

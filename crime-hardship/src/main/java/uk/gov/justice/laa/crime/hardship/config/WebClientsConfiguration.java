@@ -15,6 +15,7 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
+import uk.gov.justice.laa.crime.hardship.client.MaatCourtDataApiClient;
 import uk.gov.justice.laa.crime.hardship.client.MeansAssessmentApiClient;
 
 import java.time.Duration;
@@ -22,16 +23,47 @@ import java.time.Duration;
 @Configuration
 @AllArgsConstructor
 @Slf4j
-public class MeansAssessmentWebClientConfiguration {
+public class WebClientsConfiguration {
 
-    @Bean("meansAssessmentWebClient")
-    WebClient meansAssessmentWebClient(ServicesConfiguration servicesConfiguration, ClientRegistrationRepository clientRegistrations,
+    @Bean("maatCourtDataWebClient")
+    WebClient maatCourtDataWebClient(ServicesConfiguration servicesConfiguration, ClientRegistrationRepository clientRegistrations,
                                      OAuth2AuthorizedClientRepository authorizedClients) {
         ServletOAuth2AuthorizedClientExchangeFilterFunction oauth =
                 new ServletOAuth2AuthorizedClientExchangeFilterFunction(
                         clientRegistrations, authorizedClients
                 );
+        oauth.setDefaultClientRegistrationId(servicesConfiguration.getMaatApi().getRegistrationId());
+        return getWebClient(servicesConfiguration.getMaatApi().getBaseUrl(), oauth);
+    }
+
+    @Bean("meansAssessmentWebClient")
+    WebClient meansAssessmentWebClient(ServicesConfiguration servicesConfiguration, ClientRegistrationRepository clientRegistrations,
+                                       OAuth2AuthorizedClientRepository authorizedClients) {
+        ServletOAuth2AuthorizedClientExchangeFilterFunction oauth =
+                new ServletOAuth2AuthorizedClientExchangeFilterFunction(
+                        clientRegistrations, authorizedClients
+                );
         oauth.setDefaultClientRegistrationId(servicesConfiguration.getCmaApi().getRegistrationId());
+        return getWebClient(servicesConfiguration.getCmaApi().getBaseUrl(), oauth);
+    }
+
+    @Bean
+    MaatCourtDataApiClient maatCourtDataApiClient(@Qualifier("maatCourtDataWebClient") WebClient maatCourtDataWebClient) {
+        HttpServiceProxyFactory httpServiceProxyFactory =
+                HttpServiceProxyFactory.builderFor(WebClientAdapter.create(maatCourtDataWebClient))
+                        .build();
+        return httpServiceProxyFactory.createClient(MaatCourtDataApiClient.class);
+    }
+
+    @Bean
+    MeansAssessmentApiClient meansAssessmentApiClient(@Qualifier("meansAssessmentWebClient") WebClient meansAssessmentApiClient) {
+        HttpServiceProxyFactory httpServiceProxyFactory =
+                HttpServiceProxyFactory.builderFor(WebClientAdapter.create(meansAssessmentApiClient))
+                        .build();
+        return httpServiceProxyFactory.createClient(MeansAssessmentApiClient.class);
+    }
+
+    private static WebClient getWebClient(String servicesConfiguration, ServletOAuth2AuthorizedClientExchangeFilterFunction oauth) {
         ConnectionProvider provider =
                 ConnectionProvider.builder("custom")
                         .maxConnections(500)
@@ -42,7 +74,7 @@ public class MeansAssessmentWebClientConfiguration {
                         .build();
 
         return WebClient.builder()
-                .baseUrl(servicesConfiguration.getCmaApi().getBaseUrl())
+                .baseUrl(servicesConfiguration)
                 .clientConnector(new ReactorClientHttpConnector(
                                 HttpClient.create(provider)
                                         .resolver(DefaultAddressResolverGroup.INSTANCE)
@@ -52,13 +84,5 @@ public class MeansAssessmentWebClientConfiguration {
                 )
                 .filter(oauth)
                 .build();
-    }
-
-    @Bean
-    MeansAssessmentApiClient meansAssessmentApiClient(@Qualifier("meansAssessmentWebClient") WebClient meansAssessmentApiClient) {
-        HttpServiceProxyFactory httpServiceProxyFactory =
-                HttpServiceProxyFactory.builderFor(WebClientAdapter.create(meansAssessmentApiClient))
-                        .build();
-        return httpServiceProxyFactory.createClient(MeansAssessmentApiClient.class);
     }
 }

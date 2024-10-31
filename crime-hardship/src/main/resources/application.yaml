@@ -60,6 +60,9 @@ spring:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI}
 
+  autoconfigure:
+    exclude: org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration
+
 resilience4j:
   retry:
     configs:
@@ -82,10 +85,10 @@ resilience4j:
 services:
   maat-api:
     baseUrl: ${MAAT_API_BASE_URL}
-    registrationId: ${MAAT_API_REGISTRATION_ID}
+    registrationId: maat-api
   cma-api:
     baseUrl: ${CMA_API_BASE_URL}
-    registrationId: ${CMA_API_REGISTRATION_ID}
+    registrationId: cma
 
 springdoc:
   packagesToScan: uk.gov.justice.laa.crime.hardship
