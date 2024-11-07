@@ -139,23 +139,6 @@ class HardshipCalculationServiceTest {
     }
 
     @Test
-    void givenHardshipReviewWithSolicitorCostsAndCrownCourtCase_whenCalculateHardshipIsInvoked_thenSolicitorsCostsArentCalculated() {
-        HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(SOL_COSTS);
-
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
-
-        softly.assertThat(response.getPostHardshipDisposableIncome())
-                .isEqualTo(TestModelDataBuilder.HARDSHIP_AMOUNT.setScale(2, RoundingMode.HALF_UP));
-
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.FAIL);
-
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
-    }
-
-    @Test
     void givenHardshipReviewWithSolicitorCostsAndEstimatedTotal_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
 

@@ -7,7 +7,6 @@ import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDeta
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.enums.CourtType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
@@ -40,9 +39,8 @@ public class HardshipCalculationService {
                 .reduce(BigDecimal::add)
                 .orElse(BigDecimal.ZERO);
 
-        CourtType courtType = hardship.getCourtType();
         SolicitorCosts solicitorCosts = hardship.getSolicitorCosts();
-        if (solicitorCosts != null && courtType == CourtType.MAGISTRATE) {
+        if (solicitorCosts != null) {
             BigDecimal estimatedTotal;
             if (solicitorCosts.getEstimatedTotal() != null) {
                 estimatedTotal = solicitorCosts.getEstimatedTotal();
