@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.commons.client.RestAPIClient;

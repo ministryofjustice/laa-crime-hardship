@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;

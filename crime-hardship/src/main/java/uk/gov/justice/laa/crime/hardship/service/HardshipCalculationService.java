@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.enums.CourtType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
