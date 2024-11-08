@@ -7,6 +7,7 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PatchExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
+import reactor.core.publisher.Mono;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
@@ -23,7 +24,7 @@ public interface MaatCourtDataApiClient {
     ApiFindHardshipResponse getHardship(@PathVariable Integer hardshipId);
 
     @GetExchange("/hardship/repId/{repId}/detailType/{detailType}")
-    List<ApiHardshipDetail> getHardshipDetails(@PathVariable Integer repId, @PathVariable String detailType);
+    Mono<List<ApiHardshipDetail>> getHardshipDetails(@PathVariable Integer repId, @PathVariable String detailType);
 
     @PostExchange("/hardship")
     ApiPersistHardshipResponse create(@RequestBody ApiPersistHardshipRequest request);

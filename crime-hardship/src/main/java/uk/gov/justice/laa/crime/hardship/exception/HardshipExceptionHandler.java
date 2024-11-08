@@ -22,18 +22,6 @@ public class HardshipExceptionHandler {
     private final TraceIdHandler traceIdHandler;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    /*
-    @ExceptionHandler(WebClientResponseException.class)
-    public ProblemDetail onRuntimeException(WebClientResponseException exception) throws IOException {
-        return mapper.readValue(exception.getResponseBodyAsByteArray(), ProblemDetail.class);
-    }
-
-    @ExceptionHandler(WebClientRequestException.class)
-    public ProblemDetail onRuntimeException(WebClientRequestException exception) {
-        return ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
-    }
-     */
-
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<ErrorDTO> onRuntimeException(WebClientResponseException exception) {
         String errorMessage;
