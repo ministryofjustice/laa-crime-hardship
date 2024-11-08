@@ -8,7 +8,7 @@ import org.springframework.web.service.annotation.PatchExchange;
 import org.springframework.web.service.annotation.PostExchange;
 import org.springframework.web.service.annotation.PutExchange;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;

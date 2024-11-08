@@ -1,8 +1,9 @@
 package uk.gov.justice.laa.crime.hardship.data.builder;
 
 import org.springframework.stereotype.Component;
+import uk.gov.justice.laa.crime.common.model.common.ApiUserSession;
 import uk.gov.justice.laa.crime.common.model.hardship.*;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.enums.*;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;

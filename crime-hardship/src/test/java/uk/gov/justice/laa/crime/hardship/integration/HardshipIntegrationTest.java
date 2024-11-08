@@ -27,7 +27,7 @@ import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
