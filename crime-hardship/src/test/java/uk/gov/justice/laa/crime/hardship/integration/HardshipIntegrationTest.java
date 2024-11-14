@@ -14,7 +14,10 @@ import org.springframework.boot.test.autoconfigure.actuate.observability.AutoCon
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -33,6 +36,7 @@ import uk.gov.justice.laa.crime.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.enums.NewWorkReason;
 import uk.gov.justice.laa.crime.hardship.CrimeHardshipApplication;
+import uk.gov.justice.laa.crime.hardship.config.CrimeHardshipTestConfiguration;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 
@@ -40,7 +44,6 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
@@ -54,11 +57,13 @@ import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilde
 import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_REP_ID;
 
 @DirtiesContext
+@Import(CrimeHardshipTestConfiguration.class)
 @SpringBootTest(classes = CrimeHardshipApplication.class, webEnvironment = DEFINED_PORT)
 @AutoConfigureObservability
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
+    public static final String BEARER_TOKEN = "Bearer token";
     private MockMvc mvc;
 
     public static final String ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD = "/fullAssessmentThreshold/";
@@ -74,6 +79,9 @@ class HardshipIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
+    private FilterChainProxy springSecurityFilterChain;
+
+    @Autowired
     private WebApplicationContext webApplicationContext;
 
     @MockBean
@@ -87,19 +95,34 @@ class HardshipIntegrationTest {
     @BeforeEach
     public void setup() throws JsonProcessingException {
         stubForOAuth();
-        this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+        this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
+                .addFilter(springSecurityFilterChain).build();
     }
 
     @Test
     void givenAEmptyContent_whenUpdateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content("{}").contentType(APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content("{}").contentType(APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    void givenAEmptyOAuthToken_whenUpdateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content("{}").contentType(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized()).andReturn();
+    }
+
+    @Test
     void givenAEmptyContent_whenCalculateHardshipForDetailIsInvoked_thenFailsWithBadRequest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content("{}").contentType(APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content("{}").contentType(APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAEmptyOAuthToken_whenCalculateHardshipForDetailIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content("{}").contentType(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -110,10 +133,17 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(response))));
 
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/" + HARDSHIP_ID))
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/" + HARDSHIP_ID)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(response.getId()));
+    }
+
+    @Test
+    void givenEmptyAuthToken_whenFindIsInvoked_thenFailsWithUnauthorisedRequest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/" + HARDSHIP_ID))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -121,7 +151,8 @@ class HardshipIntegrationTest {
         wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
                 WireMock.badRequest()));
 
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET))
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("400 Bad Request from GET http://localhost:9999/hardship/" + HARDSHIP_ID));
     }
@@ -137,15 +168,23 @@ class HardshipIntegrationTest {
                 ResponseDefinitionBuilder.responseDefinition()
                         .withStatus(400).withBody(Json.write(errorDTO)).withHeader("Content-Type", "application/json")
         ));
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET))
+        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(errorMessage));
     }
 
     @Test
     void givenAEmptyContent_whenCreateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).contentType(APPLICATION_JSON).content("{}"))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).contentType(APPLICATION_JSON).content("{}")
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAEmptyOAuthToken_whenCreateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).contentType(APPLICATION_JSON).content("{}"))
+                .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -181,7 +220,8 @@ class HardshipIntegrationTest {
                                 HardshipReviewStatus.IN_PROGRESS)))
         ));
 
-        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
@@ -197,7 +237,8 @@ class HardshipIntegrationTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).contentType(APPLICATION_JSON).content(requestBody))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).contentType(APPLICATION_JSON).content(requestBody)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
     }
 
@@ -226,7 +267,8 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(TestModelDataBuilder.getFinancialAssessmentDTO()))));
 
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).content(requestBody).contentType(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.hardshipReviewId").value(1000));
         verify(exactly(1), postRequestedFor(urlEqualTo("/hardship")));
@@ -240,7 +282,8 @@ class HardshipIntegrationTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).contentType(APPLICATION_JSON).content(requestBody))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL).contentType(APPLICATION_JSON).content(requestBody)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
     }
 
@@ -259,7 +302,8 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(hardshipDetails))));
 
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALCULATE_HARDSHIP).content(requestBody).contentType(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.hardshipSummary").value(260));
@@ -272,14 +316,22 @@ class HardshipIntegrationTest {
 
         String requestBody = objectMapper.writeValueAsString(request);
 
-        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).contentType(APPLICATION_JSON).content(requestBody))
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL).contentType(APPLICATION_JSON).content(requestBody)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void givenAnEmptyContent_whenRollbackHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL + "/null").content("{}").contentType(APPLICATION_JSON))
+        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL + "/null").content("{}").contentType(APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAnEmptyOAuthToken_whenRollbackIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put(ENDPOINT_URL + "/rollback").content("{}").contentType(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -291,7 +343,8 @@ class HardshipIntegrationTest {
                 )
         );
 
-        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL_GET).contentType(APPLICATION_JSON).content(""))
+        mvc.perform(MockMvcRequestBuilders.patch(ENDPOINT_URL_GET).contentType(APPLICATION_JSON).content("")
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isOk());
         verify(exactly(1), patchRequestedFor(urlEqualTo("/hardship/" + HARDSHIP_ID)));
     }
@@ -301,7 +354,7 @@ class HardshipIntegrationTest {
         Map<String, Object> token = Map.of(
                 "expires_in", 3600,
                 "token_type", "Bearer",
-                "access_token", UUID.randomUUID()
+                "access_token", java.util.UUID.randomUUID()
         );
 
         wiremock.stubFor(
@@ -315,8 +368,15 @@ class HardshipIntegrationTest {
 
     @Test
     void givenAEmptyContent_whenCalculateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).contentType(APPLICATION_JSON).content("{}"))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).contentType(APPLICATION_JSON).content("{}")
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void givenAEmptyOAuthToken_whenCalculateHardshipIsInvoked_thenFailsWithUnauthorizedAccess() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).contentType(APPLICATION_JSON).content("{}"))
+                .andExpect(status().isUnauthorized()).andReturn();
     }
 
     @Test
@@ -331,7 +391,8 @@ class HardshipIntegrationTest {
                         .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
                         .withBody(objectMapper.writeValueAsString(BigDecimal.TEN))));
 
-        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).contentType(APPLICATION_JSON).content(requestBody))
+        mvc.perform(MockMvcRequestBuilders.post(ENDPOINT_URL_CALC_HARDSHIP).contentType(APPLICATION_JSON).content(requestBody)
+                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON)).andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.postHardshipDisposableIncome").value(-2380.0));

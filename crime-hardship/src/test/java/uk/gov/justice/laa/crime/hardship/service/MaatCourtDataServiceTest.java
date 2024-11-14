@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.client.MaatCourtDataApiClient;
@@ -63,6 +64,8 @@ class MaatCourtDataServiceTest {
 
     @Test
     void givenValidHardshipReviewId_whenGetHardshipIsInvoked_thenResponseIsReturned() {
+        ApiFindHardshipResponse expected = new ApiFindHardshipResponse();
+        when(maatCourtDataClient.getHardship(HARDSHIP_ID)).thenReturn(expected);
         maatCourtDataService.getHardship(HARDSHIP_ID);
         verify(maatCourtDataClient, times(1)).getHardship(HARDSHIP_ID);
     }

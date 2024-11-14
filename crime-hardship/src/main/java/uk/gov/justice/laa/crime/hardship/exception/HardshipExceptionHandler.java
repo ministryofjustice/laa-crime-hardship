@@ -20,7 +20,7 @@ import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 public class HardshipExceptionHandler {
 
     private final TraceIdHandler traceIdHandler;
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
     @ExceptionHandler(WebClientResponseException.class)
     public ResponseEntity<ErrorDTO> onRuntimeException(WebClientResponseException exception) {
