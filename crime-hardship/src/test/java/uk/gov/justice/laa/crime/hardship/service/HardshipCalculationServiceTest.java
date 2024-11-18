@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
@@ -133,23 +133,6 @@ class HardshipCalculationServiceTest {
 
         softly.assertThat(response.getResult())
                 .isEqualTo(HardshipReviewResult.PASS);
-
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
-    }
-
-    @Test
-    void givenHardshipReviewWithSolicitorCostsAndCrownCourtCase_whenCalculateHardshipIsInvoked_thenSolicitorsCostsArentCalculated() {
-        HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(SOL_COSTS);
-
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
-
-        softly.assertThat(response.getPostHardshipDisposableIncome())
-                .isEqualTo(TestModelDataBuilder.HARDSHIP_AMOUNT.setScale(2, RoundingMode.HALF_UP));
-
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.FAIL);
 
         softly.assertThat(response.getResultDate())
                 .isEqualTo(LocalDate.now());

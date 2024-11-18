@@ -1,10 +1,10 @@
 plugins {
     id "java"
     id "jacoco"
-    id "org.sonarqube" version "5.0.0.4638"
+    id "org.sonarqube" version "5.1.0.4882"
     id "info.solidsoft.pitest" version "1.15.0"
-    id "org.springframework.boot" version "3.1.5"
-    id 'io.spring.dependency-management' version '1.1.5'
+    id "org.springframework.boot" version "3.3.5"
+    id 'io.spring.dependency-management' version "1.1.6"
     id "org.jsonschema2dataclass" version "6.0.0"
 }
 
@@ -17,12 +17,14 @@ java {
 
 def versions = [
         pitest                      : "1.16.1",
-        springdocVersion            : "2.5.0",
-        crimeCommonsClasses         : "3.22.0",
-        commonsModSchemas           : "1.8.3",
-        commonsRestClient           : "3.4.0",
+        springdocVersion            : "2.6.0",
+        crimeCommonsClasses         : "3.33.0",
+        commonsModSchemas           : "1.17.0",
         springCloudStubRunnerVersion: "4.1.4",
-        postgresqlVersion           : "42.7.2"
+        sentryVersion               : "7.12.1",
+        resilience4jVersion         : "2.2.0",
+        postgresqlVersion           : "42.7.2",
+        commonsLang3Version         : "3.15.0"
 ]
 
 configurations {
@@ -37,26 +39,39 @@ repositories {
 
 dependencies {
 
-    implementation "uk.gov.justice.service.laa-crime:crime-commons-spring-boot-starter-rest-client:$versions.commonsRestClient:all"
-    implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
-    implementation "uk.gov.justice.service.laa-crime:crime-commons-mod-schemas:$versions.commonsModSchemas"
+    implementation platform("io.sentry:sentry-bom:$versions.sentryVersion")
+
+    implementation "io.sentry:sentry-spring-boot-starter-jakarta"
+    implementation "io.sentry:sentry-logback"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdocVersion"
+    implementation "org.apache.commons:commons-lang3:$versions.commonsLang3Version"
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4jVersion"
 
     implementation "org.postgresql:postgresql:$versions.postgresqlVersion"
     implementation "org.liquibase:liquibase-core"
-    implementation "io.micrometer:micrometer-registry-prometheus"
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdocVersion"
 
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
-    implementation "org.springframework.boot:spring-boot-starter-security"
-    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "io.micrometer:micrometer-registry-prometheus"
+    implementation "io.micrometer:micrometer-tracing"
+    implementation "io.micrometer:micrometer-tracing-bridge-brave"
+
+    implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
+    implementation "uk.gov.justice.service.laa-crime:crime-commons-mod-schemas:$versions.commonsModSchemas"
 
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation "com.h2database:h2"
     testImplementation "org.pitest:pitest:$versions.pitest"
     testImplementation "org.springframework.security:spring-security-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.cloud:spring-cloud-starter-contract-stub-runner:$versions.springCloudStubRunnerVersion"
 }
 

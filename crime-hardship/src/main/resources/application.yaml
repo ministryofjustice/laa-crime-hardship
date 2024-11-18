@@ -60,26 +60,37 @@ spring:
         jwt:
           issuer-uri: ${JWT_ISSUER_URI}
 
-retry-config:
-  max-retries: 3
-  min-back-off-period: 5
-  jitter-value: 0.75
+  autoconfigure:
+    exclude: org.springframework.boot.actuate.autoconfigure.tracing.zipkin.ZipkinAutoConfiguration
+
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadGateway
+          - org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests
+          - org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
+          - org.springframework.web.reactive.function.client.WebClientResponseException.GatewayTimeout
+
+    instances:
+      crimeMeansAssessmentService:
+        base-config: default
+      maatCourtDataService:
+        base-config: default
 
 services:
   maat-api:
-    base-url: ${MAAT_API_BASE_URL}
-    assessments-domain: ${services.maat-api.base-url}/api/internal/v1/assessment
-    hardship-endpoints:
-      hardship-detail-url: ${services.maat-api.assessments-domain}/hardship/repId/{repId}/detailType/{detailType}
-      persist-hardship-url: ${services.maat-api.assessments-domain}/hardship
-      hardship-url: ${services.maat-api.assessments-domain}/hardship/{hardshipId}
-    financial-assessment-endpoints:
-      search-url: ${services.maat-api.assessments-domain}/financial-assessments/{financialAssessmentId}
+    baseUrl: ${MAAT_API_BASE_URL}
+    registrationId: maat-api
   cma-api:
-    base-url: ${CMA_API_BASE_URL}
-    means-assessments-domain: ${services.cma-api.base-url}/api/internal/v1/assessment/means
-    cma-endpoints:
-      full-assessment-threshold-url: ${services.cma-api.means-assessments-domain}/fullAssessmentThreshold/{assessmentDate}
+    baseUrl: ${CMA_API_BASE_URL}
+    registrationId: cma
 
 springdoc:
   packagesToScan: uk.gov.justice.laa.crime.hardship
