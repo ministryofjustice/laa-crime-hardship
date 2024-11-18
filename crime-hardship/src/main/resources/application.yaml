@@ -109,4 +109,3 @@ sentry:
   send-default-pii: true
   attach-stacktrace: true
   sample-rate: ${SENTRY_SAMPLE_RATE}
-
