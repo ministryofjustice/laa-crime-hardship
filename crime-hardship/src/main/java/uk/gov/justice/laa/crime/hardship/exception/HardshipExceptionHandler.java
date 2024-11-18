@@ -14,6 +14,8 @@ import uk.gov.justice.laa.crime.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.exception.ValidationException;
 import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 
+import java.io.IOException;
+
 @Slf4j
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class HardshipExceptionHandler {
         try {
             ErrorDTO errorDTO = mapper.readValue(exception.getResponseBodyAsString(), ErrorDTO.class);
             errorMessage = errorDTO.getMessage();
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             log.warn("Unable to read the ErrorDTO from WebClientResponseException", ex);
             errorMessage = exception.getMessage();
         }

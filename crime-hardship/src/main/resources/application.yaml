@@ -68,7 +68,7 @@ resilience4j:
     configs:
       default:
         max-attempts: 3
-        wait-duration: 5s
+        wait-duration: 2s
         enableExponentialBackoff: true
         exponentialBackoffMultiplier: 2
         retry-exceptions:
@@ -109,3 +109,4 @@ sentry:
   send-default-pii: true
   attach-stacktrace: true
   sample-rate: ${SENTRY_SAMPLE_RATE}
+
