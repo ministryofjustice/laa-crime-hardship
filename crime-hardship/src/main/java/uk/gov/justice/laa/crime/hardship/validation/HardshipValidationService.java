@@ -38,14 +38,6 @@ public class HardshipValidationService {
             "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";
     public static final String EXPENDITURE_OR_DENIED_INCOME_ERROR =
             "Amount, Frequency, and Reason must be entered for each detail in section ";
-    public static final String PROGRESSION_ITEMS_ERROR =
-            "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress";
-
-    private static boolean progressionItemWithoutRequiredDateOrResponseOrDateTaken(HardshipProgress progression) {
-        return (nonNull(progression.getAction()) &&
-                (isNull(progression.getDateRequired()) || isNull(progression.getResponse()) ||
-                        isNull(progression.getDateTaken())));
-    }
 
     private static boolean expenditureWithoutAmountOrFrequencyOrReasonCode(ExtraExpenditure expenditure) {
         return (nonNull(expenditure.getItemCode()) &&
@@ -76,7 +68,6 @@ public class HardshipValidationService {
         validateSolicitorDetails(apiPerformHardshipRequest);
         validateDeniedIncome(apiPerformHardshipRequest);
         validateExpenditure(apiPerformHardshipRequest);
-        validateProgressionItems(apiPerformHardshipRequest);
         validateReviewDate(apiPerformHardshipRequest);
         if (requestType == RequestType.UPDATE) {
             validateUpdate(apiPerformHardshipRequest);
@@ -155,15 +146,6 @@ public class HardshipValidationService {
             if (expenditureWithoutAmountOrFrequencyOrReasonCode(expenditure)) {
                 throw new ValidationException(
                         EXPENDITURE_OR_DENIED_INCOME_ERROR + expenditure.getItemCode().getDescription());
-            }
-        });
-    }
-
-    private void validateProgressionItems(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        List<HardshipProgress> progressionItems = apiPerformHardshipRequest.getHardshipMetadata().getProgressItems();
-        Optional.ofNullable(progressionItems).orElse(List.of()).forEach(progression -> {
-            if (progressionItemWithoutRequiredDateOrResponseOrDateTaken(progression)) {
-                throw new ValidationException(PROGRESSION_ITEMS_ERROR);
             }
         });
     }

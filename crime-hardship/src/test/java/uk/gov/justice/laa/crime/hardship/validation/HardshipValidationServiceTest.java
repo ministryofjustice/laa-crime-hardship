@@ -289,26 +289,6 @@ class HardshipValidationServiceTest {
         );
     }
 
-    @ParameterizedTest
-    @MethodSource("progressionItemDataForValidationException")
-    void validateProgressionItem_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-
-        assertThatThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        ).isInstanceOf(ValidationException.class)
-                .hasMessage(
-                        "Date Taken, Response Required, and Date Required must be entered for each Action Taken in section Review Progress");
-    }
-
-    @ParameterizedTest
-    @MethodSource("progressionItemDataForNoValidationException")
-    void validateProgressionItem_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        configureStubs();
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
-    }
-
     private static Stream<Arguments> hardshipReviewStatusDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
@@ -465,75 +445,6 @@ class HardshipValidationServiceTest {
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(null),
                         TestModelDataBuilder.getHardshipMetadata()
-                ))
-        );
-    }
-
-    private static Stream<Arguments> progressionItemDataForValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                                .withProgressItems(
-                                        List.of(TestModelDataBuilder.getHardshipProgress()
-                                                .withAction(
-                                                        HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                                .withDateRequired(null)
-                                                .withResponse(
-                                                        HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                                .withDateTaken(LocalDateTime.now())))
-                )),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                        .withAction(
-                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                        .withDateRequired(LocalDateTime.now())
-                                        .withResponse(null)
-                                        .withDateTaken(LocalDateTime.now())))
-                )),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                        .withAction(
-                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                        .withDateRequired(LocalDateTime.now())
-                                        .withResponse(
-                                                HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                        .withDateTaken(null)))
-                ))
-        );
-    }
-
-    private static Stream<Arguments> progressionItemDataForNoValidationException() {
-        return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(
-                                TestModelDataBuilder.getMinimalHardshipReview(),
-                                TestModelDataBuilder.getHardshipMetadata()
-                                        .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                                .withAction(null)
-                                                .withDateRequired(null)
-                                                .withResponse(null)
-                                                .withDateTaken(null))
-                                        )
-                        ),
-                        Arguments.of(new ApiPerformHardshipRequest(
-                                TestModelDataBuilder.getMinimalHardshipReview(),
-                                TestModelDataBuilder.getHardshipMetadata().withProgressItems(null)
-                        ))
-                ),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                                .withProgressItems(List.of(TestModelDataBuilder.getHardshipProgress()
-                                        .withAction(
-                                                HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                                        .withDateRequired(LocalDateTime.now())
-                                        .withResponse(
-                                                HardshipReviewProgressResponse.ADDITIONAL_PROVIDED)
-                                        .withDateTaken(LocalDateTime.now())))
                 ))
         );
     }
