@@ -18,8 +18,8 @@ java {
 def versions = [
         pitest                      : "1.16.1",
         springdocVersion            : "2.6.0",
-        crimeCommonsClasses         : "3.33.0",
-        commonsModSchemas           : "1.17.0",
+        crimeCommonsClasses         : "4.1.0",
+        commonsModSchemas           : "1.22.0",
         springCloudStubRunnerVersion: "4.1.4",
         sentryVersion               : "7.12.1",
         resilience4jVersion         : "2.2.0",

@@ -135,31 +135,6 @@ class PersistHardshipMapperTest {
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(expected);
     }
-
-    @Test
-    void givenHardshipReviewDTOWithProgress_whenFromDtoIsInvoked_thenRequestIsMapped() {
-        HardshipMetadata metadata = reviewDTO.getHardshipMetadata();
-        HardshipProgress progress = TestModelDataBuilder.getHardshipProgress();
-        metadata.setProgressItems(List.of(progress));
-
-        ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
-
-        List<ApiHardshipProgress> expected = List.of(
-                new ApiHardshipProgress()
-                        .withProgressAction(progress.getAction())
-                        .withProgressResponse(progress.getResponse())
-                        .withDateRequested(progress.getDateTaken())
-                        .withDateCompleted(progress.getDateCompleted())
-                        .withDateRequired(progress.getDateRequired())
-                        .withUserCreated(metadata.getUserSession().getUserName())
-        );
-
-        assertThat(request.getReviewProgressItems())
-                .asList()
-                .usingRecursiveFieldByFieldElementComparator()
-                .containsAll(expected);
-
-    }
     @Test
     void givenHardshipReviewDTOWithoutSolicitorCosts_whenFromDtoIsInvoked_thenRequestIsMapped() {
         HardshipReview hardship = reviewDTO.getHardship();

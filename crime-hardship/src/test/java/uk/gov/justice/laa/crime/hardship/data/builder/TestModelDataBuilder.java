@@ -13,7 +13,6 @@ import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -101,8 +100,7 @@ public class TestModelDataBuilder {
                 .withNewWorkReason(NewWorkReason.PRI)
                 .withSolicitorCosts(TestModelDataBuilder.getSolicitorsCosts())
                 .withStatus(HardshipReviewStatus.COMPLETE)
-                .withReviewDetails(getApiHardshipReviewDetails(BigDecimal.valueOf(99.99), HardshipReviewDetailType.EXPENDITURE))
-                .withReviewProgressItems(null);
+                .withReviewDetails(getApiHardshipReviewDetails(BigDecimal.valueOf(99.99), HardshipReviewDetailType.EXPENDITURE));
     }
 
     public static HardshipReview getMinimalHardshipReview() {
@@ -170,20 +168,6 @@ public class TestModelDataBuilder {
                 .withFrequency(Frequency.TWO_WEEKLY)
                 .withReasonCode(HardshipReviewDetailReason.ESSENTIAL_ITEM)
                 .withItemCode(ExtraExpenditureDetailCode.CARDS);
-    }
-
-    public static HardshipProgress getHardshipProgress() {
-        return new HardshipProgress()
-                .withDateTaken(LocalDateTime.of(
-                        LocalDate.ofYearDay(2022, 235), LocalTime.NOON))
-                .withDateCompleted(LocalDateTime.of(
-                        LocalDate.ofYearDay(2022, 250), LocalTime.NOON)
-                )
-                .withDateRequired(LocalDateTime.of(
-                        LocalDate.ofYearDay(2022, 300), LocalTime.NOON)
-                )
-                .withAction(HardshipReviewProgressAction.ADDITIONAL_EVIDENCE)
-                .withResponse(HardshipReviewProgressResponse.ADDITIONAL_PROVIDED);
     }
 
     public static ApiUserSession getUserSession() {

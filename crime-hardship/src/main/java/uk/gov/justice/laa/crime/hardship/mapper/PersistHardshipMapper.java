@@ -2,7 +2,6 @@ package uk.gov.justice.laa.crime.hardship.mapper;
 
 import org.springframework.stereotype.Component;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipProgress;
 import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
 import uk.gov.justice.laa.crime.common.model.hardship.ExtraExpenditure;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
@@ -74,7 +73,6 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                 .withDisposableIncomeAfterHardship(
                         isResult ? hardshipResult.getPostHardshipDisposableIncome() : null
                 )
-                .withReviewProgressItems(convertHardshipProgress(metadata))
                 .withReviewDetails(convertHardshipDetails(hardship, metadata.getUserSession().getUserName()));
     }
 
@@ -119,18 +117,6 @@ public class PersistHardshipMapper implements RequestMapper<ApiPersistHardshipRe
                     .withAccepted("Y"));
         }
         return apiHardshipDetails;
-    }
-
-    private List<ApiHardshipProgress> convertHardshipProgress(HardshipMetadata metadata) {
-        return metadata.getProgressItems().stream()
-                .map(item -> new ApiHardshipProgress()
-                        .withDateRequested(item.getDateTaken())
-                        .withDateRequired(item.getDateRequired())
-                        .withDateCompleted(item.getDateCompleted())
-                        .withProgressAction(item.getAction())
-                        .withProgressResponse(item.getResponse())
-                        .withUserCreated(metadata.getUserSession().getUserName())
-                ).toList();
     }
 
     public void toDto(ApiPersistHardshipResponse response, HardshipReviewDTO reviewDTO) {
