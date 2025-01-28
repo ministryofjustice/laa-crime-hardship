@@ -73,8 +73,7 @@ public class HardshipController {
     public ResponseEntity<ApiFindHardshipResponse> find(
             @PathVariable int hardshipReviewId) {
         log.info("Request received to retrieve hardship review: {}", hardshipReviewId);
-        throw new RuntimeException("Testing Sentry");
-        //return ResponseEntity.ok(hardshipService.find(hardshipReviewId));
+        return ResponseEntity.ok(hardshipService.find(hardshipReviewId));
     }
 
 
