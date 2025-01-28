@@ -99,7 +99,7 @@ You will need to build the artifacts for the source code, using `gradle`.
 The apps should then start up cleanly if you run
 
 ```sh
-./startup-local.sh
+./start-local.sh
 ```
 
 laa-crime-hardship application will be running on http://localhost:8289
