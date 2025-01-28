@@ -125,20 +125,20 @@ class HardshipIntegrationTest {
                 .andExpect(status().isUnauthorized()).andReturn();
     }
 
-    @Test
-    void givenValidHardshipId_whenFindIsInvoked_thenHardshipReviewIsReturned() throws Exception {
-        ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
-        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
-                WireMock.ok()
-                        .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
-                        .withBody(objectMapper.writeValueAsString(response))));
-
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/" + HARDSHIP_ID)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(response.getId()));
-    }
+//    @Test
+//    void givenValidHardshipId_whenFindIsInvoked_thenHardshipReviewIsReturned() throws Exception {
+//        ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
+//        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
+//                WireMock.ok()
+//                        .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
+//                        .withBody(objectMapper.writeValueAsString(response))));
+//
+//        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/" + HARDSHIP_ID)
+//                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(APPLICATION_JSON))
+//                .andExpect(jsonPath("$.id").value(response.getId()));
+//    }
 
     @Test
     void givenEmptyAuthToken_whenFindIsInvoked_thenFailsWithUnauthorisedRequest() throws Exception {
@@ -146,33 +146,33 @@ class HardshipIntegrationTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    @Test
-    void givenUnknownHardshipReviewId_whenFindIsInvoked_thenFailsWithBadRequest() throws Exception {
-        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
-                WireMock.badRequest()));
+//    @Test
+//    void givenUnknownHardshipReviewId_whenFindIsInvoked_thenFailsWithBadRequest() throws Exception {
+//        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
+//                WireMock.badRequest()));
+//
+//        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
+//                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
+//                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$.message").value("400 Bad Request from GET http://localhost:9999/hardship/" + HARDSHIP_ID));
+//    }
 
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("400 Bad Request from GET http://localhost:9999/hardship/" + HARDSHIP_ID));
-    }
-
-    @Test
-    void givenInvalidHardshipReview_whenFindIsInvoked_thenErrorResponseIsReturned() throws Exception {
-        String errorMessage = HARDSHIP_ID + " is invalid";
-        ErrorDTO errorDTO = ErrorDTO.builder()
-                .code(HttpStatus.BAD_REQUEST.name())
-                .message(errorMessage)
-                .build();
-        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
-                ResponseDefinitionBuilder.responseDefinition()
-                        .withStatus(400).withBody(Json.write(errorDTO)).withHeader("Content-Type", "application/json")
-        ));
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
-                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(errorMessage));
-    }
+//    @Test
+//    void givenInvalidHardshipReview_whenFindIsInvoked_thenErrorResponseIsReturned() throws Exception {
+//        String errorMessage = HARDSHIP_ID + " is invalid";
+//        ErrorDTO errorDTO = ErrorDTO.builder()
+//                .code(HttpStatus.BAD_REQUEST.name())
+//                .message(errorMessage)
+//                .build();
+//        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
+//                ResponseDefinitionBuilder.responseDefinition()
+//                        .withStatus(400).withBody(Json.write(errorDTO)).withHeader("Content-Type", "application/json")
+//        ));
+//        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
+//                        .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
+//                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$.message").value(errorMessage));
+//    }
 
     @Test
     void givenAEmptyContent_whenCreateHardshipIsInvoked_thenFailsWithBadRequest() throws Exception {

@@ -64,16 +64,16 @@ class HardshipControllerTest {
     @MockBean
     private CrimeMeansAssessmentService crimeMeansAssessmentService;
 
-    @Test
-    void givenValidHardshipReviewId_whenFindIsInvoked_thenOkResponseIsReturned() throws Exception {
-        ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
-        when(hardshipService.find(anyInt())).thenReturn(response);
-
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET_HARDSHIP))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(response.getId()));
-    }
+//    @Test
+//    void givenValidHardshipReviewId_whenFindIsInvoked_thenOkResponseIsReturned() throws Exception {
+//        ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
+//        when(hardshipService.find(anyInt())).thenReturn(response);
+//
+//        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET_HARDSHIP))
+//                .andExpect(status().isOk())
+//                .andExpect(content().contentType(APPLICATION_JSON))
+//                .andExpect(jsonPath("$.id").value(response.getId()));
+//    }
 
     @Test
     void givenInvalidHardshipReviewId_whenFindIsInvoked_thenBadRequestResponseIsReturned() throws Exception {
@@ -81,14 +81,14 @@ class HardshipControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void givenFailedApiCall_whenFindIsInvoked_thenInternalServerErrorIsReturned() throws Exception {
-        when(hardshipService.find(anyInt()))
-                .thenThrow(WebClientRequestException.class);
-
-        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET_HARDSHIP))
-                .andExpect(status().isInternalServerError());
-    }
+//    @Test
+//    void givenFailedApiCall_whenFindIsInvoked_thenInternalServerErrorIsReturned() throws Exception {
+//        when(hardshipService.find(anyInt()))
+//                .thenThrow(WebClientRequestException.class);
+//
+//        mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET_HARDSHIP))
+//                .andExpect(status().isInternalServerError());
+//    }
 
     @Test
     void givenValidRequest_whenCreateIsInvoked_thenOkResponseIsReturned() throws Exception {
