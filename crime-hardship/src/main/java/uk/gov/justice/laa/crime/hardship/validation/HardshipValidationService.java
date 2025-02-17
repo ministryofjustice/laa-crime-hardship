@@ -99,7 +99,14 @@ public class HardshipValidationService {
         var fullAssessmentDate = financialAssessment.getFullAssessmentDate();
         var assessmentDate = fullAssessmentDate != null ? fullAssessmentDate : initialAssessmentDate;
 
+        log.info("--- About to validate review date ---");
+        log.info("--- Initial assessment date: {}", initialAssessmentDate);
+        log.info("--- Full assessment date: {}", fullAssessmentDate);
+        log.info("--- Assessment date being used: {}", assessmentDate);
+        log.info("--- Review date: {}", reviewDate);
+
         if (reviewDate.isBefore(assessmentDate)) {
+            log.info("--- Review date is before assessment date, failing...");
             throw new ValidationException(REVIEW_DATE_ERROR);
         }
 
