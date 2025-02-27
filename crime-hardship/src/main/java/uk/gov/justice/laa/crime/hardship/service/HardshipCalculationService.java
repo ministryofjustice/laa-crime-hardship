@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static uk.gov.justice.laa.crime.enums.HardshipReviewResult.FAIL;
@@ -48,7 +49,7 @@ public class HardshipCalculationService {
                 estimatedTotal = solicitorCosts.getRate()
                         .multiply(solicitorCosts.getHours())
                         .add(solicitorCosts.getVat())
-                        .add(solicitorCosts.getDisbursements() == null ? BigDecimal.ZERO : solicitorCosts.getDisbursements());
+                        .add(Optional.ofNullable(solicitorCosts.getDisbursements()).orElse(BigDecimal.ZERO));
                 solicitorCosts.setEstimatedTotal(estimatedTotal);
             }
             total = total.add(estimatedTotal);
