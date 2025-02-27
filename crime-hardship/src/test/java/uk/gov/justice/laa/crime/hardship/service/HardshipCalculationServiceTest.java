@@ -159,6 +159,25 @@ class HardshipCalculationServiceTest {
     }
 
     @Test
+    void givenHardshipReviewWithSolicitorCostsAndNullDisbursements_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
+        HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
+
+        hardship.getSolicitorCosts().setDisbursements(null);
+
+        HardshipResult response =
+                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+
+        softly.assertThat(response.getPostHardshipDisposableIncome())
+                .isEqualTo(BigDecimal.valueOf(-5250.0).setScale(2, RoundingMode.HALF_UP));
+
+        softly.assertThat(response.getResult())
+                .isEqualTo(HardshipReviewResult.PASS);
+
+        softly.assertThat(response.getResultDate())
+                .isEqualTo(LocalDate.now());
+    }
+
+    @Test
     void givenHardshipReviewWithSolicitorCosts_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
 
