@@ -48,7 +48,7 @@ public class HardshipCalculationService {
                 estimatedTotal = solicitorCosts.getRate()
                         .multiply(solicitorCosts.getHours())
                         .add(solicitorCosts.getVat())
-                        .add(solicitorCosts.getDisbursements());
+                        .add(solicitorCosts.getDisbursements() == null ? BigDecimal.ZERO : solicitorCosts.getDisbursements());
                 solicitorCosts.setEstimatedTotal(estimatedTotal);
             }
             total = total.add(estimatedTotal);
