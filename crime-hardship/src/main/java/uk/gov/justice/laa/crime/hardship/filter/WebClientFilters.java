@@ -14,9 +14,9 @@ public class WebClientFilters {
     public static ExchangeFilterFunction logResponse() {
         return ExchangeFilterFunction.ofResponseProcessor(clientResponse -> {
             if (clientResponse.statusCode().is4xxClientError() || clientResponse.statusCode().is5xxServerError()) {
-                log.info("❌  Response status: {}", clientResponse.statusCode());
+                log.error("❌  Response status: {}", clientResponse.statusCode());
             } else if (clientResponse.statusCode().is2xxSuccessful()) {
-                log.error("✅ Response status: {}", clientResponse.statusCode());
+                log.info("✅ Response status: {}", clientResponse.statusCode());
             }
             return Mono.just(clientResponse);
         });
