@@ -23,7 +23,7 @@ public class Resilience4jRetryFilter implements ExchangeFilterFunction {
                 .collect(java.util.stream.Collectors.toSet());
 
         String retryName = availableRetries.contains(clientName) ? clientName : DEFAULT_RETRY;
-        this.retry = retryRegistry.retry(retryName);
+        retry = retryRegistry.retry(retryName);
 
         retry.getEventPublisher()
                 .onSuccess(event ->
