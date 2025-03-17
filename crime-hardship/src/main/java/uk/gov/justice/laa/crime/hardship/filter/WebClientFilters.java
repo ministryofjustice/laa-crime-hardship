@@ -2,6 +2,7 @@ package uk.gov.justice.laa.crime.hardship.filter;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -27,7 +28,7 @@ public class WebClientFilters {
             log.info("Request: {} {}", clientRequest.method(), clientRequest.url());
             clientRequest.headers()
                     .forEach((name, values) -> {
-                        if (!name.equals("Authorization")) {
+                        if (!name.equals(HttpHeaders.AUTHORIZATION)) {
                             values.forEach(value -> log.info("{}={}", name, value));
                         }
                     });
