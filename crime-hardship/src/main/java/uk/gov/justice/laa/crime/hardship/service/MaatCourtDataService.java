@@ -1,11 +1,8 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
@@ -26,9 +23,7 @@ public class MaatCourtDataService {
 
     public List<ApiHardshipDetail> getHardshipByDetailType(Integer repId, String detailType) {
         log.debug("Request to get hardship details for repId: {} and detailType: {}", repId, detailType);
-        List<ApiHardshipDetail> response = maatCourtDataApiClient.getHardshipDetails(repId, detailType)
-                .onErrorResume(WebClientResponseException.NotFound.class, notFound -> Mono.empty())
-                .block();
+        List<ApiHardshipDetail> response = maatCourtDataApiClient.getHardshipDetails(repId, detailType);
         log.debug(RESPONSE_STRING, response);
         return response;
     }

@@ -132,6 +132,7 @@ public class WebClientsConfiguration {
         filters.add(retryFilter);
         filters.add(oauthFilter);
         filters.add(WebClientFilters.errorResponseHandler());
+        filters.add(WebClientFilters.handleNotFoundResponse());
         filters.add(WebClientFilters.logResponse());
     }
 }

@@ -35,6 +35,16 @@ public class WebClientFilters {
         };
     }
 
+    public static ExchangeFilterFunction handleNotFoundResponse() {
+        return ExchangeFilterFunction.ofResponseProcessor(response -> {
+            if (response.statusCode() == HttpStatus.NOT_FOUND) {
+                // Create a synthetic successful response (200 OK) with an empty body.
+                return Mono.just(ClientResponse.create(HttpStatus.OK).build());
+            }
+            return Mono.just(response);
+        });
+    }
+
     public static ExchangeFilterFunction errorResponseHandler() {
         return ExchangeFilterFunction.ofResponseProcessor(response -> {
             if (response.statusCode().is4xxClientError() || response.statusCode().is5xxServerError()) {

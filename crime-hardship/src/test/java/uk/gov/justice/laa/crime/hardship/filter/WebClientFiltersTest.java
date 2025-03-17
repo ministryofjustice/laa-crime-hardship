@@ -88,4 +88,36 @@ class WebClientFiltersTest {
         assertThatThrownBy(result::block)
                 .isInstanceOf(WebClientResponseException.class);
     }
+
+    @Test
+    void givenNotFoundResponse_whenHandleNotFoundResponseApplied_thenReturnsSyntheticResponse() {
+        // given
+        ClientResponse notFoundResponse = ClientResponse.create(HttpStatus.NOT_FOUND)
+                .header("X-Test", "value")
+                .build();
+
+        // when
+        Mono<ClientResponse> result = WebClientFilters.handleNotFoundResponse()
+                .filter(CLIENT_REQUEST, req -> Mono.just(notFoundResponse));
+        ClientResponse syntheticResponse = result.block();
+
+        // then
+        assertThat(syntheticResponse).isNotNull();
+        assertThat(syntheticResponse.statusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    void givenNonNotFoundResponse_whenHandleNotFoundResponseApplied_thenResponseIsUnchanged() {
+        // given
+        ClientResponse errorResponse = ClientResponse.create(HttpStatus.BAD_REQUEST).build();
+
+        // when
+        Mono<ClientResponse> result = WebClientFilters.handleNotFoundResponse()
+                .filter(CLIENT_REQUEST, req -> Mono.just(errorResponse));
+        ClientResponse response = result.block();
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }
