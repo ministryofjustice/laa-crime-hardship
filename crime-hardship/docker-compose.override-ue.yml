@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+  app:
+    environment:
+      - DATASOURCE_HOST_PORT=postgres:5432
+      - DATASOURCE_DBNAME=crime_hardship
+      - DATASOURCE_USERNAME=postgres
+      - DATASOURCE_PASSWORD=postgres
+      - SENTRY_ENV=development
+      - SENTRY_SAMPLE_RATE=0.0
+      - LOG_LEVEL=DEBUG
+    env_file:
+      - app.env
+    ports:
+      - "8181:8181"
+    command: java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8181 -jar app.jar
+
+  postgres:
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=crime_hardship
