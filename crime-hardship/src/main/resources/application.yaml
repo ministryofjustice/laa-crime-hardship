@@ -17,6 +17,7 @@ management:
   tracing:
     propagation:
       type: w3c,b3
+    enabled: true
 
 spring:
   datasource:
@@ -79,9 +80,9 @@ resilience4j:
           - org.springframework.web.reactive.function.client.WebClientResponseException.GatewayTimeout
 
     instances:
-      crimeMeansAssessmentService:
+      meansAssessmentWebClient:
         base-config: default
-      maatCourtDataService:
+      maatCourtDataWebClient:
         base-config: default
 
 services:

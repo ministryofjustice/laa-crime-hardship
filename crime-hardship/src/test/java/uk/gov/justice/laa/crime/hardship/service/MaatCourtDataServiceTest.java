@@ -5,21 +5,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
 import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.hardship.client.MaatCourtDataApiClient;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.DETAIL_TYPE;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.HARDSHIP_ID;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_REP_ID;
+import static org.mockito.Mockito.*;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.*;
 
 @ExtendWith(MockitoExtension.class)
 class MaatCourtDataServiceTest {
@@ -33,15 +29,7 @@ class MaatCourtDataServiceTest {
     @Test
     void givenAValidRepId_whenGetHardshipByDetailTypeIsInvoked_thenResponseIsReturned() {
         when(maatCourtDataClient.getHardshipDetails(TEST_REP_ID, DETAIL_TYPE))
-                .thenReturn(Mono.empty());
-        maatCourtDataService.getHardshipByDetailType(TEST_REP_ID, DETAIL_TYPE);
-        verify(maatCourtDataClient, times(1)).getHardshipDetails(TEST_REP_ID, DETAIL_TYPE);
-    }
-
-    @Test
-    void givenHardshipNotFound_whenGetHardshipByDetailTypeIsInvoked_thenResponseIsReturned() {
-        when(maatCourtDataClient.getHardshipDetails(TEST_REP_ID, DETAIL_TYPE))
-                .thenReturn(Mono.error(WebClientResponseException.create(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), null, null, null)));
+                .thenReturn(List.of(new ApiHardshipDetail()));
         maatCourtDataService.getHardshipByDetailType(TEST_REP_ID, DETAIL_TYPE);
         verify(maatCourtDataClient, times(1)).getHardshipDetails(TEST_REP_ID, DETAIL_TYPE);
     }
