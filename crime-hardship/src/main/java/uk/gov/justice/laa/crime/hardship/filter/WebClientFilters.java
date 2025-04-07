@@ -40,7 +40,8 @@ public class WebClientFilters {
         return ExchangeFilterFunction.ofResponseProcessor(response -> {
             if (response.statusCode() == HttpStatus.NOT_FOUND) {
                 // Create a synthetic successful response (200 OK) with an empty body.
-                return Mono.just(ClientResponse.create(HttpStatus.OK).build());
+                return response.bodyToMono(Void.class)
+                        .then(Mono.just(ClientResponse.create(HttpStatus.OK).build()));
             }
             return Mono.just(response);
         });
