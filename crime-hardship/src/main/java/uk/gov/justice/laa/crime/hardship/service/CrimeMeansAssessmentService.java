@@ -1,6 +1,5 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
-import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,12 +13,9 @@ import java.time.format.DateTimeFormatter;
 @Service
 @RequiredArgsConstructor
 public class CrimeMeansAssessmentService {
-
-    private static final String SERVICE_NAME = "crimeMeansAssessmentService";
-    private static final String RESPONSE_STRING = "Response from CMA API: {}";
     private final MeansAssessmentApiClient cmaApiClient;
+    private static final String RESPONSE_STRING = "Response from CMA API: {}";
 
-    @Retry(name = SERVICE_NAME)
     public BigDecimal getFullAssessmentThreshold(LocalDateTime assessmentDate) {
         BigDecimal response = cmaApiClient.find(assessmentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         log.info(RESPONSE_STRING, response);
