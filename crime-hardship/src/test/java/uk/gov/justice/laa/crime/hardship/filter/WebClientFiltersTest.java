@@ -1,6 +1,8 @@
 package uk.gov.justice.laa.crime.hardship.filter;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.ClientRequest;
@@ -75,11 +77,11 @@ class WebClientFiltersTest {
         assertThat(filteredResponse.statusCode()).isEqualTo(HttpStatus.OK);
     }
 
-    @Test
-    void givenErrorResponse_whenErrorResponseHandlerApplied_thenThrowsWebClientResponseException() {
+    @ParameterizedTest
+    @ValueSource(ints = {400, 500})
+    void givenErrorResponse_whenErrorResponseHandlerApplied_thenThrowsWebClientResponseException(int statusCode) {
         // given
-        ClientResponse errorResponse = ClientResponse.create(HttpStatus.BAD_REQUEST).build();
-
+        ClientResponse errorResponse = ClientResponse.create(HttpStatus.valueOf(statusCode)).build();
         // when
         Mono<ClientResponse> result = WebClientFilters.errorResponseHandler()
                 .filter(CLIENT_REQUEST, req -> Mono.just(errorResponse));
