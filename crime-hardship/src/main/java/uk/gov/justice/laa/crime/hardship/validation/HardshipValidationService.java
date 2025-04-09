@@ -53,7 +53,7 @@ public class HardshipValidationService {
 
     private static boolean solicitorRateSpecifiedWithoutSolicitorHours(BigDecimal solicitorRate,
                                                                        BigDecimal solicitorHours) {
-        return (solicitorRate.compareTo(BigDecimal.ZERO) > 0) && (solicitorHours.intValue() == 0);
+        return (solicitorRate.compareTo(BigDecimal.ZERO) > 0) && (solicitorHours.compareTo(BigDecimal.ZERO) == 0);
     }
 
     private static boolean deniedIncomeWithoutAmountOrFrequencyOrReasonNote(DeniedIncome deniedIncome) {
