@@ -4,7 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import uk.gov.justice.laa.crime.common.model.hardship.*;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
+import uk.gov.justice.laa.crime.common.model.hardship.ExtraExpenditure;
 import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
 import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.exception.ValidationException;
@@ -119,14 +122,14 @@ public class HardshipValidationService {
 
     private void validateSolicitorDetails(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         var solicitorCosts = apiPerformHardshipRequest.getHardship().getSolicitorCosts();
-        var solicitorRate = BigDecimal.ZERO;
-        var solicitorHours = BigDecimal.ZERO;
         if (solicitorCosts != null) {
-            solicitorRate = Optional.ofNullable(solicitorCosts.getRate()).orElse(BigDecimal.ZERO);
-            solicitorHours = Optional.ofNullable(solicitorCosts.getHours()).orElse(BigDecimal.ZERO);
-        }
-        if (solicitorRateSpecifiedWithoutSolicitorHours(solicitorRate, solicitorHours)) {
-            throw new ValidationException(SOLICITOR_DETAILS_ERROR);
+            var solicitorRate = Optional.ofNullable(solicitorCosts.getRate())
+                    .orElse(BigDecimal.ZERO);
+            var solicitorHours = Optional.ofNullable(solicitorCosts.getHours())
+                    .orElse(BigDecimal.ZERO);
+            if (solicitorRateSpecifiedWithoutSolicitorHours(solicitorRate, solicitorHours)) {
+                throw new ValidationException(SOLICITOR_DETAILS_ERROR);
+            }
         }
     }
 
