@@ -304,22 +304,37 @@ class HardshipValidationServiceTest {
 
     private static Stream<Arguments> solicitorDataForNoValidationException() {
         return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview()
-                        .withSolicitorCosts(new SolicitorCosts().withRate(
-                                BigDecimal.ZERO).withHours(BigDecimal.ZERO))
-                        .withReviewDate(LocalDateTime.now()),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview()
+                                .withSolicitorCosts(
+                                        new SolicitorCosts()
+                                                .withRate(BigDecimal.ZERO)
+                                                .withHours(BigDecimal.ZERO))
+                                .withReviewDate(LocalDateTime.now()),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(
-                                new SolicitorCosts().withRate(null)
-                                        .withHours(BigDecimal.ZERO))
-                        .withReviewDate(LocalDateTime.now()),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview()
+                                .withSolicitorCosts(
+                                        new SolicitorCosts()
+                                                .withRate(null)
+                                                .withHours(BigDecimal.ZERO))
+                                .withReviewDate(LocalDateTime.now()),
                         TestModelDataBuilder.getHardshipMetadata()
                 )),
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview()
-                        .withSolicitorCosts(null)
-                        .withReviewDate(LocalDateTime.now()),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview()
+                                .withSolicitorCosts(null)
+                                .withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata()
+                )),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview()
+                                .withSolicitorCosts(
+                                        new SolicitorCosts()
+                                                .withRate(BigDecimal.ONE)
+                                                .withHours(BigDecimal.valueOf(0.5)))
+                                .withReviewDate(LocalDateTime.now()),
                         TestModelDataBuilder.getHardshipMetadata()
                 ))
         );
