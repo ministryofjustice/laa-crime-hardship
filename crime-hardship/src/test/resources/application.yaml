@@ -48,6 +48,21 @@ springdoc:
 swagger-ui:
   path: /open-api/docs.html
 
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadGateway
+          - org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests
+          - org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
+          - org.springframework.web.reactive.function.client.WebClientResponseException.GatewayTimeout
+
 services:
   maat-api:
     baseUrl: ${MAAT_API_BASE_URL:http://localhost:9999}
@@ -55,11 +70,3 @@ services:
   cma-api:
     baseUrl: ${CMA_API_BASE_URL:http://localhost:9999}
     registrationId: cma
-
-crime-hardship:
-  security:
-    issuer-uri: http://localhost:${server.port}
-
-feature:
-  postMvp:
-    enabled: false
