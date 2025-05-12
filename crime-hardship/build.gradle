@@ -20,11 +20,11 @@ def versions = [
         springdocVersion            : "2.6.0",
         crimeCommonsClasses         : "4.7.1",
         commonsModSchemas           : "1.26.1",
-        springCloudStubRunnerVersion: "4.1.4",
         sentryVersion               : "7.12.1",
         resilience4jVersion         : "2.2.0",
         postgresqlVersion           : "42.7.2",
-        commonsLang3Version         : "3.15.0"
+        commonsLang3Version         : "3.15.0",
+        wiremock                    : "3.10.0"
 ]
 
 configurations {
@@ -57,11 +57,11 @@ dependencies {
     implementation "io.github.resilience4j:resilience4j-reactor:$versions.resilience4jVersion"
     implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4jVersion"
 
-    implementation "org.postgresql:postgresql:$versions.postgresqlVersion"
     implementation "org.liquibase:liquibase-core"
+    implementation "org.postgresql:postgresql:$versions.postgresqlVersion"
 
-    implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "io.micrometer:micrometer-tracing"
+    implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "io.micrometer:micrometer-tracing-bridge-brave"
 
     implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
@@ -76,7 +76,8 @@ dependencies {
     testImplementation "org.pitest:pitest:$versions.pitest"
     testImplementation "org.springframework.security:spring-security-test"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.springframework.cloud:spring-cloud-starter-contract-stub-runner:$versions.springCloudStubRunnerVersion"
+    testImplementation "org.wiremock.integrations:wiremock-spring-boot:${versions.wiremock}"
+
 
     testCompileOnly "org.projectlombok:lombok"
     testAnnotationProcessor "org.projectlombok:lombok"

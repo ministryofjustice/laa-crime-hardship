@@ -6,13 +6,11 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.Json;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,6 +21,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.wiremock.spring.EnableWireMock;
+import org.wiremock.spring.InjectWireMock;
 import uk.gov.justice.laa.crime.common.model.hardship.*;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.dto.ErrorDTO;
@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -46,11 +47,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
 import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.*;
 
+@EnableWireMock
 @DirtiesContext
+@AutoConfigureObservability
 @Import(CrimeHardshipTestConfiguration.class)
 @SpringBootTest(classes = CrimeHardshipApplication.class, webEnvironment = DEFINED_PORT)
-@AutoConfigureObservability
-@AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
     private MockMvc mvc;
@@ -62,8 +63,8 @@ class HardshipIntegrationTest {
     private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship-for-detail");
     private static final String ENDPOINT_URL_CALC_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship");
 
-    @Autowired
-    private WireMockServer wiremock;
+    @InjectWireMock
+    private static WireMockServer wiremock;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -77,10 +78,6 @@ class HardshipIntegrationTest {
     @MockitoBean
     private TraceIdHandler traceIdHandler;
 
-    @AfterEach
-    void after() {
-        wiremock.resetAll();
-    }
 
     @BeforeEach
     void setup() throws JsonProcessingException {
@@ -118,10 +115,11 @@ class HardshipIntegrationTest {
     @Test
     void givenValidHardshipId_whenFindIsInvoked_thenHardshipReviewIsReturned() throws Exception {
         ApiFindHardshipResponse response = TestModelDataBuilder.getApiFindHardshipResponse();
-        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID)).willReturn(
-                WireMock.ok()
-                        .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
-                        .withBody(objectMapper.writeValueAsString(response))));
+        wiremock.stubFor(get(urlEqualTo("/hardship/" + HARDSHIP_ID))
+                                 .willReturn(
+                                         WireMock.ok()
+                                                 .withHeader("Content-Type", String.valueOf(APPLICATION_JSON))
+                                                 .withBody(objectMapper.writeValueAsString(response))));
 
         mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL + "/" + HARDSHIP_ID)
                         .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
@@ -144,7 +142,8 @@ class HardshipIntegrationTest {
         mvc.perform(MockMvcRequestBuilders.get(ENDPOINT_URL_GET)
                         .header(HttpHeaders.AUTHORIZATION, BEARER_TOKEN))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("400 Bad Request from GET http://localhost:9999/hardship/" + HARDSHIP_ID));
+                .andExpect(jsonPath("$.message", containsString("400 Bad Request")))
+                .andExpect(jsonPath("$.message", containsString("/hardship/" + HARDSHIP_ID)));
     }
 
     @Test
