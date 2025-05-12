@@ -12,25 +12,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
-import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipRequest;
-import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
-import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
-import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
-import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
-import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
-import uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts;
+import uk.gov.justice.laa.crime.common.model.hardship.*;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
 import uk.gov.justice.laa.crime.dto.ErrorDTO;
 import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
@@ -48,13 +41,10 @@ import java.util.Map;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.DETAIL_TYPE;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.HARDSHIP_ID;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_REP_ID;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.*;
 
 @DirtiesContext
 @Import(CrimeHardshipTestConfiguration.class)
@@ -63,12 +53,12 @@ import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilde
 @AutoConfigureWireMock(port = 9999)
 class HardshipIntegrationTest {
 
-    public static final String BEARER_TOKEN = "Bearer token";
     private MockMvc mvc;
 
-    public static final String ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD = "/fullAssessmentThreshold/";
+    private static final String BEARER_TOKEN = "Bearer token";
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
-    public static final String ENDPOINT_URL_GET = ENDPOINT_URL + "/" + HARDSHIP_ID;
+    private static final String ENDPOINT_URL_GET = ENDPOINT_URL + "/" + HARDSHIP_ID;
+    private static final String ENDPOINT_URL_FULL_ASSESSMENT_THRESHOLD = "/fullAssessmentThreshold/";
     private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship-for-detail");
     private static final String ENDPOINT_URL_CALC_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship");
 
@@ -84,7 +74,7 @@ class HardshipIntegrationTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
-    @MockBean
+    @MockitoBean
     private TraceIdHandler traceIdHandler;
 
     @AfterEach
@@ -93,7 +83,7 @@ class HardshipIntegrationTest {
     }
 
     @BeforeEach
-    public void setup() throws JsonProcessingException {
+    void setup() throws JsonProcessingException {
         stubForOAuth();
         this.mvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .addFilter(springSecurityFilterChain).build();
