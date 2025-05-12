@@ -15,15 +15,15 @@ java {
 }
 
 def versions = [
-        pitest                      : "1.16.1",
-        springdocVersion            : "2.6.0",
-        crimeCommonsClasses         : "4.7.1",
-        commonsModSchemas           : "1.26.1",
-        sentryVersion               : "7.12.1",
-        resilience4jVersion         : "2.2.0",
-        postgresqlVersion           : "42.7.2",
-        commonsLang3Version         : "3.15.0",
-        wiremock                    : "3.10.0"
+        pitest               : "1.16.1",
+        springdoc            : "2.6.0",
+        crimeCommonsClasses  : "4.7.1",
+        commonsModSchemas    : "1.26.1",
+        sentry               : "7.12.1",
+        resilience4j         : "2.2.0",
+        postgreSQL           : "42.7.2",
+        commonsLang          : "3.15.0",
+        wiremock             : "3.10.0"
 ]
 
 configurations {
@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
 
-    implementation platform("io.sentry:sentry-bom:$versions.sentryVersion")
+    implementation platform("io.sentry:sentry-bom:$versions.sentry")
     implementation "io.sentry:sentry-spring-boot-starter-jakarta"
     implementation "io.sentry:sentry-logback"
 
@@ -50,14 +50,14 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdocVersion"
-    implementation "org.apache.commons:commons-lang3:$versions.commonsLang3Version"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdoc"
+    implementation "org.apache.commons:commons-lang3:$versions.commonsLang"
 
-    implementation "io.github.resilience4j:resilience4j-reactor:$versions.resilience4jVersion"
-    implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4jVersion"
+    implementation "io.github.resilience4j:resilience4j-reactor:$versions.resilience4j"
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4j"
 
     implementation "org.liquibase:liquibase-core"
-    implementation "org.postgresql:postgresql:$versions.postgresqlVersion"
+    implementation "org.postgresql:postgresql:$versions.postgreSQL"
 
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-registry-prometheus"
@@ -69,7 +69,6 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-
 
     testImplementation "com.h2database:h2"
     testImplementation "org.pitest:pitest:$versions.pitest"
