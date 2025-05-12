@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "jacoco"
-    id "org.sonarqube" version "5.1.0.4882"
+    id "org.sonarqube" version "6.1.0.5360"
     id "info.solidsoft.pitest" version "1.15.0"
     id "org.springframework.boot" version "3.4.4"
     id 'io.spring.dependency-management' version "1.1.6"
@@ -125,9 +125,17 @@ pitest {
     mutationThreshold = 60
 }
 
-tasks["sonar"].dependsOn test
+
+def isCiBuild = System.getenv("SONAR_TOKEN") != null
+
+if (isCiBuild) {
+    tasks.named("sonar") {
+        dependsOn "test"
+    }
+}
 
 sonar {
+    skipProject = !isCiBuild
     properties {
         property "sonar.exclusions", "**/entity/**.java , **/model/**.java , **/dto/**.java , **/config/**.java, **/jms/**.java,**/exception/**.java,**/handler/**.java"
         property "sonar.coverage.exclusions", "**/CrimeHardshipApplication.java"
