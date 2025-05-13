@@ -1,5 +1,6 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -100,7 +101,7 @@ class PersistHardshipMapperTest {
         List<ApiHardshipDetail> reviewDetails = request.getReviewDetails();
 
         assertThat(reviewDetails)
-                .asList()
+                .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .hasSize(3);
 
         List<ApiHardshipDetail> expected = List.of(
@@ -131,7 +132,7 @@ class PersistHardshipMapperTest {
         );
 
         assertThat(reviewDetails)
-                .asList()
+                .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(expected);
     }

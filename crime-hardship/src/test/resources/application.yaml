@@ -25,9 +25,9 @@ spring:
       client:
         provider:
           maat-api:
-            token-uri: http://localhost:9999/oauth2/token
+            token-uri: http://localhost:${wiremock.server.port}/oauth2/token
           cma:
-            token-uri: http://localhost:9999/oauth2/token
+            token-uri: http://localhost:${wiremock.server.port}/oauth2/token
         registration:
           maat-api:
             client-id: dummy-client
@@ -39,7 +39,7 @@ spring:
             authorization-grant-type: client_credentials
       resource-server:
         jwt:
-          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9999}
+          issuer-uri: http://localhost:${server.port}
 
 springdoc:
   api-docs:
@@ -48,18 +48,25 @@ springdoc:
 swagger-ui:
   path: /open-api/docs.html
 
+resilience4j:
+  retry:
+    configs:
+      default:
+        max-attempts: 3
+        wait-duration: 2s
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientRequestException
+          - org.springframework.web.reactive.function.client.WebClientResponseException.BadGateway
+          - org.springframework.web.reactive.function.client.WebClientResponseException.TooManyRequests
+          - org.springframework.web.reactive.function.client.WebClientResponseException.ServiceUnavailable
+          - org.springframework.web.reactive.function.client.WebClientResponseException.GatewayTimeout
+
 services:
   maat-api:
-    baseUrl: ${MAAT_API_BASE_URL:http://localhost:9999}
+    baseUrl: ${wiremock.server.baseUrl}
     registrationId: maat-api
   cma-api:
-    baseUrl: ${CMA_API_BASE_URL:http://localhost:9999}
+    baseUrl: ${wiremock.server.baseUrl}
     registrationId: cma
-
-crime-hardship:
-  security:
-    issuer-uri: http://localhost:${server.port}
-
-feature:
-  postMvp:
-    enabled: false
