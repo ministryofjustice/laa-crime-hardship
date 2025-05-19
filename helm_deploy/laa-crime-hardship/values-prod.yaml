@@ -44,18 +44,7 @@ service:
   targetPort: 8289
 
 ingress:
-  enabled: true
-  annotations:
-    external-dns.alpha.kubernetes.io/aws-weight: "100"
-    external-dns.alpha.kubernetes.io/set-identifier: "laa-crime-hardship-laa-crime-hardship-prod-green"
-    nginx.ingress.kubernetes.io/affinity: "cookie"
-    nginx.ingress.kubernetes.io/session-cookie-max-age: "300"
-  externalAnnotations: {}
-  hosts:
-    - host: laa-crime-hardship-prod.apps.live.cloud-platform.service.justice.gov.uk
-      paths: ["/open-api/"]
-  tls: []
-  className: default
+  enabled: false
 
 autoscaling:
   enabled: false
