@@ -1,6 +1,18 @@
 package uk.gov.justice.laa.crime.hardship.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -9,7 +21,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
-import uk.gov.justice.laa.crime.common.model.hardship.*;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
@@ -19,15 +37,6 @@ import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
-
-import java.time.LocalDateTime;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
 
 @WebMvcTest(HardshipController.class)
 @AutoConfigureMockMvc(addFilters = false)
