@@ -1,11 +1,23 @@
 package uk.gov.justice.laa.crime.hardship.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
@@ -26,42 +38,37 @@ import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.tracing.TraceIdHandler;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
 
-import java.time.LocalDateTime;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
-
 @WebMvcTest(HardshipController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class HardshipControllerTest {
 
     private static final String ENDPOINT_URL = "/api/internal/v1/hardship";
-    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship-for-detail");
     private static final String ENDPOINT_URL_CALC_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship");
     private static final String ENDPOINT_URL_GET_HARDSHIP = ENDPOINT_URL + "/" + TestModelDataBuilder.HARDSHIP_ID;
-    @MockBean
-    TraceIdHandler traceIdHandler;
+    private static final String ENDPOINT_URL_CALCULATE_HARDSHIP = ENDPOINT_URL.concat("/calculate-hardship-for-detail");
+
     @Autowired
     private MockMvc mvc;
+
     @Autowired
     private ObjectMapper objectMapper;
-    @MockBean
+
+    @MockitoBean
+    TraceIdHandler traceIdHandler;
+
+    @MockitoBean
     private HardshipMapper hardshipMapper;
-    @MockBean
+
+    @MockitoBean
     private HardshipService hardshipService;
-    @MockBean
-    private HardshipCalculationService hardshipCalculationService;
-    @MockBean
+
+    @MockitoBean
     private HardshipValidationService validationService;
-    @MockBean
+
+    @MockitoBean
+    private HardshipCalculationService hardshipCalculationService;
+
+    @MockitoBean
     private CrimeMeansAssessmentService crimeMeansAssessmentService;
 
     @Test
