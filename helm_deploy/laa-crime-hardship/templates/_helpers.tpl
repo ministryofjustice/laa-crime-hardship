@@ -31,6 +31,16 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Create ingress configuration
+*/}}
+{{- define "laa-crime-hardship.ingress" -}}
+{{- $internalAllowlistSourceRange := (lookup "v1" "Secret" .Release.Namespace "ingress-internal-allowlist-source-range").data.INTERNAL_ALLOWLIST_SOURCE_RANGE | b64dec }}
+{{- if $internalAllowlistSourceRange }}
+  nginx.ingress.kubernetes.io/whitelist-source-range: {{ $internalAllowlistSourceRange }}
+{{- end }}
+{{- end }}
+
+{{/*
 Common labels
 */}}
 {{- define "laa-crime-hardship.labels" -}}
