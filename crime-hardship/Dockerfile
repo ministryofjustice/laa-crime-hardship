@@ -1,4 +1,4 @@
-FROM amazoncorretto:17-alpine
+FROM amazoncorretto:21-alpine
 RUN mkdir -p /opt/laa-crime-hardship/
 WORKDIR /opt/laa-crime-hardship/
 COPY ./build/libs/crime-hardship.jar /opt/laa-crime-hardship/app.jar
