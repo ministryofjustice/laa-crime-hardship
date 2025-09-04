@@ -77,3 +77,11 @@ scheduledDowntime:
 
 logging:
   level: INFO
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
