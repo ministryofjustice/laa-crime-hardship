@@ -47,24 +47,4 @@ env:
         key: MAAT_API_OAUTH_CLIENT_SECRET
   - name: JWT_ISSUER_URI
     value: {{ .Values.jwt.issuerUri }}
-  - name: DATASOURCE_HOST_PORT
-    valueFrom:
-      secretKeyRef:
-        name: rds-postgresql-instance-output
-        key: rds_instance_endpoint
-  - name: DATASOURCE_DBNAME
-    valueFrom:
-      secretKeyRef:
-        name: rds-postgresql-instance-output
-        key: database_name
-  - name: DATASOURCE_USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: rds-postgresql-instance-output
-        key: database_username
-  - name: DATASOURCE_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: rds-postgresql-instance-output
-        key: database_password
 {{- end -}}

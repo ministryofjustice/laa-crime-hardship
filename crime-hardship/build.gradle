@@ -46,16 +46,12 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webflux"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdoc"
     implementation "org.apache.commons:commons-lang3:$versions.commonsLang"
 
     implementation "io.github.resilience4j:resilience4j-reactor:$versions.resilience4j"
     implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4j"
-
-    implementation "org.postgresql:postgresql"
-    implementation "org.liquibase:liquibase-core"
 
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-registry-prometheus"
@@ -67,8 +63,7 @@ dependencies {
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-
-    testImplementation "com.h2database:h2"
+    
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.wiremock.integrations:wiremock-spring-boot:${versions.wiremock}"
 
