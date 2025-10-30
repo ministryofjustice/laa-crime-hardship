@@ -1,14 +1,19 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
-import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.SoftAssertions;
-import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
-import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import uk.gov.justice.laa.crime.common.model.hardship.*;
-import uk.gov.justice.laa.crime.common.model.hardship.maat_api.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.INCOME;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.SOL_COSTS;
+
+import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
+import uk.gov.justice.laa.crime.common.model.hardship.ExtraExpenditure;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiCreateHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiUpdateHardshipRequest;
 import uk.gov.justice.laa.crime.enums.Frequency;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailCode;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
@@ -20,12 +25,16 @@ import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.*;
+import org.assertj.core.api.InstanceOfAssertFactories;
+import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class PersistHardshipMapperTest {
-
 
     HardshipReviewDTO reviewDTO;
     PersistHardshipMapper mapper = new PersistHardshipMapper();
@@ -53,22 +62,15 @@ class PersistHardshipMapperTest {
 
         softly.assertThat(request.getNworCode())
                 .isEqualTo(metadata.getReviewReason().getCode());
-        softly.assertThat(request.getCmuId())
-                .isEqualTo(metadata.getCmuId());
-        softly.assertThat(request.getReviewResult())
-                .isEqualTo(result.getResult());
-        softly.assertThat(request.getReviewDate())
-                .isEqualTo(hardship.getReviewDate());
+        softly.assertThat(request.getCmuId()).isEqualTo(metadata.getCmuId());
+        softly.assertThat(request.getReviewResult()).isEqualTo(result.getResult());
+        softly.assertThat(request.getReviewDate()).isEqualTo(hardship.getReviewDate());
         softly.assertThat(request.getResultDate().toLocalDate())
                 .isEqualTo(LocalDateTime.now().toLocalDate());
-        softly.assertThat(request.getNotes())
-                .isEqualTo(metadata.getNotes());
-        softly.assertThat(request.getDecisionNotes())
-                .isEqualTo(metadata.getDecisionNotes());
-        softly.assertThat(request.getStatus())
-                .isEqualTo(metadata.getReviewStatus());
-        softly.assertThat(request.getDisposableIncome())
-                .isEqualTo(hardship.getTotalAnnualDisposableIncome());
+        softly.assertThat(request.getNotes()).isEqualTo(metadata.getNotes());
+        softly.assertThat(request.getDecisionNotes()).isEqualTo(metadata.getDecisionNotes());
+        softly.assertThat(request.getStatus()).isEqualTo(metadata.getReviewStatus());
+        softly.assertThat(request.getDisposableIncome()).isEqualTo(hardship.getTotalAnnualDisposableIncome());
         softly.assertThat(request.getDisposableIncomeAfterHardship())
                 .isEqualTo(result.getPostHardshipDisposableIncome());
 
@@ -100,12 +102,9 @@ class PersistHardshipMapperTest {
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
         List<ApiHardshipDetail> reviewDetails = request.getReviewDetails();
 
-        assertThat(reviewDetails)
-                .asInstanceOf(InstanceOfAssertFactories.LIST)
-                .hasSize(3);
+        assertThat(reviewDetails).asInstanceOf(InstanceOfAssertFactories.LIST).hasSize(3);
 
         List<ApiHardshipDetail> expected = List.of(
-
                 new ApiHardshipDetail()
                         .withAccepted("Y")
                         .withDetailType(INCOME)
@@ -114,7 +113,6 @@ class PersistHardshipMapperTest {
                         .withReasonNote("Hospitalisation")
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.MEDICAL_GROUNDS),
-
                 new ApiHardshipDetail()
                         .withAccepted("N")
                         .withDetailType(EXPENDITURE)
@@ -123,26 +121,28 @@ class PersistHardshipMapperTest {
                         .withUserCreated(metadata.getUserSession().getUserName())
                         .withDetailCode(HardshipReviewDetailCode.CARDS)
                         .withDetailReason(extraExpenditure.getReasonCode()),
-
                 new ApiHardshipDetail()
                         .withDetailType(SOL_COSTS)
                         .withAmount(hardship.getSolicitorCosts().getEstimatedTotal())
                         .withFrequency(Frequency.ANNUALLY)
-                        .withAccepted("Y")
-        );
+                        .withAccepted("Y"));
 
         assertThat(reviewDetails)
                 .asInstanceOf(InstanceOfAssertFactories.LIST)
                 .usingRecursiveFieldByFieldElementComparator()
                 .containsAll(expected);
     }
+
     @Test
     void givenHardshipReviewDTOWithoutSolicitorCosts_whenFromDtoIsInvoked_thenRequestIsMapped() {
         HardshipReview hardship = reviewDTO.getHardship();
         hardship.setSolicitorCosts(null);
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
         assertThat(request.getSolicitorCosts()).isNull();
-        assertThat(request.getReviewDetails().stream().filter(detail -> detail.getDetailType() == SOL_COSTS).findFirst()).isEmpty();
+        assertThat(request.getReviewDetails().stream()
+                        .filter(detail -> detail.getDetailType() == SOL_COSTS)
+                        .findFirst())
+                .isEmpty();
     }
 
     @Test
@@ -153,14 +153,11 @@ class PersistHardshipMapperTest {
 
         ApiCreateHardshipRequest request = (ApiCreateHardshipRequest) mapper.fromDto(reviewDTO);
 
-        softly.assertThat(request.getRepId())
-                .isEqualTo(metadata.getRepId());
+        softly.assertThat(request.getRepId()).isEqualTo(metadata.getRepId());
         softly.assertThat(request.getUserCreated())
                 .isEqualTo(metadata.getUserSession().getUserName());
-        softly.assertThat(request.getCourtType())
-                .isEqualTo(hardship.getCourtType());
-        softly.assertThat(request.getFinancialAssessmentId())
-                .isEqualTo(metadata.getFinancialAssessmentId());
+        softly.assertThat(request.getCourtType()).isEqualTo(hardship.getCourtType());
+        softly.assertThat(request.getFinancialAssessmentId()).isEqualTo(metadata.getFinancialAssessmentId());
     }
 
     @Test
@@ -170,8 +167,7 @@ class PersistHardshipMapperTest {
 
         ApiUpdateHardshipRequest request = (ApiUpdateHardshipRequest) mapper.fromDto(reviewDTO);
 
-        softly.assertThat(request.getId())
-                .isEqualTo(metadata.getHardshipReviewId());
+        softly.assertThat(request.getId()).isEqualTo(metadata.getHardshipReviewId());
         softly.assertThat(request.getUserModified())
                 .isEqualTo(metadata.getUserSession().getUserName());
     }
@@ -181,22 +177,17 @@ class PersistHardshipMapperTest {
         reviewDTO.setHardshipResult(null);
         ApiPersistHardshipRequest request = mapper.fromDto(reviewDTO);
 
-        softly.assertThat(request.getResultDate())
-                .isNull();
-        softly.assertThat(request.getReviewResult())
-                .isNull();
-        softly.assertThat(request.getDisposableIncomeAfterHardship())
-                .isNull();
+        softly.assertThat(request.getResultDate()).isNull();
+        softly.assertThat(request.getReviewResult()).isNull();
+        softly.assertThat(request.getDisposableIncomeAfterHardship()).isNull();
     }
 
     @Test
     void givenApiPersistHardshipResponse_whenToDtoIsInvoked_thenDtoIsMapped() {
-        ApiPersistHardshipResponse response = new ApiPersistHardshipResponse()
-                .withId(TestModelDataBuilder.HARDSHIP_ID);
+        ApiPersistHardshipResponse response = new ApiPersistHardshipResponse().withId(TestModelDataBuilder.HARDSHIP_ID);
 
         mapper.toDto(response, reviewDTO);
 
-        assertThat(reviewDTO.getHardshipMetadata().getHardshipReviewId())
-                .isEqualTo(response.getId());
+        assertThat(reviewDTO.getHardshipMetadata().getHardshipReviewId()).isEqualTo(response.getId());
     }
 }

@@ -1,17 +1,19 @@
 package uk.gov.justice.laa.crime.hardship.mapper;
 
-import org.springframework.stereotype.Component;
+import static java.util.Optional.ofNullable;
+
 import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipResult;
 import uk.gov.justice.laa.crime.hardship.dto.HardshipReviewDTO;
 
-import static java.util.Optional.ofNullable;
+import org.springframework.stereotype.Component;
 
 @Component
-public class HardshipMapper implements RequestMapper<ApiPerformHardshipResponse, HardshipReviewDTO>,
-        ResponseMapper<ApiPerformHardshipRequest, HardshipReviewDTO> {
+public class HardshipMapper
+        implements RequestMapper<ApiPerformHardshipResponse, HardshipReviewDTO>,
+                ResponseMapper<ApiPerformHardshipRequest, HardshipReviewDTO> {
 
     public ApiPerformHardshipResponse fromDto(HardshipReviewDTO reviewDTO) {
 
@@ -20,11 +22,13 @@ public class HardshipMapper implements RequestMapper<ApiPerformHardshipResponse,
 
         return new ApiPerformHardshipResponse()
                 .withReviewResult(ofNullable(hardshipResult)
-                        .map(HardshipResult::getResult).orElse(null))
+                        .map(HardshipResult::getResult)
+                        .orElse(null))
                 .withDisposableIncome(hardship.getTotalAnnualDisposableIncome())
                 .withHardshipReviewId(reviewDTO.getHardshipMetadata().getHardshipReviewId())
                 .withPostHardshipDisposableIncome(ofNullable(hardshipResult)
-                        .map(HardshipResult::getPostHardshipDisposableIncome).orElse(null));
+                        .map(HardshipResult::getPostHardshipDisposableIncome)
+                        .orElse(null));
     }
 
     public void toDto(ApiPerformHardshipRequest request, HardshipReviewDTO reviewDTO) {

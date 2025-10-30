@@ -1,18 +1,19 @@
 package uk.gov.justice.laa.crime.hardship.service;
 
-import org.assertj.core.api.SoftAssertions;
-import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
-import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.EXPENDITURE;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.INCOME;
+import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.SOL_COSTS;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.FULL_THRESHOLD;
+import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_SOLICITOR_ESTIMATED_COST;
+
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
-import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiHardshipDetail;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.enums.HardshipReviewDetailType;
 import uk.gov.justice.laa.crime.enums.HardshipReviewResult;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
@@ -24,13 +25,15 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
-import static uk.gov.justice.laa.crime.enums.HardshipReviewDetailType.*;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.FULL_THRESHOLD;
-import static uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder.TEST_SOLICITOR_ESTIMATED_COST;
+import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SoftAssertionsExtension.class)
@@ -59,12 +62,9 @@ class HardshipCalculationServiceTest {
                 .thenReturn(hardshipDetails);
 
         ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
-                request.getRepId(),
-                HardshipReviewDetailType.valueOf(request.getDetailType())
-        );
+                request.getRepId(), HardshipReviewDetailType.valueOf(request.getDetailType()));
 
-        assertThat(response.getHardshipSummary())
-                .isEqualTo(BigDecimal.valueOf(260));
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.valueOf(260));
     }
 
     @Test
@@ -79,16 +79,14 @@ class HardshipCalculationServiceTest {
                 .thenReturn(hardshipDetails);
 
         ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
-                request.getRepId(),
-                HardshipReviewDetailType.valueOf(request.getDetailType())
-        );
+                request.getRepId(), HardshipReviewDetailType.valueOf(request.getDetailType()));
 
-        assertThat(response.getHardshipSummary())
-                .isEqualTo(BigDecimal.ZERO);
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
-    void givenExpenditureTypeAndNullMaatAPIResponse_whenCalculateHardshipForDetailIsInvoked_thenCorrectTotalIsCalculated() {
+    void
+            givenExpenditureTypeAndNullMaatAPIResponse_whenCalculateHardshipForDetailIsInvoked_thenCorrectTotalIsCalculated() {
         ApiCalculateHardshipByDetailRequest request =
                 TestModelDataBuilder.getApiCalculateHardshipByDetailRequest(true, EXPENDITURE);
 
@@ -96,82 +94,68 @@ class HardshipCalculationServiceTest {
                 .thenReturn(null);
 
         ApiCalculateHardshipByDetailResponse response = hardshipCalculationService.calculateHardshipForDetail(
-                request.getRepId(),
-                HardshipReviewDetailType.valueOf(request.getDetailType())
-        );
+                request.getRepId(), HardshipReviewDetailType.valueOf(request.getDetailType()));
 
-        assertThat(response.getHardshipSummary())
-                .isEqualTo(BigDecimal.ZERO);
+        assertThat(response.getHardshipSummary()).isEqualTo(BigDecimal.ZERO);
     }
 
     @Test
     void givenHardshipReviewWithExtraExpenditure_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(EXPENDITURE);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-3320.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void givenHardshipReviewWithDeniedIncome_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(INCOME);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(3000.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
-    void givenHardshipReviewWithSolicitorCostsAndEstimatedTotal_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
+    void
+            givenHardshipReviewWithSolicitorCostsAndEstimatedTotal_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
 
-        hardship.getSolicitorCosts()
-                .setEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST);
+        hardship.getSolicitorCosts().setEstimatedTotal(TEST_SOLICITOR_ESTIMATED_COST);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(2500.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
-    void givenHardshipReviewWithSolicitorCostsAndNullDisbursements_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
+    void
+            givenHardshipReviewWithSolicitorCostsAndNullDisbursements_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
         hardship.getSolicitorCosts().setDisbursements(null);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-5250.0).setScale(2, RoundingMode.HALF_UP));
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
         softly.assertAll();
     }
 
@@ -179,107 +163,88 @@ class HardshipCalculationServiceTest {
     void givenHardshipReviewWithSolicitorCosts_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-5625.0).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
-    void givenHardshipReviewWithSolicitorCostsAndExtraExpenditure_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
+    void
+            givenHardshipReviewWithSolicitorCostsAndExtraExpenditure_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS, EXPENDITURE);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-13945.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void givenHardshipReviewWithAllDetailTypes_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getMagsHardshipReviewWithDetails(SOL_COSTS, EXPENDITURE, INCOME);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(-15945.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.PASS);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.PASS);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void givenHardshipReviewWithZeroAmount_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(EXPENDITURE);
 
-        hardship.getExtraExpenditure().get(0)
-                .setAmount(BigDecimal.ZERO);
+        hardship.getExtraExpenditure().get(0).setAmount(BigDecimal.ZERO);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.FAIL);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.FAIL);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void givenHardshipReviewWithRejectedExtraExpenditure_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails(EXPENDITURE);
 
-        hardship.getExtraExpenditure().get(0)
-                .setAccepted(false);
+        hardship.getExtraExpenditure().get(0).setAccepted(false);
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.FAIL);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.FAIL);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 
     @Test
     void givenHardshipReviewWithEmptyDetails_whenCalculateHardshipIsInvoked_thenHardshipResultIsReturned() {
         HardshipReview hardship = TestModelDataBuilder.getCrownHardshipReviewWithDetails();
 
-        HardshipResult response =
-                hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
+        HardshipResult response = hardshipCalculationService.calculateHardship(hardship, FULL_THRESHOLD);
 
         softly.assertThat(response.getPostHardshipDisposableIncome())
                 .isEqualTo(BigDecimal.valueOf(5000.00).setScale(2, RoundingMode.HALF_UP));
 
-        softly.assertThat(response.getResult())
-                .isEqualTo(HardshipReviewResult.FAIL);
+        softly.assertThat(response.getResult()).isEqualTo(HardshipReviewResult.FAIL);
 
-        softly.assertThat(response.getResultDate())
-                .isEqualTo(LocalDate.now());
+        softly.assertThat(response.getResultDate()).isEqualTo(LocalDate.now());
     }
 }
