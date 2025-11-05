@@ -7,19 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import uk.gov.justice.laa.crime.annotation.DefaultHTTPErrorResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiCalculateHardshipByDetailResponse;
@@ -38,6 +27,19 @@ import uk.gov.justice.laa.crime.hardship.service.HardshipCalculationService;
 import uk.gov.justice.laa.crime.hardship.service.HardshipService;
 import uk.gov.justice.laa.crime.hardship.validation.HardshipValidationService;
 
+import java.math.BigDecimal;
+
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -53,62 +55,70 @@ public class HardshipController {
 
     @PostMapping(value = "/calculate-hardship-for-detail", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Calculate Crime Hardship for Detail")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiCalculateHardshipByDetailResponse.class)
-            )
-    )
+    @ApiResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiCalculateHardshipByDetailResponse.class)))
     @DefaultHTTPErrorResponse
     public ResponseEntity<ApiCalculateHardshipByDetailResponse> calculateHardshipForDetail(
-            @Parameter(description = "Calculate Crime Hardship For Detail",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiCalculateHardshipByDetailRequest.class)
-                    )
-            ) @Valid @RequestBody ApiCalculateHardshipByDetailRequest request) {
+            @Parameter(
+                            description = "Calculate Crime Hardship For Detail",
+                            content =
+                                    @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema =
+                                                    @Schema(
+                                                            implementation =
+                                                                    ApiCalculateHardshipByDetailRequest.class)))
+                    @Valid
+                    @RequestBody
+                    ApiCalculateHardshipByDetailRequest request) {
 
-        return ResponseEntity.ok(
-                hardshipCalculationService.calculateHardshipForDetail(
-                        request.getRepId(),
-                        HardshipReviewDetailType.valueOf(request.getDetailType())
-                )
-        );
+        return ResponseEntity.ok(hardshipCalculationService.calculateHardshipForDetail(
+                request.getRepId(), HardshipReviewDetailType.valueOf(request.getDetailType())));
     }
 
     @GetMapping(value = "/{hardshipReviewId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Find Hardship review")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
-            )
-    )
+    @ApiResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiPerformHardshipResponse.class)))
     @DefaultHTTPErrorResponse
-    public ResponseEntity<ApiFindHardshipResponse> find(
-            @PathVariable int hardshipReviewId) {
+    public ResponseEntity<ApiFindHardshipResponse> find(@PathVariable int hardshipReviewId) {
         log.info("Request received to retrieve hardship review: {}", hardshipReviewId);
         return ResponseEntity.ok(hardshipService.find(hardshipReviewId));
     }
 
-
     @PostMapping(value = "/calculate-hardship", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Generic Client Agnostic Calculate Crime Hardship")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiCalculateHardshipResponse.class)
-            )
-    )
+    @ApiResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiCalculateHardshipResponse.class)))
     @DefaultHTTPErrorResponse
     public ResponseEntity<ApiCalculateHardshipResponse> calculateHardship(
-            @Parameter(description = "Generic Client Agnostic Calculate Crime Hardship",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiCalculateHardshipRequest.class)
-                    )
-            ) @Valid @RequestBody ApiCalculateHardshipRequest request) {
+            @Parameter(
+                            description = "Generic Client Agnostic Calculate Crime Hardship",
+                            content =
+                                    @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = ApiCalculateHardshipRequest.class)))
+                    @Valid
+                    @RequestBody
+                    ApiCalculateHardshipRequest request) {
 
-        BigDecimal fullThreshold = crimeMeansAssessmentService
-                .getFullAssessmentThreshold(request.getHardship().getReviewDate());
+        BigDecimal fullThreshold = crimeMeansAssessmentService.getFullAssessmentThreshold(
+                request.getHardship().getReviewDate());
 
-        HardshipResult hardshipResult = hardshipCalculationService.calculateHardship(
-                request.getHardship(), fullThreshold);
+        HardshipResult hardshipResult =
+                hardshipCalculationService.calculateHardship(request.getHardship(), fullThreshold);
 
         return ResponseEntity.ok(new ApiCalculateHardshipResponse()
                 .withReviewResult(hardshipResult.getResult())
@@ -117,18 +127,23 @@ public class HardshipController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Create Hardship review")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
-            )
-    )
+    @ApiResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiPerformHardshipResponse.class)))
     @DefaultHTTPErrorResponse
     public ResponseEntity<ApiPerformHardshipResponse> create(
-            @Parameter(description = "JSON object containing Hardship information",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiPerformHardshipRequest.class)
-                    )
-            ) @Valid @RequestBody ApiPerformHardshipRequest hardship) {
+            @Parameter(
+                            description = "JSON object containing Hardship information",
+                            content =
+                                    @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = ApiPerformHardshipRequest.class)))
+                    @Valid
+                    @RequestBody
+                    ApiPerformHardshipRequest hardship) {
 
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.CREATE);
         reviewDTO = hardshipService.create(reviewDTO);
@@ -137,18 +152,23 @@ public class HardshipController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(description = "Update Hardship review")
-    @ApiResponse(responseCode = "200",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ApiPerformHardshipResponse.class)
-            )
-    )
+    @ApiResponse(
+            responseCode = "200",
+            content =
+                    @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ApiPerformHardshipResponse.class)))
     @DefaultHTTPErrorResponse
     public ResponseEntity<ApiPerformHardshipResponse> update(
-            @Parameter(description = "JSON object containing Hardship information",
-                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ApiPerformHardshipRequest.class)
-                    )
-            ) @Valid @RequestBody ApiPerformHardshipRequest hardship) {
+            @Parameter(
+                            description = "JSON object containing Hardship information",
+                            content =
+                                    @Content(
+                                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                            schema = @Schema(implementation = ApiPerformHardshipRequest.class)))
+                    @Valid
+                    @RequestBody
+                    ApiPerformHardshipRequest hardship) {
         HardshipReviewDTO reviewDTO = preProcessRequest(hardship, RequestType.UPDATE);
         reviewDTO = hardshipService.update(reviewDTO);
         return ResponseEntity.ok(mapper.fromDto(reviewDTO));
@@ -165,8 +185,8 @@ public class HardshipController {
     }
 
     private HardshipReviewDTO preProcessRequest(ApiPerformHardshipRequest hardship, RequestType requestType) {
-        HardshipReviewDTO reviewDTO = HardshipReviewDTO.builder()
-                .requestType(requestType).build();
+        HardshipReviewDTO reviewDTO =
+                HardshipReviewDTO.builder().requestType(requestType).build();
         hardshipValidationService.checkHardship(hardship, requestType);
         mapper.toDto(hardship, reviewDTO);
         return reviewDTO;

@@ -1,15 +1,22 @@
 package uk.gov.justice.laa.crime.hardship.validation;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.justice.laa.crime.common.model.hardship.*;
-import uk.gov.justice.laa.crime.enums.*;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatNoException;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+
+import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
+import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
+import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
+import uk.gov.justice.laa.crime.common.model.hardship.SolicitorCosts;
+import uk.gov.justice.laa.crime.enums.DeniedIncomeDetailCode;
+import uk.gov.justice.laa.crime.enums.ExtraExpenditureDetailCode;
+import uk.gov.justice.laa.crime.enums.Frequency;
+import uk.gov.justice.laa.crime.enums.HardshipReviewDetailReason;
+import uk.gov.justice.laa.crime.enums.HardshipReviewStatus;
+import uk.gov.justice.laa.crime.enums.NewWorkReason;
+import uk.gov.justice.laa.crime.enums.RequestType;
 import uk.gov.justice.laa.crime.exception.ValidationException;
 import uk.gov.justice.laa.crime.hardship.data.builder.TestModelDataBuilder;
 import uk.gov.justice.laa.crime.hardship.dto.maat_api.FinancialAssessmentDTO;
@@ -20,10 +27,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatNoException;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class HardshipValidationServiceTest {
@@ -43,16 +54,12 @@ class HardshipValidationServiceTest {
                         .replaced("N")
                         .dateCompleted(YESTERDAY)
                         .initialAssessmentDate(YESTERDAY)
-                        .build()
-                );
+                        .build());
     }
 
     private ApiPerformHardshipRequest getHardshipRequestWithReviewDate(final LocalDateTime reviewDate) {
         return new ApiPerformHardshipRequest(
-                new HardshipReview()
-                        .withReviewDate(reviewDate),
-                TestModelDataBuilder.getHardshipMetadata()
-        );
+                new HardshipReview().withReviewDate(reviewDate), TestModelDataBuilder.getHardshipMetadata());
     }
 
     @Test
@@ -76,17 +83,16 @@ class HardshipValidationServiceTest {
         when(maatCourtDataService.getHardship(anyInt()))
                 .thenReturn(new ApiFindHardshipResponse().withStatus(HardshipReviewStatus.IN_PROGRESS));
 
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.UPDATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.UPDATE));
     }
 
     @Test
     void givenNoPrecedingFinancialAssessment_whenCheckHardshipIsInvoked_thenExceptionIsThrown() {
         ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
-        when(maatCourtDataService.getFinancialAssessment(anyInt()))
-                .thenReturn(null);
+        when(maatCourtDataService.getFinancialAssessment(anyInt())).thenReturn(null);
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
                 .isInstanceOf(ValidationException.class)
@@ -101,8 +107,7 @@ class HardshipValidationServiceTest {
                 .thenReturn(FinancialAssessmentDTO.builder()
                         .replaced("Y")
                         .dateCompleted(TODAY)
-                        .build()
-                );
+                        .build());
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
                 .isInstanceOf(ValidationException.class)
@@ -117,8 +122,7 @@ class HardshipValidationServiceTest {
                 .thenReturn(FinancialAssessmentDTO.builder()
                         .replaced("N")
                         .dateCompleted(null)
-                        .build()
-                );
+                        .build());
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
                 .isInstanceOf(ValidationException.class)
@@ -130,9 +134,9 @@ class HardshipValidationServiceTest {
         configureStubs();
         ApiPerformHardshipRequest apiPerformHardshipRequest = getHardshipRequestWithReviewDate(TODAY);
 
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     @Test
@@ -144,8 +148,7 @@ class HardshipValidationServiceTest {
                         .replaced("N")
                         .dateCompleted(TODAY)
                         .initialAssessmentDate(TODAY)
-                        .build()
-                );
+                        .build());
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
                 .isInstanceOf(ValidationException.class)
@@ -161,12 +164,11 @@ class HardshipValidationServiceTest {
                         .replaced("N")
                         .dateCompleted(YESTERDAY)
                         .fullAssessmentDate(YESTERDAY)
-                        .build()
-                );
+                        .build());
 
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     @Test
@@ -179,8 +181,7 @@ class HardshipValidationServiceTest {
                         .dateCompleted(TODAY)
                         .initialAssessmentDate(YESTERDAY)
                         .fullAssessmentDate(TODAY)
-                        .build()
-                );
+                        .build());
 
         assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
                 .isInstanceOf(ValidationException.class)
@@ -190,47 +191,40 @@ class HardshipValidationServiceTest {
     @Test
     void hardshipValidationServiceWithNoValidationException() {
         configureStubs();
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(TestModelDataBuilder.getHardshipReview(),
-                        TestModelDataBuilder.getHardshipMetadata()
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = new ApiPerformHardshipRequest(
+                TestModelDataBuilder.getHardshipReview(), TestModelDataBuilder.getHardshipMetadata());
 
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     @Test
     void validateHardshipReviewStatus_validationException() {
-        ApiPerformHardshipRequest apiPerformHardshipRequest =
-                new ApiPerformHardshipRequest(new HardshipReview().withReviewDate(null),
-                        new HardshipMetadata().withReviewStatus(
-                                HardshipReviewStatus.COMPLETE)
-                );
+        ApiPerformHardshipRequest apiPerformHardshipRequest = new ApiPerformHardshipRequest(
+                new HardshipReview().withReviewDate(null),
+                new HardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE));
 
-        assertThatThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        ).isInstanceOf(ValidationException.class)
+        assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
+                .isInstanceOf(ValidationException.class)
                 .hasMessage("Review Date must be entered for completed hardship");
-
     }
 
     @ParameterizedTest
     @MethodSource("hardshipReviewStatusDataForNoValidationException")
     void validateHardshipReviewStatus_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         configureStubs();
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     @Test
     void validateHardshipReviewNewWorkReason() {
         ApiPerformHardshipRequest apiPerformHardshipRequest =
                 new ApiPerformHardshipRequest(new HardshipReview(), new HardshipMetadata().withReviewReason(null));
-        assertThatThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        ).isInstanceOf(ValidationException.class)
+        assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
+                .isInstanceOf(ValidationException.class)
                 .hasMessage("Review Reason must be entered for hardship");
     }
 
@@ -238,26 +232,24 @@ class HardshipValidationServiceTest {
     @MethodSource("solicitorDataForNoValidationException")
     void validateSolicitorDetails_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         configureStubs();
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     @ParameterizedTest
     @MethodSource("solicitorDataForValidationException")
     void validateSolicitorDetails_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        assertThatThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        ).isInstanceOf(ValidationException.class)
+        assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
+                .isInstanceOf(ValidationException.class)
                 .hasMessage("Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified");
     }
 
     @ParameterizedTest
     @MethodSource("deniedIncomeDataForValidationException")
     void validateDeniedIncome_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        assertThatThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        ).isInstanceOf(ValidationException.class)
+        assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
+                .isInstanceOf(ValidationException.class)
                 .hasMessage("Amount, Frequency, and Reason must be entered for each detail in section Medical Grounds");
     }
 
@@ -265,17 +257,16 @@ class HardshipValidationServiceTest {
     @MethodSource("deniedIncomeDataForNoValidationException")
     void validateDeniedIncome_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         configureStubs();
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     @ParameterizedTest
     @MethodSource("expenditureDataForValidationException")
     void validateExtraExpenditure_validationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        assertThatThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        ).isInstanceOf(ValidationException.class)
+        assertThatThrownBy(() -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE))
+                .isInstanceOf(ValidationException.class)
                 .hasMessage(
                         "Amount, Frequency, and Reason must be entered for each detail in section Mortgage on additional Property");
     }
@@ -284,77 +275,63 @@ class HardshipValidationServiceTest {
     @MethodSource("expenditureDataForNoValidationException")
     void validateExtraExpenditure_noValidationException(final ApiPerformHardshipRequest apiPerformHardshipRequest) {
         configureStubs();
-        assertThatNoException().isThrownBy(
-                () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE)
-        );
+        assertThatNoException()
+                .isThrownBy(
+                        () -> hardshipValidationService.checkHardship(apiPerformHardshipRequest, RequestType.CREATE));
     }
 
     private static Stream<Arguments> hardshipReviewStatusDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview().withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE)
-                )),
+                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.COMPLETE))),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview().withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata().withReviewStatus(HardshipReviewStatus.IN_PROGRESS)
-                ))
-        );
+                        TestModelDataBuilder.getHardshipMetadata()
+                                .withReviewStatus(HardshipReviewStatus.IN_PROGRESS))));
     }
 
     private static Stream<Arguments> solicitorDataForNoValidationException() {
         return Stream.of(
                 Arguments.of(new ApiPerformHardshipRequest(
                         new HardshipReview()
-                                .withSolicitorCosts(
-                                        new SolicitorCosts()
-                                                .withRate(BigDecimal.ZERO)
-                                                .withHours(BigDecimal.ZERO))
+                                .withSolicitorCosts(new SolicitorCosts()
+                                        .withRate(BigDecimal.ZERO)
+                                        .withHours(BigDecimal.ZERO))
                                 .withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         new HardshipReview()
                                 .withSolicitorCosts(
-                                        new SolicitorCosts()
-                                                .withRate(null)
-                                                .withHours(BigDecimal.ZERO))
+                                        new SolicitorCosts().withRate(null).withHours(BigDecimal.ZERO))
                                 .withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview().withSolicitorCosts(null).withReviewDate(LocalDateTime.now()),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         new HardshipReview()
-                                .withSolicitorCosts(null)
+                                .withSolicitorCosts(new SolicitorCosts()
+                                        .withRate(BigDecimal.ONE)
+                                        .withHours(BigDecimal.valueOf(0.5)))
                                 .withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
-                Arguments.of(new ApiPerformHardshipRequest(
-                        new HardshipReview()
-                                .withSolicitorCosts(
-                                        new SolicitorCosts()
-                                                .withRate(BigDecimal.ONE)
-                                                .withHours(BigDecimal.valueOf(0.5)))
-                                .withReviewDate(LocalDateTime.now()),
-                        TestModelDataBuilder.getHardshipMetadata()
-                ))
-        );
+                        TestModelDataBuilder.getHardshipMetadata())));
     }
 
     private static Stream<Arguments> solicitorDataForValidationException() {
         return Stream.of(
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(
-                                new SolicitorCosts().withRate(BigDecimal.ONE)
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview()
+                                .withSolicitorCosts(new SolicitorCosts()
+                                        .withRate(BigDecimal.ONE)
                                         .withHours(BigDecimal.ZERO)),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
-                )),
-                Arguments.of(new ApiPerformHardshipRequest(new HardshipReview().
-                        withSolicitorCosts(
-                                new SolicitorCosts().withRate(BigDecimal.ONE)
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))),
+                Arguments.of(new ApiPerformHardshipRequest(
+                        new HardshipReview()
+                                .withSolicitorCosts(new SolicitorCosts()
+                                        .withRate(BigDecimal.ONE)
                                         .withHours(null)),
-                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW)
-                ))
-        );
+                        new HardshipMetadata().withReviewReason(NewWorkReason.NEW))));
     }
 
     private static Stream<Arguments> deniedIncomeDataForNoValidationException() {
@@ -366,14 +343,10 @@ class HardshipValidationServiceTest {
                                         .withFrequency(null)
                                         .withAmount(null)
                                         .withReasonNote(null))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withDeniedIncome(null),
-                        TestModelDataBuilder.getHardshipMetadata()
-                ))
-        );
+                        TestModelDataBuilder.getMinimalHardshipReview().withDeniedIncome(null),
+                        TestModelDataBuilder.getHardshipMetadata())));
     }
 
     private static Stream<Arguments> deniedIncomeDataForValidationException() {
@@ -385,8 +358,7 @@ class HardshipValidationServiceTest {
                                         .withFrequency(null)
                                         .withAmount(BigDecimal.ONE)
                                         .withReasonNote("test"))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withDeniedIncome(List.of(TestModelDataBuilder.getDeniedIncome()
@@ -394,8 +366,7 @@ class HardshipValidationServiceTest {
                                         .withFrequency(Frequency.ANNUALLY)
                                         .withAmount(BigDecimal.ONE)
                                         .withReasonNote(null))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withDeniedIncome(List.of(TestModelDataBuilder.getDeniedIncome()
@@ -403,9 +374,7 @@ class HardshipValidationServiceTest {
                                         .withFrequency(Frequency.ANNUALLY)
                                         .withAmount(null)
                                         .withReasonNote("test"))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                ))
-        );
+                        TestModelDataBuilder.getHardshipMetadata())));
     }
 
     private static Stream<Arguments> expenditureDataForValidationException() {
@@ -413,36 +382,27 @@ class HardshipValidationServiceTest {
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(
-                                                ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(null)
                                         .withAmount(BigDecimal.ONE)
-                                        .withReasonCode(
-                                                HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                                        .withReasonCode(HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(
-                                                ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(Frequency.ANNUALLY)
                                         .withAmount(BigDecimal.ONE)
                                         .withReasonCode(null))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
                         TestModelDataBuilder.getMinimalHardshipReview()
                                 .withExtraExpenditure(List.of(TestModelDataBuilder.getExtraExpenditure()
-                                        .withItemCode(
-                                                ExtraExpenditureDetailCode.ADD_MORTGAGE)
+                                        .withItemCode(ExtraExpenditureDetailCode.ADD_MORTGAGE)
                                         .withFrequency(Frequency.ANNUALLY)
                                         .withAmount(null)
-                                        .withReasonCode(
-                                                HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                ))
-        );
+                                        .withReasonCode(HardshipReviewDetailReason.ARRANGEMENT_IN_PLACE))),
+                        TestModelDataBuilder.getHardshipMetadata())));
     }
 
     private static Stream<Arguments> expenditureDataForNoValidationException() {
@@ -454,13 +414,9 @@ class HardshipValidationServiceTest {
                                         .withFrequency(null)
                                         .withAmount(null)
                                         .withReasonCode(null))),
-                        TestModelDataBuilder.getHardshipMetadata()
-                )),
+                        TestModelDataBuilder.getHardshipMetadata())),
                 Arguments.of(new ApiPerformHardshipRequest(
-                        TestModelDataBuilder.getMinimalHardshipReview()
-                                .withExtraExpenditure(null),
-                        TestModelDataBuilder.getHardshipMetadata()
-                ))
-        );
+                        TestModelDataBuilder.getMinimalHardshipReview().withExtraExpenditure(null),
+                        TestModelDataBuilder.getHardshipMetadata())));
     }
 }

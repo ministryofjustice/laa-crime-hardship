@@ -1,9 +1,10 @@
 package uk.gov.justice.laa.crime.hardship.validation;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiPerformHardshipRequest;
 import uk.gov.justice.laa.crime.common.model.hardship.DeniedIncome;
@@ -18,8 +19,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -28,14 +29,12 @@ public class HardshipValidationService {
 
     private final MaatCourtDataService maatCourtDataService;
 
-    public static final String CANNOT_MODIFY_COMPLETE_HARDSHIP_ERROR =
-            "Cannot modify a complete hardship review";
+    public static final String CANNOT_MODIFY_COMPLETE_HARDSHIP_ERROR = "Cannot modify a complete hardship review";
     public static final String INCOMPLETE_ASSESSMENT_ERROR =
             "Hardship review can only be entered after a completed assessment";
     public static final String REVIEW_DATE_ERROR =
             "Hardship review date precedes the initial or full assessment date(s)";
-    public static final String REVIEW_STATUS_ERROR =
-            "Review Date must be entered for completed hardship";
+    public static final String REVIEW_STATUS_ERROR = "Review Date must be entered for completed hardship";
     public static final String NEW_WORK_REASON_ERROR = "Review Reason must be entered for hardship";
     public static final String SOLICITOR_DETAILS_ERROR =
             "Solicitor Number of Hours must be entered when Solicitor Hourly Rate is specified";
@@ -43,9 +42,10 @@ public class HardshipValidationService {
             "Amount, Frequency, and Reason must be entered for each detail in section ";
 
     private static boolean expenditureWithoutAmountOrFrequencyOrReasonCode(ExtraExpenditure expenditure) {
-        return (nonNull(expenditure.getItemCode()) &&
-                (isNull(expenditure.getAmount()) || isNull(expenditure.getFrequency()) ||
-                        isNull(expenditure.getReasonCode())));
+        return (nonNull(expenditure.getItemCode())
+                && (isNull(expenditure.getAmount())
+                        || isNull(expenditure.getFrequency())
+                        || isNull(expenditure.getReasonCode())));
     }
 
     private static boolean hardshipStatusIsCompleteWithoutReviewDate(
@@ -54,15 +54,16 @@ public class HardshipValidationService {
                 && isNull(apiPerformHardshipRequest.getHardship().getReviewDate()));
     }
 
-    private static boolean solicitorRateSpecifiedWithoutSolicitorHours(BigDecimal solicitorRate,
-                                                                       BigDecimal solicitorHours) {
+    private static boolean solicitorRateSpecifiedWithoutSolicitorHours(
+            BigDecimal solicitorRate, BigDecimal solicitorHours) {
         return (solicitorRate.compareTo(BigDecimal.ZERO) > 0) && (solicitorHours.compareTo(BigDecimal.ZERO) == 0);
     }
 
     private static boolean deniedIncomeWithoutAmountOrFrequencyOrReasonNote(DeniedIncome deniedIncome) {
-        return (nonNull(deniedIncome.getItemCode()) &&
-                (isNull(deniedIncome.getAmount()) || isNull(deniedIncome.getFrequency()) ||
-                        StringUtils.isEmpty(deniedIncome.getReasonNote())));
+        return (nonNull(deniedIncome.getItemCode())
+                && (isNull(deniedIncome.getAmount())
+                        || isNull(deniedIncome.getFrequency())
+                        || StringUtils.isEmpty(deniedIncome.getReasonNote())));
     }
 
     public void checkHardship(final ApiPerformHardshipRequest apiPerformHardshipRequest, RequestType requestType) {
@@ -78,18 +79,16 @@ public class HardshipValidationService {
     }
 
     private void validateUpdate(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        ApiFindHardshipResponse hardship =
-                maatCourtDataService.getHardship(apiPerformHardshipRequest.getHardshipMetadata().getHardshipReviewId());
+        ApiFindHardshipResponse hardship = maatCourtDataService.getHardship(
+                apiPerformHardshipRequest.getHardshipMetadata().getHardshipReviewId());
         if (hardship.getStatus().equals(HardshipReviewStatus.COMPLETE)) {
             throw new ValidationException(CANNOT_MODIFY_COMPLETE_HARDSHIP_ERROR);
         }
     }
 
     private void validateReviewDate(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        FinancialAssessmentDTO financialAssessment =
-                maatCourtDataService.getFinancialAssessment(
-                        apiPerformHardshipRequest.getHardshipMetadata().getFinancialAssessmentId()
-                );
+        FinancialAssessmentDTO financialAssessment = maatCourtDataService.getFinancialAssessment(
+                apiPerformHardshipRequest.getHardshipMetadata().getFinancialAssessmentId());
 
         if (isNull(financialAssessment)
                 || "Y".equals(financialAssessment.getReplaced())
@@ -105,7 +104,6 @@ public class HardshipValidationService {
         if (reviewDate.isBefore(assessmentDate)) {
             throw new ValidationException(REVIEW_DATE_ERROR);
         }
-
     }
 
     private void validateHardshipReviewStatus(ApiPerformHardshipRequest apiPerformHardshipRequest) {
@@ -123,10 +121,8 @@ public class HardshipValidationService {
     private void validateSolicitorDetails(ApiPerformHardshipRequest apiPerformHardshipRequest) {
         var solicitorCosts = apiPerformHardshipRequest.getHardship().getSolicitorCosts();
         if (solicitorCosts != null) {
-            var solicitorRate = Optional.ofNullable(solicitorCosts.getRate())
-                    .orElse(BigDecimal.ZERO);
-            var solicitorHours = Optional.ofNullable(solicitorCosts.getHours())
-                    .orElse(BigDecimal.ZERO);
+            var solicitorRate = Optional.ofNullable(solicitorCosts.getRate()).orElse(BigDecimal.ZERO);
+            var solicitorHours = Optional.ofNullable(solicitorCosts.getHours()).orElse(BigDecimal.ZERO);
             if (solicitorRateSpecifiedWithoutSolicitorHours(solicitorRate, solicitorHours)) {
                 throw new ValidationException(SOLICITOR_DETAILS_ERROR);
             }
@@ -134,21 +130,23 @@ public class HardshipValidationService {
     }
 
     private void validateDeniedIncome(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        List<DeniedIncome> deniedIncomes = apiPerformHardshipRequest.getHardship().getDeniedIncome();
+        List<DeniedIncome> deniedIncomes =
+                apiPerformHardshipRequest.getHardship().getDeniedIncome();
         Optional.ofNullable(deniedIncomes).orElse(List.of()).forEach(deniedIncome -> {
             if (deniedIncomeWithoutAmountOrFrequencyOrReasonNote(deniedIncome)) {
-                throw new ValidationException(
-                        EXPENDITURE_OR_DENIED_INCOME_ERROR + deniedIncome.getItemCode().getDescription());
+                throw new ValidationException(EXPENDITURE_OR_DENIED_INCOME_ERROR
+                        + deniedIncome.getItemCode().getDescription());
             }
         });
     }
 
     private void validateExpenditure(ApiPerformHardshipRequest apiPerformHardshipRequest) {
-        List<ExtraExpenditure> expenditures = apiPerformHardshipRequest.getHardship().getExtraExpenditure();
+        List<ExtraExpenditure> expenditures =
+                apiPerformHardshipRequest.getHardship().getExtraExpenditure();
         Optional.ofNullable(expenditures).orElse(List.of()).forEach(expenditure -> {
             if (expenditureWithoutAmountOrFrequencyOrReasonCode(expenditure)) {
-                throw new ValidationException(
-                        EXPENDITURE_OR_DENIED_INCOME_ERROR + expenditure.getItemCode().getDescription());
+                throw new ValidationException(EXPENDITURE_OR_DENIED_INCOME_ERROR
+                        + expenditure.getItemCode().getDescription());
             }
         });
     }

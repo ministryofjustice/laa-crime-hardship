@@ -8,7 +8,6 @@ import uk.gov.justice.laa.crime.common.model.hardship.HardshipMetadata;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.enums.RequestType;
 
-
 @Data
 @Builder
 @AllArgsConstructor

@@ -2,7 +2,6 @@ package uk.gov.justice.laa.crime.hardship.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 import uk.gov.justice.laa.crime.common.model.hardship.ApiFindHardshipResponse;
 import uk.gov.justice.laa.crime.common.model.hardship.HardshipReview;
 import uk.gov.justice.laa.crime.common.model.hardship.maat_api.ApiPersistHardshipRequest;
@@ -16,6 +15,8 @@ import uk.gov.justice.laa.crime.hardship.mapper.PersistHardshipMapper;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -48,13 +49,11 @@ public class HardshipService {
 
     private HardshipReviewDTO persist(HardshipReviewDTO hardshipReviewDTO, RequestType requestType) {
         HardshipReview hardship = hardshipReviewDTO.getHardship();
-        BigDecimal fullThreshold = crimeMeansAssessmentService
-                .getFullAssessmentThreshold(hardship.getReviewDate());
+        BigDecimal fullThreshold = crimeMeansAssessmentService.getFullAssessmentThreshold(hardship.getReviewDate());
         HardshipResult result = hardshipCalculationService.calculateHardship(hardship, fullThreshold);
         hardshipReviewDTO.setHardshipResult(result);
         ApiPersistHardshipRequest request = mapper.fromDto(hardshipReviewDTO);
-        ApiPersistHardshipResponse response =
-                maatCourtDataService.persistHardship(request, requestType);
+        ApiPersistHardshipResponse response = maatCourtDataService.persistHardship(request, requestType);
         mapper.toDto(response, hardshipReviewDTO);
         return hardshipReviewDTO;
     }
