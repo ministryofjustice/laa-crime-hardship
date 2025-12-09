@@ -212,26 +212,29 @@ public class TestModelDataBuilder {
 
         Arrays.stream(detailTypes).forEach(type -> {
             switch (type) {
-                case INCOME -> details.add(new ApiHardshipDetail()
-                        .withDetailType(HardshipReviewDetailType.INCOME)
-                        .withAmount(amount)
-                        .withFrequency(Frequency.MONTHLY)
-                        .withAccepted("N")
-                        .withOtherDescription("Statutory sick pay")
-                        .withDetailCode(HardshipReviewDetailCode.SUSPENDED_WORK));
-                case EXPENDITURE -> details.add(new ApiHardshipDetail()
-                        .withDetailType(HardshipReviewDetailType.EXPENDITURE)
-                        .withAmount(amount)
-                        .withFrequency(Frequency.TWO_WEEKLY)
-                        .withAccepted("Y")
-                        .withDetailReason(HardshipReviewDetailReason.COVERED_BY_LIVING_EXPENSE)
-                        .withOtherDescription("Loan to family members")
-                        .withDetailCode(HardshipReviewDetailCode.OTHER));
-                case SOL_COSTS -> details.add(new ApiHardshipDetail()
-                        .withDetailType(HardshipReviewDetailType.SOL_COSTS)
-                        .withAmount(amount)
-                        .withFrequency(Frequency.ANNUALLY)
-                        .withAccepted("Y"));
+                case INCOME ->
+                    details.add(new ApiHardshipDetail()
+                            .withDetailType(HardshipReviewDetailType.INCOME)
+                            .withAmount(amount)
+                            .withFrequency(Frequency.MONTHLY)
+                            .withAccepted("N")
+                            .withOtherDescription("Statutory sick pay")
+                            .withDetailCode(HardshipReviewDetailCode.SUSPENDED_WORK));
+                case EXPENDITURE ->
+                    details.add(new ApiHardshipDetail()
+                            .withDetailType(HardshipReviewDetailType.EXPENDITURE)
+                            .withAmount(amount)
+                            .withFrequency(Frequency.TWO_WEEKLY)
+                            .withAccepted("Y")
+                            .withDetailReason(HardshipReviewDetailReason.COVERED_BY_LIVING_EXPENSE)
+                            .withOtherDescription("Loan to family members")
+                            .withDetailCode(HardshipReviewDetailCode.OTHER));
+                case SOL_COSTS ->
+                    details.add(new ApiHardshipDetail()
+                            .withDetailType(HardshipReviewDetailType.SOL_COSTS)
+                            .withAmount(amount)
+                            .withFrequency(Frequency.ANNUALLY)
+                            .withAccepted("Y"));
             }
         });
         return details;
@@ -245,19 +248,22 @@ public class TestModelDataBuilder {
 
         Stream.of(detailTypes).forEach(type -> {
             switch (type) {
-                case EXPENDITURE -> hardship.setExtraExpenditure(List.of(new ExtraExpenditure()
-                        .withAccepted(true)
-                        .withAmount(BigDecimal.valueOf(160.00))
-                        .withFrequency(Frequency.WEEKLY)));
-                case SOL_COSTS -> hardship.setSolicitorCosts(new SolicitorCosts()
-                        .withRate(TEST_SOLICITOR_RATE)
-                        .withDisbursements(TEST_SOLICITOR_DISBURSEMENTS)
-                        .withVat(TEST_SOLICITOR_VAT)
-                        .withHours(TEST_SOLICITOR_HOURS));
-                case INCOME -> hardship.setDeniedIncome(List.of(new DeniedIncome()
-                        .withAccepted(true)
-                        .withAmount(BigDecimal.valueOf(2000.00))
-                        .withFrequency(Frequency.ANNUALLY)));
+                case EXPENDITURE ->
+                    hardship.setExtraExpenditure(List.of(new ExtraExpenditure()
+                            .withAccepted(true)
+                            .withAmount(BigDecimal.valueOf(160.00))
+                            .withFrequency(Frequency.WEEKLY)));
+                case SOL_COSTS ->
+                    hardship.setSolicitorCosts(new SolicitorCosts()
+                            .withRate(TEST_SOLICITOR_RATE)
+                            .withDisbursements(TEST_SOLICITOR_DISBURSEMENTS)
+                            .withVat(TEST_SOLICITOR_VAT)
+                            .withHours(TEST_SOLICITOR_HOURS));
+                case INCOME ->
+                    hardship.setDeniedIncome(List.of(new DeniedIncome()
+                            .withAccepted(true)
+                            .withAmount(BigDecimal.valueOf(2000.00))
+                            .withFrequency(Frequency.ANNUALLY)));
             }
         });
 
