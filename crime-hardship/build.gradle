@@ -1,28 +1,29 @@
 plugins {
     id "java"
     id "jacoco"
-    id "org.sonarqube" version "6.1.0.5360"
+    id "org.sonarqube" version "6.2.0.5505"
     id "com.diffplug.spotless" version "8.0.0"
     id "info.solidsoft.pitest" version "1.15.0"
-    id "org.springframework.boot" version "3.4.6"
-    id 'io.spring.dependency-management' version "1.1.6"
+    id "org.springframework.boot" version "3.5.7"
+    id 'io.spring.dependency-management' version "1.1.7"
 }
 
 group = "uk.gov.justice.laa.crime"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 def versions = [
-        springdoc            : "2.8.6",
+        springdoc            : "2.8.13",
         crimeCommonsClasses  : "4.7.1",
         commonsModSchemas    : "1.26.1",
-        sentry               : "8.11.1",
+        sentry               : "8.23.0",
         resilience4j         : "2.3.0",
-        commonsLang          : "3.15.0",
-        wiremock             : "3.10.0"
+        commonsLang          : "3.20.0",
+        wiremock             : "3.10.6"
 ]
 
 configurations {
@@ -37,40 +38,42 @@ repositories {
 
 dependencies {
 
-    implementation platform("io.sentry:sentry-bom:$versions.sentry")
-    implementation "io.sentry:sentry-spring-boot-starter-jakarta"
+    // ---- Monitoring & Logging ----
     implementation "io.sentry:sentry-logback"
-
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-starter-validation"
-    implementation "org.springframework.boot:spring-boot-starter-web"
-    implementation "org.springframework.boot:spring-boot-starter-webflux"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdoc"
-    implementation "org.apache.commons:commons-lang3:$versions.commonsLang"
-
-    implementation "io.github.resilience4j:resilience4j-reactor:$versions.resilience4j"
-    implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4j"
-
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "io.micrometer:micrometer-tracing-bridge-brave"
+    implementation "io.sentry:sentry-spring-boot-starter-jakarta"
+    implementation platform("io.sentry:sentry-bom:$versions.sentry")
 
+    // ---- Core Application ----
     implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
     implementation "uk.gov.justice.service.laa-crime:crime-commons-mod-schemas:$versions.commonsModSchemas"
 
+    implementation "org.apache.commons:commons-lang3:$versions.commonsLang"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:$versions.springdoc"
+
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+
+    // ---- Resilience4j ----
+    implementation "io.github.resilience4j:resilience4j-reactor:$versions.resilience4j"
+    implementation "io.github.resilience4j:resilience4j-spring-boot3:$versions.resilience4j"
+
+    // ---- Lombok ----
     compileOnly "org.projectlombok:lombok"
     annotationProcessor "org.projectlombok:lombok"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-    
-    testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "org.wiremock.integrations:wiremock-spring-boot:${versions.wiremock}"
 
-
+    // ---- Testing ----
     testCompileOnly "org.projectlombok:lombok"
     testAnnotationProcessor "org.projectlombok:lombok"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.wiremock.integrations:wiremock-spring-boot:${versions.wiremock}"
 }
 
 spotless {
@@ -126,6 +129,7 @@ jacocoTestReport {
 }
 
 pitest {
+    pitestVersion = "1.20.7"
     targetClasses = [
             "uk.gov.justice.laa.crime.hardship.*",
             "uk.gov.justice.laa.crime.hardship.controller.*",
