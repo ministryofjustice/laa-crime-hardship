@@ -117,13 +117,14 @@ Make sure Remote Debug Option is set up on your preferred Editor.
 
 ### Application Monitoring and Logs
 
-The LAA Crime Hardship API has been configured to send the application logs to both AWS Cloud Watch and Sentry.
+The LAA Crime Hardship API has been configured to send the application logs to both OpenSearch and Sentry.
 
-####Cloud Watch Logs:
-To see the Cloud watch logs, you need to have the right user groups and permission. More details about this available here. (link) The application logs are configured with the followings log groups (names).
-The application deployed as a Docker container, and the logs can also be found from the AWS ECS logs.
+#### OpenSearch Logs:
+Documentation on accessing OpenSearch logs can be found [here](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/logging-an-app/access-logs-os.html#accessing-application-log-data-in-opensearch)
 
-####Sentry
+We also use ModSecurity to protect our non-prod environments. This will automatically prevent traffic considered malicious. These logs also appear in OpenSearch - details for accessing these logs can be found [here](https://user-guide.cloud-platform.service.justice.gov.uk/documentation/networking/modsecurity.html#modsecurity-web-application-firewall) 
+
+#### Sentry
 Sentry is a 3rd party application logging and monitoring platform. The platform provides easier searching based on meta-data as well as application monitoring. You can learn more about ['how we have integrated Sentry to improve application logging and monitoring'](https://dsdmoj.atlassian.net/wiki/spaces/LAACP/pages/2139914261/Integrate+Sentry+to+improve+application+logging+and+monitoring)
 There are several alert rules configured on Sentry that will push notification to both email and Slack channel. We have created a dedicated slack channel (named 'laa-crime-apps-logs-alert'). Sentry will push the alert to this channel for a specific type of exceptions. The configuration for Slack alert can be change from a [Sentry dashboard](https://sentry.io/settings/ministryofjustice/projects/laa-crime-hardship/alerts/).
 
