@@ -246,7 +246,9 @@ workflows:
   build-deploy-master:
     jobs:
       - build_and_scan_app:
-          context: laa-crime-apps-slack
+          context:
+            - laa-crime-apps-slack
+            - SonarCloud
           filters:
             branches:
               only:
@@ -298,7 +300,9 @@ workflows:
   build-deploy-branch:
     jobs:
       - build_and_scan_app:
-          context: laa-crime-apps-slack
+          context:
+            - laa-crime-apps-slack
+            - SonarCloud
           filters:
             branches:
               ignore:
