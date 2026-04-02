@@ -126,7 +126,7 @@ commands:
 # JOBS
 # ------------------
 jobs:
-  build_and_scan:
+  build_and_scan_app:
     executor: build-executor
     steps:
       - checkout:
@@ -245,7 +245,7 @@ workflows:
 
   build-deploy-master:
     jobs:
-      - build_and_scan:
+      - build_and_scan_app:
           context: laa-crime-apps-slack
           filters:
             branches:
@@ -255,7 +255,7 @@ workflows:
       - build_scan_and_push_image:
           context: laa-crime-apps-slack
           requires:
-            - build_and_scan
+            - build_and_scan_app
 
       - deploy-dev:
           context: laa-crime-apps-slack
@@ -297,7 +297,7 @@ workflows:
 
   build-deploy-branch:
     jobs:
-      - build_and_scan:
+      - build_and_scan_app:
           context: laa-crime-apps-slack
           filters:
             branches:
@@ -307,7 +307,7 @@ workflows:
       - build_scan_and_push_image:
           context: laa-crime-apps-slack
           requires:
-            - build_and_scan
+            - build_and_scan_app
 
       - hold_install_on_dev:
           context: laa-crime-apps-slack
