@@ -4,7 +4,7 @@ plugins {
     id "org.sonarqube" version "6.2.0.5505"
     id "com.diffplug.spotless" version "8.0.0"
     id "info.solidsoft.pitest" version "1.15.0"
-    id "org.springframework.boot" version "3.5.7"
+    id "org.springframework.boot" version "3.5.12"
     id 'io.spring.dependency-management' version "1.1.7"
 }
 
@@ -21,7 +21,7 @@ def versions = [
         crimeCommonsClasses  : "4.7.1",
         commonsModSchemas    : "1.26.1",
         sentry               : "8.23.0",
-        resilience4j         : "2.3.0",
+        resilience4j         : "2.4.0",
         commonsLang          : "3.20.0",
         wiremock             : "3.10.6"
 ]
@@ -39,12 +39,12 @@ repositories {
 dependencies {
 
     // ---- Monitoring & Logging ----
+    implementation platform("io.sentry:sentry-bom:$versions.sentry")
     implementation "io.sentry:sentry-logback"
     implementation "io.micrometer:micrometer-tracing"
     implementation "io.micrometer:micrometer-registry-prometheus"
     implementation "io.micrometer:micrometer-tracing-bridge-brave"
     implementation "io.sentry:sentry-spring-boot-starter-jakarta"
-    implementation platform("io.sentry:sentry-bom:$versions.sentry")
 
     // ---- Core Application ----
     implementation "uk.gov.justice.service.laa-crime:crime-commons-classes:$versions.crimeCommonsClasses"
@@ -146,17 +146,7 @@ pitest {
     mutationThreshold = 60
 }
 
-
-def isCiBuild = System.getenv("SONAR_TOKEN") != null
-
-if (isCiBuild) {
-    tasks.named("sonar") {
-        dependsOn "test"
-    }
-}
-
 sonar {
-    skipProject = !isCiBuild
     properties {
         property "sonar.exclusions", "**/entity/**.java , **/model/**.java , **/dto/**.java , **/config/**.java, **/jms/**.java,**/exception/**.java,**/handler/**.java"
         property "sonar.coverage.exclusions", "**/CrimeHardshipApplication.java"
