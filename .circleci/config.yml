@@ -248,7 +248,7 @@ workflows:
       - build_and_scan_app:
           context:
             - laa-crime-apps-slack
-            - SonarCloud
+            - SonarCloud Crime
           filters:
             branches:
               only:
@@ -302,7 +302,7 @@ workflows:
       - build_and_scan_app:
           context:
             - laa-crime-apps-slack
-            - SonarCloud
+            - SonarCloud Crime
           filters:
             branches:
               ignore:
